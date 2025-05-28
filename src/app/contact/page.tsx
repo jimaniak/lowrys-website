@@ -2,7 +2,7 @@
 
 import Layout from '@/components/Layout';
 import { useState } from 'react';
-import { FaEnvelope, FaBriefcase, FaLinkedin, FaGithub } from 'react-icons/fa';
+import { FaEnvelope, FaBriefcase} from 'react-icons/fa';
 import SocialLinks from '@/components/SocialLinks';
 
 export default function Contact( ) {
@@ -17,7 +17,7 @@ export default function Contact( ) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -25,7 +25,7 @@ export default function Contact( ) {
     }));
   };
   
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
