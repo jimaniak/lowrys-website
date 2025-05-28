@@ -2,7 +2,7 @@
 
 import Layout from '@/components/Layout';
 import { useState } from 'react';
-import { FaEnvelope, FaBriefcase, FaProjectDiagram, FaLightbulb } from 'react-icons/fa';
+import { FaEnvelope, FaBriefcase, FaLinkedin, FaGithub } from 'react-icons/fa';
 import SocialLinks from '@/components/SocialLinks';
 
 export default function Contact( ) {
@@ -65,7 +65,7 @@ export default function Contact( ) {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Contact Me</h1>
           <p className="text-xl max-w-3xl">
-            Get in touch for opportunities, collaborations, or just to say hello. I'm always open to discussing new projects and ideas.
+            Get in touch for opportunities, collaborations, or just to say hello. I&apos;m always open to discussing new projects and ideas.
           </p>
         </div>
       </section>
@@ -75,7 +75,7 @@ export default function Contact( ) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-12">
             <div className="md:w-1/2">
-              <h2 className="text-3xl font-bold mb-8">Let's Connect</h2>
+              <h2 className="text-3xl font-bold mb-8">Let&apos;s Connect</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -118,7 +118,7 @@ export default function Contact( ) {
                 
                 {isSubmitted ? (
                   <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    <p>Thank you for your message! I'll get back to you soon.</p>
+                    <p>Thank you for your message! I&apos;ll get back to you soon.</p>
                   </div>
                 ) : null}
                 
@@ -200,11 +200,11 @@ export default function Contact( ) {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">My Availability</h2>
           <p className="text-lg mb-8 max-w-3xl mx-auto">
-            I'm currently available for consulting, project work, and full-time opportunities across my areas of expertise.
+            I&apos;m currently available for consulting, project work, and full-time opportunities across my areas of expertise.
           </p>
           <div className="inline-block bg-white px-8 py-4 rounded-lg shadow-md">
             <p className="text-xl font-semibold text-blue-600">
-              Let's discuss how I can contribute to your success!
+              Let&apos;s discuss how I can contribute to your success!
             </p>
           </div>
         </div>

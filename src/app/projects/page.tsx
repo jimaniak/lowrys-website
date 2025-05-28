@@ -193,7 +193,7 @@ export default function Projects() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-4">Interested in Working Together?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            I'm available for consulting, project work, and full-time opportunities across my areas of expertise.
+            I&apos;m available for consulting, project work, and full-time opportunities across my areas of expertise.
           </p>
           <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
             Contact Me

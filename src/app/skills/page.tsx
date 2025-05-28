@@ -232,7 +232,7 @@ export default function Skills() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-4">Interested in My Skills?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Let's discuss how my diverse expertise can benefit your organization or project.
+            Let&apos;s discuss how my diverse expertise can benefit your organization or project.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
             <a href="/projects" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">

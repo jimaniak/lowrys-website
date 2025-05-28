@@ -2,7 +2,7 @@
 
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import SocialLinks from '@/components/SocialLinks';
+//import SocialLinks from '@/components/SocialLinks';
 import { FaLinkedin, FaFileAlt } from 'react-icons/fa';
 
 export default function About() {
@@ -27,17 +27,17 @@ export default function About() {
               <h2 className="text-3xl font-bold mb-6">My Professional Journey</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  I'm Jim Lowry, a versatile professional with a unique combination of skills spanning financial analysis, 
-                  technical implementation, and hands-on practical expertise. Throughout my career, I've focused on bridging 
+                  I&apos;m Jim Lowry, a versatile professional with a unique combination of skills spanning financial analysis, 
+                  technical implementation, and hands-on practical expertise. Throughout my career, I&apos;ve focused on bridging 
                   the gap between business objectives and technical solutions.
                 </p>
                 <p className="text-lg">
-                  With extensive experience in financial analysis and Excel expertise, I've helped organizations optimize 
+                  With extensive experience in financial analysis and Excel expertise, I&apos;ve helped organizations optimize 
                   their business performance and identify growth opportunities. My analytical mindset allows me to transform 
                   complex data into actionable insights.
                 </p>
                 <p className="text-lg">
-                  In the technical realm, I've implemented Power Platform solutions and automation tools that streamline 
+                  In the technical realm, I&apos;ve implemented Power Platform solutions and automation tools that streamline 
                   processes and enhance productivity. I believe in leveraging technology to solve real-world problems and 
                   create efficient workflows.
                 </p>
@@ -47,7 +47,7 @@ export default function About() {
                   implementation.
                 </p>
                 <p className="text-lg">
-                  I'm passionate about continuous learning and applying my diverse skill set to deliver comprehensive 
+                  I&apos;m passionate about continuous learning and applying my diverse skill set to deliver comprehensive 
                   solutions across multiple domains. My goal is to achieve $90,000+ income through multiple streams by 
                   leveraging my cross-domain expertise.
                 </p>
