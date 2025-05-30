@@ -137,7 +137,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Location</h3>
-                    <p className="text-gray-600">Raleigh-Durham Area, NC</p>
+                    <p className="text-gray-600">High Ridge, MO</p>
                   </div>
                 </div>
                 
@@ -147,7 +147,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">LinkedIn</h3>
-                    <a href="https://www.linkedin.com/in/jimlowry/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">linkedin.com/in/jimlowry</a>
+                    <a href="https://www.linkedin.com/in/jimsitsecurity" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">linkedin.com/in/MyLinkedIn
+					</a>
                   </div>
                 </div>
                 
@@ -157,7 +158,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">GitHub</h3>
-                    <a href="https://github.com/jimlowry" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">github.com/jimlowry</a>
+                    <a href="https://github.com/jimaniak" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">github.com/MyGitHub</a>
                   </div>
                 </div>
               </div>
