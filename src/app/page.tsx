@@ -85,7 +85,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-4">Ready to Work Together?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            I'm available for consulting, project work, and full-time opportunities.
+            I&apos;m available for consulting, project work, and full-time opportunities.
           </p>
           <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
             Contact Me

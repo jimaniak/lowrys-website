@@ -2,79 +2,134 @@
 
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaChartBar, FaCode, FaTools, FaExternalLinkAlt, FaDatabase, FaProjectDiagram, FaRobot, FaChartLine, FaLightbulb, FaCheckCircle, FaArrowRight, FaNetworkWired, FaHome, FaShieldAlt, FaWrench, FaServer } from 'react-icons/fa';
 
 export default function Projects() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-16">
+      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">My Projects</h1>
-          <p className="text-xl max-w-3xl">
-            Explore a selection of my work across financial analysis, technical implementation, and hands-on projects.
+          <h1 className="text-5xl font-bold mb-6 leading-tight">My Projects</h1>
+          <p className="text-xl max-w-3xl leading-relaxed">
+            Explore how I transform business challenges into effective solutions through data integration, workflow automation, and innovative technology approaches. The selected projects below represent a small sample of my work, chosen to illustrate my approach to solving complex business challenges.
           </p>
         </div>
       </section>
 
-      {/* Projects Introduction */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Featured Work</h2>
-            <p className="text-lg mb-8">
-              These projects demonstrate my ability to deliver comprehensive solutions by leveraging my diverse skill set across multiple domains.
-            </p>
-          </div>
+      {/* Featured Work Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-8">Featured Work</h2>
+          <p className="text-lg mb-12 max-w-3xl mx-auto">
+            These projects demonstrate my ability to deliver comprehensive solutions by leveraging my diverse skill set across multiple domains.
+          </p>
         </div>
       </section>
 
       {/* Financial & Analytical Projects */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Financial & Analytical Projects</h2>
+          <div className="flex items-center justify-center mb-12">
+            <FaChartLine className="text-blue-600 text-3xl mr-4" />
+            <h2 className="text-3xl font-bold text-center">Financial & Analytical Projects</h2>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Project 1 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Budget Optimization Model</h3>
-                <p className="text-gray-600 mb-4">
-                  Developed a comprehensive Excel model for budget optimization that helped identify cost-saving opportunities and improve financial performance.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Excel</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Financial Analysis</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Data Modeling</span>
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Enterprise Data Unification Initiative */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-blue-500">
+                  <FaDatabase className="text-7xl opacity-40" />
                 </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Enterprise Data Unification Initiative</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Organization struggled with fragmented data across multiple systems, inconsistent naming conventions, and data quality issues.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Created a unified data architecture with an innovative two-tier development and deployment system that filtered bad data and created accountability.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Built exceptional stakeholder trust, enabled visibility into previously unavailable data, and established a culture of data ownership.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Data Integration</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Data Governance</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Process Improvement</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
                 </a>
               </div>
             </div>
             
-            {/* Project 2 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Financial Forecasting Dashboard</h3>
-                <p className="text-gray-600 mb-4">
-                  Created an interactive dashboard for financial forecasting that provided actionable insights and improved decision-making processes.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Power BI</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Data Visualization</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Financial Analysis</span>
+            {/* Proactive Resource Management System */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-blue-500">
+                  <FaChartLine className="text-7xl opacity-40" />
                 </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Proactive Resource Management System</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Over 30 dependent business services weren&apos;t notified of project dependencies until urgent deadlines approached.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Developed integration between business planning and project management that automatically created entries in an Automated Work Log at early planning stages.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Accelerated development timelines, enabled early discovery of dependencies, and reduced project delays due to resource constraints.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Resource Planning</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Process Automation</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Cross-functional Collaboration</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
                 </a>
               </div>
             </div>
@@ -83,104 +138,108 @@ export default function Projects() {
       </section>
 
       {/* Technical & Digital Projects */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Technical & Digital Projects</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Project 1 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Workflow Automation Solution</h3>
-                <p className="text-gray-600 mb-4">
-                  Implemented a Power Automate workflow that streamlined approval processes, reducing processing time by 60% and improving accuracy.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Power Automate</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Process Automation</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Workflow Design</span>
-                </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
-                </a>
-              </div>
-            </div>
-            
-            {/* Project 2 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Custom PowerApp Solution</h3>
-                <p className="text-gray-600 mb-4">
-                  Developed a custom PowerApp that simplified data collection and reporting, enhancing team productivity and data accuracy.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">PowerApps</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">App Development</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Data Management</span>
-                </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Hands-on Projects */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Hands-on Projects</h2>
+          <div className="flex items-center justify-center mb-12">
+            <FaCode className="text-green-600 text-3xl mr-4" />
+            <h2 className="text-3xl font-bold text-center">Technical & Digital Projects</h2>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Project 1 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Custom Kitchen Renovation</h3>
-                <p className="text-gray-600 mb-4">
-                  Designed and built custom cabinetry for a complete kitchen renovation, combining aesthetic appeal with functional storage solutions.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Cabinetry</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Woodworking</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Design</span>
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Red Project Report */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-green-50 to-green-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-green-500">
+                  <FaChartBar className="text-7xl opacity-40" />
                 </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Red Project Report</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Portfolio managers lacked timely visibility into the status of multiple projects under their supervision.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Implemented an automated reporting system that identified projects with metrics in the &quot;red&quot; zone requiring immediate attention.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Enabled proactive management of at-risk projects, eliminated manual reporting efforts, and improved decision-making.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Automated Reporting</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Performance Monitoring</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Portfolio Management</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-green-600 font-medium hover:text-green-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
                 </a>
               </div>
             </div>
             
-            {/* Project 2 */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Project Image</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Home Electrical Upgrade</h3>
-                <p className="text-gray-600 mb-4">
-                  Completed a comprehensive electrical system upgrade for a residential property, improving safety and energy efficiency.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Electrical</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Installation</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Safety</span>
+            {/* Project Phase Checklist */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-green-50 to-green-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-green-500">
+                  <FaProjectDiagram className="text-7xl opacity-40" />
                 </div>
-                <a href="#" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                  <span>View Details</span>
-                  <FaExternalLinkAlt size={14} />
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Project Phase Checklist</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Projects moved between lifecycle phases without completing required deliverables, leading to quality issues and rework.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Created an automated governance system that tracked required deliverables and flagged incomplete items during phase transitions.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Ensured adherence to methodology standards, reduced rework, and increased stakeholder confidence in delivery processes.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Project Governance</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Quality Assurance</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Process Automation</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-green-600 font-medium hover:text-green-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
                 </a>
               </div>
             </div>
@@ -188,15 +247,334 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-blue-600 text-white text-center">
+      {/* AI-Enhanced Solutions */}
+      <section className="py-16 bg-gradient-to-r from-purple-50 to-indigo-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Interested in Working Together?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
+          <div className="flex items-center justify-center mb-12">
+            <FaRobot className="text-purple-600 text-3xl mr-4" />
+            <h2 className="text-3xl font-bold text-center">AI-Enhanced Solutions</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 md:mx-auto md:max-w-4xl">
+            {/* AI-Powered Technical Solution Development */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden md:col-span-2 transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-purple-50 to-indigo-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-purple-500">
+                  <FaRobot className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">AI-Powered Technical Solution Development</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Modern technical solutions require expertise across diverse technologies that&apos;s impossible for one person to master.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Pioneered an approach leveraging AI tools to augment technical capabilities across multiple domains.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Accelerated development timelines, delivered sophisticated solutions with fewer resources, and expanded capabilities beyond traditional boundaries.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">AI Integration</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Technical Versatility</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Innovative Problem-Solving</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-purple-600 font-medium hover:text-purple-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Technical Infrastructure Projects */}
+      <section className="py-16 bg-gradient-to-r from-cyan-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center mb-8">
+            <FaNetworkWired className="text-cyan-600 text-3xl mr-4" />
+            <h2 className="text-3xl font-bold text-center">Technical Infrastructure Projects</h2>
+          </div>
+          
+          <p className="text-lg text-center mb-12 max-w-3xl mx-auto">
+            These projects demonstrate how I apply enterprise-level architecture, security, and integration principles in practical implementations, showcasing my technical versatility beyond traditional business environments.
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Enterprise-Grade Home Network */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
+                  <FaNetworkWired className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Enterprise-Grade Home Network</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Modern home environments require enterprise-level network security, reliability, and performance to support multiple connected systems and devices with redundancy for critical services.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Designed and implemented a semi-commercial network infrastructure using professional-grade Ubiquiti equipment including a UDM-Pro (Iron Curtain), multiple managed switches (24-port and 8-port POE), and dedicated WiFi access points, complemented by additional non-UniFi endpoint switches.
+                  </p>
+                </div>
+                {/* Add the NetworkTraffic GIF here */}
+				<div className="my-4">
+				  <Image 
+					src="/images/projects/technical-infrastructure/NetworkTraffic.gif"
+					alt="Live network traffic visualization showing data flow through enterprise-grade home network" 
+					width={600} 
+					height={400} 
+					className="rounded-lg shadow-md mx-auto"
+				  />
+				</div>
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Created a robust foundation with 1Gbps fiber primary connection and 400Mbps LTE failover, enabling reliable connectivity for home automation, secure remote work, and demonstrating enterprise architecture principles in a residential context.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Network Architecture</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Security Implementation</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Redundancy Planning</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
+              </div>
+            </div>
+            
+            {/* Integrated Smart Home Automation */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
+                  <FaHome className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Integrated Smart Home Automation</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Creating a truly intelligent home environment requires complex integration between disparate systems and contextual awareness for meaningful automation with advanced security features.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Developed a sophisticated smart home system with conditional logic that responds to environmental factors (like rain detection), security conditions, and occupancy patterns to automate household functions and enhance security.
+                  </p>
+                </div>
+                {/* Add HomeAutomation flowchart */}
+				<div className="my-4">
+				  <Image 
+					src="/images/projects/technical-infrastructure/HomeAutomation.png" 
+					alt="Smart home automation flowchart showing conditional logic for security and convenience features" 
+					width={600} 
+					height={400} 
+					className="rounded-lg shadow-md mx-auto"
+				  />
+				</div>
+
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Created practical automations including automatic garage door control when leaving, security notifications for open windows/unlocked doors, and visual security alerts (red porch light) with conditional access control during potential intrusions.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Systems Integration</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Conditional Automation</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Security Protocols</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 mt-12">
+            {/* Laundry Room Rebuild */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
+                  <FaTools className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Laundry Room Rebuild</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Existing laundry room was severely limited in space and functionality, with inefficient layout and inadequate storage for a modern household&apos;s needs.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Executed a comprehensive renovation that included extending the wall by four feet, relocating plumbing, electrical, and ventilation systems to the opposite wall, and designing and building custom white cabinetry with butcher block countertops.
+                  </p>
+                </div>
+				{/* Add Laundry Room transformation GIF */}
+				<div className="my-4">
+				  <Image 
+					src="/images/projects/technical-infrastructure/LaundryRoomTransformation.gif" 
+					alt="Before and after transformation of laundry room rebuild project" 
+					width={600} 
+					height={400} 
+					className="rounded-lg shadow-md mx-auto"
+				  />
+				</div>                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Transformed a basic utility space into a highly functional and aesthetically pleasing room with upgraded stacked front-loading appliances, demonstrating project management skills, technical versatility, and ability to coordinate multiple technical disciplines.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Structural Modification</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Custom Cabinetry</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Systems Integration</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
+              </div>
+            </div>
+            
+            {/* Garage Workshop Conversion (In Progress) */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
+                  <FaWrench className="text-7xl opacity-40" />
+                </div>
+                <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  In Progress
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Garage Workshop Conversion</h3>
+                
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Standard garage space lacks the infrastructure, organization, and functionality needed for an efficient dual-purpose workshop and parking area.
+                  </p>
+                </div>
+                
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Currently transforming the garage into a multi-functional space with enhanced electrical systems, custom storage solutions, and optimized workflow layout while maintaining vehicle parking capability.
+                  </p>
+                </div>
+				{/* Add Garage Workshop Transformation Journey */}
+				<div className="my-4">
+				  <Image 
+					src="/images/projects/technical-infrastructure/GarageTransformationJourney.png" 
+					alt="Garage workshop transformation journey showing beginning, current progress, and final vision" 
+					width={600} 
+					height={1200} 
+					className="rounded-lg shadow-md mx-auto"
+				  />
+				</div>
+                
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Creating a versatile space that demonstrates space optimization, systems planning, and the ability to balance multiple functional requirements within physical constraints.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Space Planning</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Electrical Systems</span>
+                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Workflow Optimization</span>
+                </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">Interested in Working Together?</h2>
+          <p className="text-xl mb-8 max-w-3xl mx-auto">
             I&apos;m available for consulting, project work, and full-time opportunities across my areas of expertise.
           </p>
-          <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
-            Contact Me
+          <a 
+            href="/contact" 
+            className="inline-block bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-50 transition-colors transform hover:scale-105 duration-300"
+          >
+            Get in Touch
           </a>
         </div>
       </section>
