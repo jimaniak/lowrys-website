@@ -117,7 +117,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Email</h3>
-                    <p className="text-gray-600">jim@lowrys.org</p>
+                    <p className="text-gray-600">business@lowrys.org</p>
                   </div>
                 </div>
                 
@@ -127,7 +127,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Phone</h3>
-                    <p className="text-gray-600">(919) 555-1234</p>
+                    <p className="text-gray-600">See Resume</p>
                   </div>
                 </div>
                 
