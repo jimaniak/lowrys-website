@@ -28,30 +28,28 @@ export default function About() {
               <div className="space-y-6">
                 <p className="text-lg">
                   I&apos;m Jim Lowry, a versatile professional with a unique combination of skills spanning financial analysis, 
-                  technical implementation, and practical problem-solving. Throughout my career, I&apos;ve focused on bridging 
+                  technical implementation, and hands-on practical expertise. Throughout my career, I&apos;ve focused on bridging 
                   the gap between business objectives and technical solutions.
                 </p>
                 <p className="text-lg">
-                  With extensive experience in data analysis and digital solutions, I&apos;ve helped organizations optimize 
+                  With extensive experience in financial analysis and Excel expertise, I&apos;ve helped organizations optimize 
                   their business performance and identify growth opportunities. My analytical mindset allows me to transform 
-                  complex data into actionable insights, regardless of the platform or technology involved.
+                  complex data into actionable insights.
                 </p>
                 <p className="text-lg">
-                  In the technical realm, I apply the same logical principles across various platforms and languages, 
-                  from spreadsheet applications to database systems, automation tools, and programming environments. 
-                  I understand that while syntax may differ, the underlying logic remains consistent, allowing me to 
-                  adapt quickly to new technologies and deliver effective solutions.
+                  In the technical realm, I&apos;ve implemented Power Platform solutions and automation tools that streamline 
+                  processes and enhance productivity. I believe in leveraging technology to solve real-world problems and 
+                  create efficient workflows.
                 </p>
                 <p className="text-lg">
-                  What sets me apart is my comprehensive approach to problem-solving. I combine analytical thinking with 
-                  practical implementation, drawing on my diverse background to develop solutions that address both 
-                  technical requirements and business needs. This cross-domain perspective enables me to see connections 
-                  and opportunities that might be missed by those with more narrowly focused backgrounds.
+                  What sets me apart is my hands-on approach to problem-solving. With practical skills in electrical work 
+                  and cabinetry, I bring a unique perspective to challenges, combining analytical thinking with practical 
+                  implementation.
                 </p>
                 <p className="text-lg">
                   I&apos;m passionate about continuous learning and applying my diverse skill set to deliver comprehensive 
-                  solutions across multiple domains. My professional goal is to leverage my cross-domain expertise to create 
-                  meaningful impact through innovative and efficient technical solutions.
+                  solutions across multiple domains. My goal is to achieve $90,000+ income through multiple streams by 
+                  leveraging my cross-domain expertise.
                 </p>
               </div>
 
@@ -59,15 +57,13 @@ export default function About() {
               <div className="space-y-6">
                 <p className="text-lg">
                   I believe in taking a holistic approach to problem-solving, considering both the analytical and practical 
-                  aspects of any challenge. By understanding the fundamental principles that underlie different technologies, 
-                  I can select the most appropriate tools for each situation and deliver solutions that are both strategically 
-                  sound and practically feasible.
+                  aspects of any challenge. By combining financial analysis, technical implementation, and hands-on skills, 
+                  I deliver solutions that are both strategically sound and practically feasible.
                 </p>
                 <p className="text-lg">
                   My diverse background allows me to communicate effectively with stakeholders at all levels, translating 
                   complex technical concepts into business terms and vice versa. This ability to bridge different domains 
-                  makes me a valuable asset in cross-functional teams, where I can adapt to various technical environments 
-                  while maintaining focus on business objectives.
+                  makes me a valuable asset in cross-functional teams.
                 </p>
               </div>
             </div>
