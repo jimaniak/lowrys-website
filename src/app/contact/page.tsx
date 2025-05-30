@@ -16,7 +16,7 @@ export default function Contact() {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('submitting');
     setError('');
