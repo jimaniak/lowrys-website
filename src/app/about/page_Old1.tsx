@@ -4,7 +4,6 @@ import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import Head from 'next/head';
-import ResumeAccess from '@/components/ResumeAccess';
 //import SocialLinks from '@/components/SocialLinks';
 
 export default function About() {
@@ -162,9 +161,15 @@ export default function About() {
                     <FaLinkedin size={24} />
                     <span>LinkedIn Profile</span>
                   </a>
-				{/* Resume Access */}
-				<ResumeAccess />
-
+                  <a 
+                    href="/documents/jim-lowry-resume.pdf" 
+                    className="flex items-center gap-3 text-blue-600 hover:text-blue-800 transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaFileAlt size={24} />
+                    <span>Download Resume</span>
+                  </a>
                 </div>
               </div>
             </div>

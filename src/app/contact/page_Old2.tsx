@@ -1,4 +1,3 @@
-// src/app/contact/page.tsx
 'use client';
 
 import Layout from '@/components/Layout';
@@ -89,6 +88,53 @@ export default function Contact() {
 
   return (
     <Layout>
+      <Head>
+        <title>Contact Jim Lowry | Business Process Consultant</title>
+        <meta name="description" content="Contact Jim Lowry for business process consulting, technical implementation, and solution development. Solving complex business challenges with practical solutions." />
+        <meta name="keywords" content="contact business consultant, hire process consultant, technical implementation specialist, business solutions expert" />
+        <link rel="canonical" href="https://www.lowrys.org/contact" />
+        
+        {/* Person Schema */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Jim Lowry",
+              "url": "https://www.lowrys.org",
+              "sameAs": [
+                "https://www.linkedin.com/in/jimlowry/",
+                "https://github.com/jimlowry"
+              ],
+              "jobTitle": "Business Process Consultant",
+              "worksFor": {
+                "@type": "Organization",
+                "name": "Self-employed"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Raleigh-Durham Area",
+                "addressRegion": "NC"
+              },
+              "email": "jim@lowrys.org",
+              "telephone": "+19195551234",
+              "alumniOf": {
+                "@type": "EducationalOrganization",
+                "name": "University of North Carolina",
+                "sameAs": "https://www.unc.edu/"
+              },
+              "knowsAbout": [
+                "Business Process Optimization",
+                "Technical Implementation",
+                "Data Integration",
+                "Solution Architecture",
+                "Project Management"
+              ]
+            }
+          `}
+        </script>
+      </Head>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
@@ -127,7 +173,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Phone</h3>
-                    <p className="text-gray-600">(919) 555-1234</p>
+                    <p className="text-gray-600">(919 ) 555-1234</p>
                   </div>
                 </div>
                 

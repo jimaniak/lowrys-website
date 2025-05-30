@@ -2,7 +2,6 @@
 
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import Link from 'next/link';
 import { FaChartBar, FaCode, FaTools, FaExternalLinkAlt, FaDatabase, FaProjectDiagram, FaRobot, FaChartLine, FaLightbulb, FaCheckCircle, FaArrowRight, FaNetworkWired, FaHome, FaShieldAlt, FaWrench, FaServer } from 'react-icons/fa';
 import Head from 'next/head';
 
@@ -27,21 +26,6 @@ export default function Projects() {
                   "position": 1,
                   "item": {
                     "@type": "Project",
-                    "name": "AI-Enhanced Web Platform Development",
-                    "description": "Created AIrtisan.net using Next.js and React, leveraging AI collaboration for enhanced development efficiency with advanced SEO optimization.",
-                    "url": "https://www.lowrys.org/projects#airtisan-platform",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Next.js", "React", "AI Development", "SEO Optimization", "Web Platform"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "item": {
-                    "@type": "Project",
                     "name": "Enterprise Data Unification Initiative",
                     "description": "Created a unified data architecture with an innovative two-tier development and deployment system that filtered bad data and created accountability.",
                     "url": "https://www.lowrys.org/projects#enterprise-data-unification",
@@ -54,7 +38,7 @@ export default function Projects() {
                 },
                 {
                   "@type": "ListItem",
-                  "position": 3,
+                  "position": 2,
                   "item": {
                     "@type": "Project",
                     "name": "Proactive Resource Management System",
@@ -69,7 +53,7 @@ export default function Projects() {
                 },
                 {
                   "@type": "ListItem",
-                  "position": 4,
+                  "position": 3,
                   "item": {
                     "@type": "Project",
                     "name": "Enterprise-Grade Home Network",
@@ -84,7 +68,7 @@ export default function Projects() {
                 },
                 {
                   "@type": "ListItem",
-                  "position": 5,
+                  "position": 4,
                   "item": {
                     "@type": "Project",
                     "name": "Laundry Room Rebuild",
@@ -99,7 +83,7 @@ export default function Projects() {
                 },
                 {
                   "@type": "ListItem",
-                  "position": 6,
+                  "position": 5,
                   "item": {
                     "@type": "Project",
                     "name": "Garage Workshop Conversion",
@@ -189,6 +173,10 @@ export default function Projects() {
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Data Governance</span>
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Process Improvement</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
             
@@ -234,6 +222,10 @@ export default function Projects() {
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Process Automation</span>
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Cross-functional Collaboration</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
           </div>
@@ -249,83 +241,6 @@ export default function Projects() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-12">
-            {/* AIrtisan.net Web Platform Project */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="airtisan-platform">
-              <div className="h-64 bg-gradient-to-br from-green-50 to-green-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-green-500">
-                  <FaCode className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">AI-Enhanced Web Platform Development</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Develop a modern, responsive web platform that showcases professional services while implementing cutting-edge technologies and SEO best practices to maximize online visibility and user engagement.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Created AIrtisan.net using Next.js and React, leveraging AI collaboration for enhanced development efficiency. Implemented advanced SEO optimization, responsive design, and structured data markup to ensure cross-device compatibility and search visibility.
-                  </p>
-                </div>
-                
-                {/* Add AIrtisan.net Screenshot as a clickable link */}
-                <div className="my-4">
-                  <Link 
-                    href="https://airtisan.net" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block mx-auto w-fit"
-                  >
-                    <Image 
-                      src="/images/projects/web-development/airtisan-platform.png" 
-                      alt="AIrtisan.net web platform showcasing AI-enhanced development techniques" 
-                      width={600} 
-                      height={400} 
-                      className="rounded-lg shadow-md mx-auto hover:opacity-90 transition-opacity cursor-pointer"
-                      unoptimized={true}
-                    />
-                  </Link>
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Delivered a high-performance web platform with 90+ PageSpeed scores, optimized SEO architecture, and seamless user experience across all devices. The AI-assisted development process reduced implementation time by 40% while maintaining code quality and best practices.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Next.js</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">React</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">AI Development</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">SEO Optimization</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Responsive Design</span>
-                </div>
-                
-                <div className="mt-6 flex justify-center">
-                  <a 
-                    href="https://airtisan.net" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-                  >
-                    View Project <span className="ml-2">→</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-            
             {/* Red Project Report */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
               <div className="h-64 bg-gradient-to-br from-green-50 to-green-100 relative">
@@ -368,6 +283,10 @@ export default function Projects() {
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Performance Monitoring</span>
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Portfolio Management</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-green-600 font-medium hover:text-green-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
             
@@ -386,7 +305,7 @@ export default function Projects() {
                     <FaLightbulb className="mr-2" /> Challenge
                   </h4>
                   <p className="text-gray-700">
-                    Projects moved between lifecycle phases without completing required deliverables, leading to quality issues, rework, and increased annual cost.
+                    Projects moved between lifecycle phases without completing required deliverables, leading to quality issues, rework, and increased costs of approximately $250,000 annually.
                   </p>
                 </div>
                 
@@ -404,7 +323,7 @@ export default function Projects() {
                     <FaCheckCircle className="mr-2" /> Impact
                   </h4>
                   <p className="text-gray-700">
-                    Ensured adherence to methodology standards, reduced rework, and increased stakeholder confidence in delivery processes, resulting in annual savings.
+                    Ensured adherence to methodology standards, reduced rework by 65%, and increased stakeholder confidence in delivery processes, resulting in estimated annual savings of $175,000.
                   </p>
                 </div>
                 
@@ -413,6 +332,10 @@ export default function Projects() {
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Quality Assurance</span>
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Process Automation</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-green-600 font-medium hover:text-green-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
           </div>
@@ -470,6 +393,10 @@ export default function Projects() {
                   <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Technical Versatility</span>
                   <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Innovative Problem-Solving</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-purple-600 font-medium hover:text-purple-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
           </div>
@@ -524,7 +451,7 @@ export default function Projects() {
                     width={600} 
                     height={400} 
                     className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
+					unoptimized={true}
                   />
                 </div>
                 <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
@@ -541,6 +468,10 @@ export default function Projects() {
                   <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Security Implementation</span>
                   <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Redundancy Planning</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
             
@@ -580,7 +511,6 @@ export default function Projects() {
                     width={600} 
                     height={400} 
                     className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
                   />
                 </div>
                 
@@ -598,6 +528,10 @@ export default function Projects() {
                   <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Automation Logic</span>
                   <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Energy Efficiency</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-cyan-600 font-medium hover:text-cyan-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
           </div>
@@ -653,7 +587,7 @@ export default function Projects() {
                     width={600} 
                     height={400} 
                     className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
+					unoptimized={true}
                   />
                 </div>
                 
@@ -671,6 +605,10 @@ export default function Projects() {
                   <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Electrical Work</span>
                   <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Smart Home Integration</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-amber-600 font-medium hover:text-amber-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
             
@@ -714,7 +652,6 @@ export default function Projects() {
                     width={600} 
                     height={1200} 
                     className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
                   />
                 </div>
                 
@@ -732,6 +669,10 @@ export default function Projects() {
                   <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Custom Storage</span>
                   <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Workflow Optimization</span>
                 </div>
+                
+                <a href="#" className="inline-flex items-center text-amber-600 font-medium hover:text-amber-800 transition-colors">
+                  View Details <FaArrowRight className="ml-2" />
+                </a>
               </div>
             </div>
           </div>
