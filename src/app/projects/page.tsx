@@ -451,6 +451,7 @@ export default function Projects() {
                     width={600} 
                     height={400} 
                     className="rounded-lg shadow-md mx-auto"
+					unoptimized={true}
                   />
                 </div>
                 <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
@@ -586,6 +587,7 @@ export default function Projects() {
                     width={600} 
                     height={400} 
                     className="rounded-lg shadow-md mx-auto"
+					unoptimized={true}
                   />
                 </div>
                 

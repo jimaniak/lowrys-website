@@ -66,7 +66,7 @@ export default function Contact() {
         <meta name="description" content="Schedule a consultation to discuss your business process automation, financial analysis, or workflow optimization needs. Let's transform your business challenges into measurable solutions." />
         <meta name="keywords" content="business process consultant, automation solutions, financial analysis consulting, workflow optimization, business technology advisor, contact, consultation" />
         <link rel="canonical" href="https://www.lowrys.org/contact" />
-        
+  
         {/* ContactPage Schema */}
         <script type="application/ld+json">
           {`
