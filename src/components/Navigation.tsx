@@ -22,6 +22,9 @@ const Navigation = () => {
       <Link href="/projects" className={`transition duration-300 ${isActive('/projects')}`}>
         Projects
       </Link>
+	  <Link href="/resources" className={pathname === '/resources' ? 'active-link' : ''}>
+		Resources
+	  </Link>
       <Link href="/contact" className={`transition duration-300 ${isActive('/contact')}`}>
         Contact
       </Link>

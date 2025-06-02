@@ -47,6 +47,13 @@ const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => {
           Projects
         </Link>
         <Link 
+          href="/resources" 
+          className={`block py-2 transition duration-300 ${isActive('/resources')}`}
+          onClick={onClose}
+        >
+          Resources
+        </Link>
+        <Link 
           href="/contact" 
           className={`block py-2 transition duration-300 ${isActive('/contact')}`}
           onClick={onClose}
