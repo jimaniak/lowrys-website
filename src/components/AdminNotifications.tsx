@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db, messaging, getToken, onMessage } from '../lib/firebase-client';
 import { MessagePayload } from 'firebase/messaging';
+import { Firestore } from 'firebase/firestore';
 
 // TypeScript interfaces
 interface ResumeRequest {
@@ -96,6 +97,11 @@ const AdminNotifications: React.FC = () => {
   const saveTokenToDatabase = async (token: string): Promise<void> => {
     // Save token to Firestore
     try {
+      if (!db) {
+        console.error('Firestore db is not initialized');
+        return;
+      }
+      
       await setDoc(doc(db, 'fcmTokens', 'admin'), {
         token,
         timestamp: new Date()
@@ -107,6 +113,11 @@ const AdminNotifications: React.FC = () => {
   
   const loadRequests = async (): Promise<void> => {
     try {
+      if (!db) {
+        console.error('Firestore db is not initialized');
+        return;
+      }
+      
       const q = query(
         collection(db, 'resumeRequests'),
         where('status', '==', 'pending'),

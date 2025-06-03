@@ -31,4 +31,7 @@ if (!global.firebaseAdmin) {
   console.log('Firebase Admin already initialized');
 }
 
-export { admin };
+// Create and export the Firestore database instance
+const db = admin.firestore();
+
+export { admin, db };
