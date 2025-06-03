@@ -1,10 +1,10 @@
 // src/lib/resumeAccessUtils.js
-import twilio from 'twilio';
 import { v4 as uuidv4 } from 'uuid';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc, collection } from 'firebase/firestore';
+import { admin } from './firebase-admin';
 
 // Your Firebase configuration - store these in environment variables
 const firebaseConfig = {
@@ -73,18 +73,43 @@ export async function getRequest(requestId) {
   }
 }
 
-// Send SMS via Twilio
-export async function sendSMS(body, to) {
-  const twilioClient = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-  );
-  
-  return twilioClient.messages.create({
-    body,
-    messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
-    to: to || process.env.YOUR_PHONE_NUMBER
-  });
+// Send notification via Firebase Cloud Messaging
+export async function sendNotification(requestId, name, email, company, reason) {
+  try {
+    // Get the admin FCM token from Firestore
+    const tokenDoc = await admin.firestore().collection('fcmTokens').doc('admin').get();
+    if (!tokenDoc.exists) {
+      console.error('No admin FCM token found');
+      return false;
+    }
+    
+    const token = tokenDoc.data().token;
+    
+    // Send the notification via Firebase Cloud Messaging
+    const message = {
+      notification: {
+        title: 'New Resume Access Request',
+        body: `${name} from ${company} has requested access to your resume.`
+      },
+      data: {
+        requestId: requestId,
+        name: name,
+        email: email,
+        company: company,
+        reason: reason,
+        click_action: 'OPEN_ADMIN_PAGE'
+      },
+      token: token
+    };
+    
+    // Send via Firebase Admin SDK
+    const response = await admin.messaging().send(message);
+    console.log('Successfully sent notification:', response);
+    return true;
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return false;
+  }
 }
 
 // Send audit email
@@ -113,8 +138,7 @@ Reason: ${reason}
 
 Request ID: ${requestId}
 
-To approve, reply to the SMS with Y${requestId}
-To deny, reply with N${requestId}
+Visit the admin page to approve or deny this request: ${process.env.SITE_URL}/admin
     `,
     html: `
 <h2>Resume Access Request</h2>
@@ -126,8 +150,7 @@ To deny, reply with N${requestId}
 
 <p><strong>Request ID:</strong> ${requestId}</p>
 
-<p>To approve, reply to the SMS with Y${requestId}<br>
-To deny, reply with N${requestId}</p>
+<p>Visit the <a href="${process.env.SITE_URL}/admin">admin page</a> to approve or deny this request.</p>
     `
   });
 }
@@ -226,4 +249,32 @@ Visit ${process.env.SITE_URL}/resume and enter this passcode to access the resum
 <p>Visit <a href="${process.env.SITE_URL}/resume">${process.env.SITE_URL}/resume</a> and enter this passcode to access the resume.</p>
     `
   });
+}
+
+// Handle resume request - main function that orchestrates the process
+export async function handleResumeRequest(name, email, company, reason) {
+  try {
+    const requestId = generateRequestId();
+    
+    // Store the request in Firestore
+    await storeRequest(requestId, {
+      name,
+      email,
+      company,
+      reason,
+      status: 'pending',
+      timestamp: new Date().toISOString()
+    });
+    
+    // Send FCM notification instead of SMS
+    await sendNotification(requestId, name, email, company, reason);
+    
+    // Still send the audit email
+    await sendAuditEmail({ name, email, company, reason, requestId });
+    
+    return { success: true, message: 'Resume request submitted successfully' };
+  } catch (error) {
+    console.error('Error handling resume request:', error);
+    return { success: false, message: 'Error submitting resume request' };
+  }
 }
