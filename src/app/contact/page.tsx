@@ -50,28 +50,39 @@ export default function Contact() {
       }
       
       // If resume was requested, send approval request
-      if (requestResume) {
-        const resumeResponse = await fetch('/api/request-resume-access', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            company,
-            reason
-          })
-        });
-        
-        if (!resumeResponse.ok) {
-          throw new Error('Failed to process resume request');
-        }
-        
-        setStatus('success-resume');
-      } else {
-        setStatus('success');
-      }
+		// In your handleSubmit function, modify the resume request section:
+		if (requestResume) {
+		  try {
+			const resumeResponse = await fetch('/api/request-resume-access', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json'
+			  },
+			  body: JSON.stringify({
+				name,
+				email,
+				company,
+				reason
+			  })
+			});
+			
+			if (!resumeResponse.ok) {
+			  // Get the error details from the response
+			  const errorData = await resumeResponse.json();
+			  throw new Error(errorData.error || 'Failed to process resume request');
+			}
+			
+			setStatus('success-resume');
+		  } catch (err) {
+			console.error('Error processing resume request:', err);
+			setError(`Resume request error: ${err.message}`);
+			setStatus('error');
+			return; // Stop execution if resume request fails
+		  }
+		} else {
+		  setStatus('success');
+		}
+
       
       // Clear form
       setName('');

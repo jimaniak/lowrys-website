@@ -24,33 +24,55 @@ export async function POST(request) {
     const requestId = generateRequestId();
     
     // Store request
-    storeRequest(requestId, { 
-      name, 
-      email, 
-      company, 
-      reason, 
-      timestamp: new Date().toISOString() 
-    });
+    try {
+      storeRequest(requestId, { 
+        name, 
+        email, 
+        company, 
+        reason, 
+        timestamp: new Date().toISOString() 
+      });
+    } catch (storeError) {
+      console.error('Error storing request:', storeError);
+      return NextResponse.json(
+        { error: `Failed to store request: ${storeError.message}` },
+        { status: 500 }
+      );
+    }
     
-    // Send SMS notification
-    await sendSMS(
-      `Resume Request from ${name} (${company || 'No company'}). Reply Y${requestId} to approve or N${requestId} to deny.`
-    );
+    // Send SMS notification with detailed error handling
+    try {
+      await sendSMS(
+        `Resume Request from ${name} (${company || 'No company'}). Reply Y${requestId} to approve or N${requestId} to deny.`
+      );
+    } catch (smsError) {
+      console.error('SMS sending error:', smsError);
+      return NextResponse.json(
+        { error: `Failed to send SMS notification: ${smsError.message}` },
+        { status: 500 }
+      );
+    }
     
     // Send audit email
-    await sendAuditEmail({
-      name,
-      email,
-      company,
-      reason,
-      requestId
-    });
+    try {
+      await sendAuditEmail({
+        name,
+        email,
+        company,
+        reason,
+        requestId
+      });
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Continue execution even if email fails
+      // We don't return an error here since SMS is the primary notification
+    }
     
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error processing resume request:', error);
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: `Failed to process request: ${error.message}` },
       { status: 500 }
     );
   }
