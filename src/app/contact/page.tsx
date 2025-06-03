@@ -66,12 +66,14 @@ export default function Contact() {
 			  })
 			});
 			
+			// Check if the response is ok before trying to parse it
 			if (!resumeResponse.ok) {
-			  // Get the error details from the response
-			  const errorData = await resumeResponse.json();
-			  throw new Error(errorData.error || 'Failed to process resume request');
+			  const errorText = await resumeResponse.text();
+			  console.error('API response error:', errorText);
+			  throw new Error(errorText || 'Failed to process resume request');
 			}
 			
+			const responseData = await resumeResponse.json();
 			setStatus('success-resume');
 		  } catch (err) {
 			console.error('Error processing resume request:', err);
@@ -82,7 +84,6 @@ export default function Contact() {
 		} else {
 		  setStatus('success');
 		}
-
       
       // Clear form
       setName('');
