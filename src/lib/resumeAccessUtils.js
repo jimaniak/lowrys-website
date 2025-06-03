@@ -105,7 +105,7 @@ export async function sendSMS(body, to) {
   
   return twilioClient.messages.create({
     body,
-    from: process.env.TWILIO_PHONE_NUMBER,
+    messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
     to: to || process.env.YOUR_PHONE_NUMBER
   });
 }
