@@ -57,35 +57,37 @@ const AdminNotifications: React.FC = () => {
         if (permission === 'granted') {
           console.log('Notification permission granted.');
           
-          // Get FCM token
-          getToken(messaging, { 
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY 
-          })
-            .then((token) => {
-              if (token) {
-                console.log('FCM Token:', token);
-                setFcmToken(token);
-                saveTokenToDatabase(token);
-              }
+          // Get FCM token - Add extra null check to satisfy TypeScript
+          if (messaging) { // Extra null check for TypeScript
+            getToken(messaging, { 
+              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY 
             })
-            .catch((err: Error) => {
-              console.error('Failed to get token:', err);
-            });
-          
-          // Handle foreground messages
-          const unsubscribe = onMessage(messaging, (payload: MessagePayload) => {
-            console.log('Message received:', payload);
-            if (payload.notification) {
-              setNotification({
-                title: payload.notification.title || 'New Notification',
-                body: payload.notification.body || '',
-                data: payload.data
+              .then((token) => {
+                if (token) {
+                  console.log('FCM Token:', token);
+                  setFcmToken(token);
+                  saveTokenToDatabase(token);
+                }
+              })
+              .catch((err: Error) => {
+                console.error('Failed to get token:', err);
               });
-            }
-            loadRequests();
-          });
-          
-          return () => unsubscribe();
+            
+            // Handle foreground messages
+            const unsubscribe = onMessage(messaging, (payload: MessagePayload) => {
+              console.log('Message received:', payload);
+              if (payload.notification) {
+                setNotification({
+                  title: payload.notification.title || 'New Notification',
+                  body: payload.notification.body || '',
+                  data: payload.data
+                });
+              }
+              loadRequests();
+            });
+            
+            return () => unsubscribe();
+          }
         }
       });
     }
