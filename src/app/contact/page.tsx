@@ -60,7 +60,7 @@ export default function Contact() {
       }
       
       // Then submit to Formspree (regardless of resume request)
-      const formspreeResponse = await fetch('https://formspree.io/f/xovdgkyo', {
+      const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
