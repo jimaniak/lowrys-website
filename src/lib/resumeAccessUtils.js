@@ -1,99 +1,76 @@
 // src/lib/resumeAccessUtils.js
-
-// Import paths should use @/ prefix
 import twilio from 'twilio';
+import { v4 as uuidv4 } from 'uuid';
 import nodemailer from 'nodemailer';
-import CryptoJS from 'crypto-js';
-import fs from 'fs';
-import path from 'path';
+import crypto from 'crypto';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, getDoc, collection } from 'firebase/firestore';
 
-// File path for storing requests and passcodes
-const REQUESTS_FILE = path.join(process.cwd(), 'resume-requests.json');
-const PASSCODES_FILE = path.join(process.cwd(), 'resume-passcodes.json');
+// Your Firebase configuration - store these in environment variables
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
+};
 
-// Resume file path
-const RESUME_PATH = '/documents/jim-lowry-resume.pdf';
+// Initialize Firebase
+let app;
+let db;
 
-// Initialize files if they don't exist
-function initFiles() {
-  if (!fs.existsSync(REQUESTS_FILE)) {
-    fs.writeFileSync(REQUESTS_FILE, JSON.stringify({}));
+// Initialize Firebase safely (handling server-side rendering)
+try {
+  // Check if Firebase is already initialized
+  if (!global._firebaseInitialized) {
+    app = initializeApp(firebaseConfig);
+    global._firebaseInitialized = true;
+  } else {
+    app = global._firebaseApp;
   }
-  if (!fs.existsSync(PASSCODES_FILE)) {
-    fs.writeFileSync(PASSCODES_FILE, JSON.stringify({}));
-  }
+  
+  db = getFirestore(app);
+  global._firebaseApp = app;
+} catch (error) {
+  console.error('Firebase initialization error:', error);
 }
 
 // Generate a unique request ID
 export function generateRequestId() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
+  return uuidv4().substring(0, 8);
 }
 
-// Generate a random passcode
-export function generatePasscode() {
-  const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+// Store request in Firebase
+export async function storeRequest(requestId, data) {
+  try {
+    await setDoc(doc(db, "resumeRequests", requestId), {
+      ...data,
+      createdAt: new Date().toISOString()
+    });
+    console.log(`Stored request ${requestId} in Firebase`);
+    return true;
+  } catch (error) {
+    console.error('Error storing request in Firebase:', error);
+    throw error;
   }
-  return result;
 }
 
-// Store a resume request
-export function storeRequest(requestId, requestData) {
-  initFiles();
-  const requests = JSON.parse(fs.readFileSync(REQUESTS_FILE, 'utf8'));
-  requests[requestId] = requestData;
-  fs.writeFileSync(REQUESTS_FILE, JSON.stringify(requests));
-}
-
-// Get a resume request
-export function getRequest(requestId) {
-  initFiles();
-  const requests = JSON.parse(fs.readFileSync(REQUESTS_FILE, 'utf8'));
-  return requests[requestId];
-}
-
-// Store a passcode
-export function storePasscode(passcode, email) {
-  initFiles();
-  const hashedPasscode = CryptoJS.SHA256(passcode).toString();
-  const passcodes = JSON.parse(fs.readFileSync(PASSCODES_FILE, 'utf8'));
-  
-  passcodes[hashedPasscode] = {
-    email,
-    expirationTime: Date.now() + (48 * 60 * 60 * 1000), // 48 hours
-    used: false
-  };
-  
-  fs.writeFileSync(PASSCODES_FILE, JSON.stringify(passcodes));
-}
-
-// Validate a passcode
-export function validatePasscode(passcode) {
-  initFiles();
-  const hashedPasscode = CryptoJS.SHA256(passcode).toString();
-  const passcodes = JSON.parse(fs.readFileSync(PASSCODES_FILE, 'utf8'));
-  
-  if (!passcodes[hashedPasscode]) {
-    return { valid: false, message: 'Invalid passcode' };
+// Retrieve request from Firebase
+export async function getRequest(requestId) {
+  try {
+    const docRef = doc(db, "resumeRequests", requestId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error retrieving request from Firebase:', error);
+    return null;
   }
-  
-  const passcodeData = passcodes[hashedPasscode];
-  
-  if (Date.now() > passcodeData.expirationTime) {
-    return { valid: false, message: 'Passcode expired' };
-  }
-  
-  if (passcodeData.used) {
-    return { valid: false, message: 'Passcode already used' };
-  }
-  
-  // Mark passcode as used
-  passcodes[hashedPasscode].used = true;
-  fs.writeFileSync(PASSCODES_FILE, JSON.stringify(passcodes));
-  
-  return { valid: true, resumePath: RESUME_PATH };
 }
 
 // Send SMS via Twilio
@@ -110,138 +87,143 @@ export async function sendSMS(body, to) {
   });
 }
 
-// Configure email transporter
-function getEmailTransporter() {
-  return nodemailer.createTransport({
-    host: 'smtpout.secureserver.net', // GoDaddy's SMTP server
-    port: 465,
-    secure: true, // use SSL
+// Send audit email
+export async function sendAuditEmail({ name, email, company, reason, requestId }) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD
     }
   });
-}
-
-// Send passcode email to requester
-export async function sendPasscodeEmail(name, email, passcode) {
-  const transporter = getEmailTransporter();
   
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Your Resume Access Code',
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_TO,
+    subject: `Resume Request: ${name} (${company})`,
+    text: `
+Resume Access Request
+
+Name: ${name}
+Email: ${email}
+Company: ${company}
+Reason: ${reason}
+
+Request ID: ${requestId}
+
+To approve, reply to the SMS with Y${requestId}
+To deny, reply with N${requestId}
+    `,
     html: `
-      <h2>Resume Access Code</h2>
-      <p>Hello ${name},</p>
-      <p>Thank you for your interest in my resume. Your request has been approved. Please use the following access code to view my resume:</p>
-      <div style="background-color: #f0f0f0; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0;">
-        ${passcode}
-      </div>
-      <p>This code will expire in 48 hours and can only be used once.</p>
-      <p>To access the resume, please return to my website and enter this code when prompted.</p>
-      <p>Best regards,<br>Jim Lowry</p>
+<h2>Resume Access Request</h2>
+
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Company:</strong> ${company}</p>
+<p><strong>Reason:</strong> ${reason}</p>
+
+<p><strong>Request ID:</strong> ${requestId}</p>
+
+<p>To approve, reply to the SMS with Y${requestId}<br>
+To deny, reply with N${requestId}</p>
     `
-  };
-  
-  return transporter.sendMail(mailOptions);
+  });
 }
 
-// Send rejection email to requester
-export async function sendRejectionEmail(name, email) {
-  const transporter = getEmailTransporter();
-  
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Resume Access Request',
-    html: `
-      <h2>Resume Access Request</h2>
-      <p>Hello ${name},</p>
-      <p>Thank you for your interest in my resume. Unfortunately, I'm unable to provide access at this time.</p>
-      <p>If you believe this is an error or would like to provide additional information, please feel free to contact me again.</p>
-      <p>Best regards,<br>Jim Lowry</p>
-    `
-  };
-  
-  return transporter.sendMail(mailOptions);
+// Generate a passcode
+export function generatePasscode() {
+  return crypto.randomInt(100000, 999999).toString();
 }
 
-// Send audit email
-export async function sendAuditEmail(data) {
-  const transporter = getEmailTransporter();
-  
-  const { name, email, company, reason, requestId, action, passcode } = data;
-  
-  let subject, htmlContent;
-  
-  if (!action) {
-    // Initial request
-    subject = 'Resume Access Request Received';
-    htmlContent = `
-      <h2>New Resume Access Request</h2>
-      <p>A new resume access request has been received:</p>
-      <ul>
-        <li><strong>Request ID:</strong> ${requestId}</li>
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Company:</strong> ${company || 'Not provided'}</li>
-        <li><strong>Reason:</strong> ${reason || 'Not provided'}</li>
-        <li><strong>Timestamp:</strong> ${new Date().toLocaleString()}</li>
-      </ul>
-      <p>An SMS has been sent to your phone for approval.</p>
-      <p>Reply Y${requestId} to approve or N${requestId} to deny.</p>
-    `;
-  } else if (action === 'approved') {
-    // Approval
-    subject = 'Resume Access Request Approved';
-    htmlContent = `
-      <h2>Resume Access Request Approved</h2>
-      <p>You have approved the following resume access request:</p>
-      <ul>
-        <li><strong>Request ID:</strong> ${requestId}</li>
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Company:</strong> ${company || 'Not provided'}</li>
-        <li><strong>Reason:</strong> ${reason || 'Not provided'}</li>
-        <li><strong>Passcode Issued:</strong> ${passcode}</li>
-        <li><strong>Expiration:</strong> 48 hours from now</li>
-        <li><strong>Timestamp:</strong> ${new Date().toLocaleString()}</li>
-      </ul>
-      <p>The requester has been sent an email with the passcode.</p>
-    `;
-  } else if (action === 'denied') {
-    // Denial
-    subject = 'Resume Access Request Denied';
-    htmlContent = `
-      <h2>Resume Access Request Denied</h2>
-      <p>You have denied the following resume access request:</p>
-      <ul>
-        <li><strong>Request ID:</strong> ${requestId}</li>
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Company:</strong> ${company || 'Not provided'}</li>
-        <li><strong>Reason:</strong> ${reason || 'Not provided'}</li>
-        <li><strong>Timestamp:</strong> ${new Date().toLocaleString()}</li>
-      </ul>
-      <p>The requester has been sent a rejection email.</p>
-    `;
+// Store passcode in Firebase
+export async function storePasscode(email, passcode) {
+  try {
+    // Use email as document ID (after sanitizing)
+    const docId = email.replace(/[.#$[\]]/g, '_');
+    
+    await setDoc(doc(db, "resumePasscodes", docId), {
+      email,
+      passcode,
+      timestamp: new Date().toISOString()
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error storing passcode in Firebase:', error);
+    throw error;
   }
-  
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.YOUR_EMAIL,
-    subject,
-    html: htmlContent
-  };
-  
-  return transporter.sendMail(mailOptions);
 }
 
-// Validate Twilio request
-export function validateTwilioRequest(twilioSignature, body) {
-  // In a production environment, you should validate the Twilio signature
-  // For simplicity in this implementation, we're skipping this step
-  // See: https://www.twilio.com/docs/usage/security#validating-requests
-  return true;
+// Validate passcode from Firebase
+export async function validatePasscode(email, passcode) {
+  try {
+    // Use email as document ID (after sanitizing)
+    const docId = email.replace(/[.#$[\]]/g, '_');
+    const docRef = doc(db, "resumePasscodes", docId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      return false;
+    }
+    
+    const storedData = docSnap.data();
+    
+    // Check if passcode matches
+    if (storedData.passcode !== passcode) {
+      return false;
+    }
+    
+    // Check if passcode is expired (24 hours)
+    const storedTime = new Date(storedData.timestamp);
+    const currentTime = new Date();
+    const diffHours = (currentTime - storedTime) / (1000 * 60 * 60);
+    
+    if (diffHours > 24) {
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error validating passcode from Firebase:', error);
+    return false;
+  }
+}
+
+// Send passcode email
+export async function sendPasscodeEmail(email, passcode) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+  
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Your Resume Access Passcode',
+    text: `
+Your resume access request has been approved!
+
+Your passcode is: ${passcode}
+
+This passcode will expire in 24 hours.
+
+Visit ${process.env.SITE_URL}/resume and enter this passcode to access the resume.
+    `,
+    html: `
+<h2>Your resume access request has been approved!</h2>
+
+<p>Your passcode is: <strong>${passcode}</strong></p>
+
+<p>This passcode will expire in 24 hours.</p>
+
+<p>Visit <a href="${process.env.SITE_URL}/resume">${process.env.SITE_URL}/resume</a> and enter this passcode to access the resume.</p>
+    `
+  });
 }
