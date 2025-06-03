@@ -74,7 +74,7 @@ export async function getRequest(requestId) {
 }
 
 // Send notification via Firebase Cloud Messaging
-export async function sendNotification(requestId, name, email, company, reason) {
+export async function sendNotification(requestId, name, email, company, reason, message) {
   try {
     // Get the admin FCM token from Firestore
     const tokenDoc = await admin.firestore().collection('fcmTokens').doc('admin').get();
@@ -86,7 +86,7 @@ export async function sendNotification(requestId, name, email, company, reason) 
     const token = tokenDoc.data().token;
     
     // Send the notification via Firebase Cloud Messaging
-    const message = {
+    const fcmMessage = {
       notification: {
         title: 'New Resume Access Request',
         body: `${name} from ${company} has requested access to your resume.`
@@ -95,15 +95,16 @@ export async function sendNotification(requestId, name, email, company, reason) 
         requestId: requestId,
         name: name,
         email: email,
-        company: company,
-        reason: reason,
+        company: company || 'Not provided',
+        reason: reason || 'Not provided',
+        message: message || 'No message provided',
         click_action: 'OPEN_ADMIN_PAGE'
       },
       token: token
     };
     
     // Send via Firebase Admin SDK
-    const response = await admin.messaging().send(message);
+    const response = await admin.messaging().send(fcmMessage);
     console.log('Successfully sent notification:', response);
     return true;
   } catch (error) {
@@ -112,8 +113,8 @@ export async function sendNotification(requestId, name, email, company, reason) 
   }
 }
 
-// Send audit email
-export async function sendAuditEmail({ name, email, company, reason, requestId }) {
+// Send audit email for resume requests
+export async function sendAuditEmail({ name, email, company, reason, message, requestId }) {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -127,14 +128,15 @@ export async function sendAuditEmail({ name, email, company, reason, requestId }
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: process.env.EMAIL_TO,
-    subject: `Resume Request: ${name} (${company})`,
+    subject: `Resume Request: ${name} (${company || 'No company'})`,
     text: `
 Resume Access Request
 
 Name: ${name}
 Email: ${email}
-Company: ${company}
-Reason: ${reason}
+Company: ${company || 'Not provided'}
+Reason: ${reason || 'Not provided'}
+Message: ${message || 'No message provided'}
 
 Request ID: ${requestId}
 
@@ -145,14 +147,56 @@ Visit the admin page to approve or deny this request: ${process.env.SITE_URL}/ad
 
 <p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
-<p><strong>Company:</strong> ${company}</p>
-<p><strong>Reason:</strong> ${reason}</p>
+<p><strong>Company:</strong> ${company || 'Not provided'}</p>
+<p><strong>Reason:</strong> ${reason || 'Not provided'}</p>
+<p><strong>Message:</strong> ${message || 'No message provided'}</p>
 
 <p><strong>Request ID:</strong> ${requestId}</p>
 
 <p>Visit the <a href="${process.env.SITE_URL}/admin">admin page</a> to approve or deny this request.</p>
     `
   });
+}
+
+// Send regular message email (without resume request)
+export async function sendRegularMessage({ name, email, company, message }) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+  
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_TO,
+    subject: `Message from ${name}`,
+    text: `
+Message from Website
+
+Name: ${name}
+Email: ${email}
+Company: ${company || 'Not provided'}
+
+Message:
+${message}
+    `,
+    html: `
+<h2>Message from Website</h2>
+
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Company:</strong> ${company || 'Not provided'}</p>
+
+<h3>Message:</h3>
+<p>${message}</p>
+    `
+  });
+  
+  return true;
 }
 
 // Generate a passcode
@@ -252,7 +296,7 @@ Visit ${process.env.SITE_URL}/resume and enter this passcode to access the resum
 }
 
 // Handle resume request - main function that orchestrates the process
-export async function handleResumeRequest(name, email, company, reason) {
+export async function handleResumeRequest(name, email, company, reason, message) {
   try {
     const requestId = generateRequestId();
     
@@ -262,19 +306,33 @@ export async function handleResumeRequest(name, email, company, reason) {
       email,
       company,
       reason,
+      message,
       status: 'pending',
       timestamp: new Date().toISOString()
     });
     
-    // Send FCM notification instead of SMS
-    await sendNotification(requestId, name, email, company, reason);
+    // Send FCM notification
+    await sendNotification(requestId, name, email, company, reason, message);
     
-    // Still send the audit email
-    await sendAuditEmail({ name, email, company, reason, requestId });
+    // Send the audit email
+    await sendAuditEmail({ name, email, company, reason, message, requestId });
     
     return { success: true, message: 'Resume request submitted successfully' };
   } catch (error) {
     console.error('Error handling resume request:', error);
     return { success: false, message: 'Error submitting resume request' };
+  }
+}
+
+// Handle message submission - for regular messages without resume request
+export async function handleMessageSubmission(name, email, company, message) {
+  try {
+    // Send regular message email
+    await sendRegularMessage({ name, email, company, message });
+    
+    return { success: true, message: 'Message sent successfully' };
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return { success: false, message: 'Error sending message' };
   }
 }

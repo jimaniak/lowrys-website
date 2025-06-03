@@ -135,8 +135,8 @@ export default function Contact() {
                     <FaPhone className="text-blue-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">Phone</h3>
-                    <p className="text-gray-600">See Resume</p>
+                    <h3 className="font-semibold text-lg">Contact Preference</h3>
+                    <p className="text-gray-600">Please use the contact form</p>
                   </div>
                 </div>
                 

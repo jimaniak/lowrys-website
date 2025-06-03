@@ -21,12 +21,15 @@ export default function ResumeAccess() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ passcode })
+        body: JSON.stringify({ 
+          email: '', // This could be added as a field if needed
+          passcode 
+        })
       });
       
       const data = await response.json();
       
-      if (response.ok && data.valid) {
+      if (response.ok && data.success) {
         setStatus('success');
       } else {
         setStatus('error');

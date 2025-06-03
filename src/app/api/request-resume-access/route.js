@@ -1,79 +1,132 @@
-//************ Creating a Comment to force a change ***************
 // src/app/api/request-resume-access/route.js
 import { NextResponse } from 'next/server';
 import { 
-  generateRequestId, 
-  storeRequest, 
-  sendSMS, 
-  sendAuditEmail 
+  generateRequestId,
+  storeRequest,
+  sendNotification,
+  sendAuditEmail,
+  sendRegularMessage,
+  handleResumeRequest,
+  handleMessageSubmission
 } from '@/lib/resumeAccessUtils';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, company, reason } = body;
+    const { name, email, company, message, requestResume } = body; // Added requestResume flag
     
     // Validate request
     if (!name || !email) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { 
+          success: false,
+          message: 'Missing required fields'
+        },
         { status: 400 }
       );
     }
     
-    // Generate request ID
-    const requestId = generateRequestId();
-    
-    // Store request
-    try {
-      storeRequest(requestId, { 
-        name, 
-        email, 
-        company, 
-        reason, 
-        timestamp: new Date().toISOString() 
+    // If this is a resume request
+    if (requestResume) {
+      // Generate request ID
+      const requestId = generateRequestId();
+      
+      // Store request - now including the message field
+      try {
+        await storeRequest(requestId, { 
+          name, 
+          email, 
+          company, 
+          message, // Store the message content
+          status: 'pending',
+          timestamp: new Date().toISOString() 
+        });
+      } catch (storeError) {
+        console.error('Error storing request:', storeError);
+        return NextResponse.json(
+          { 
+            success: false,
+            message: `Failed to store request: ${storeError.message}`
+          },
+          { status: 500 }
+        );
+      }
+      
+      // Send FCM notification with detailed error handling
+      try {
+        await sendNotification(
+          requestId,
+          name,
+          email,
+          company || 'No company',
+          null, // reason parameter
+          message || 'No message provided'
+        );
+      } catch (notificationError) {
+        console.error('Notification sending error:', notificationError);
+        return NextResponse.json(
+          { 
+            success: false,
+            message: `Failed to send notification: ${notificationError.message}`
+          },
+          { status: 500 }
+        );
+      }
+      
+      // Send audit email - now including the message in the email
+      try {
+        await sendAuditEmail({
+          name,
+          email,
+          company,
+          reason: null,
+          message,
+          requestId
+        });
+      } catch (emailError) {
+        console.error('Email sending error:', emailError);
+        // Continue execution even if email fails
+      }
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Resume request submitted successfully',
+        requestId: requestId
       });
-    } catch (storeError) {
-      console.error('Error storing request:', storeError);
-      return NextResponse.json(
-        { error: `Failed to store request: ${storeError.message}` },
-        { status: 500 }
-      );
-    }
-    
-    // Send SMS notification with detailed error handling
-    try {
-      await sendSMS(
-        `Resume Request from ${name} (${company || 'No company'}). Reply Y${requestId} to approve or N${requestId} to deny.`
-      );
-    } catch (smsError) {
-      console.error('SMS sending error:', smsError);
-      return NextResponse.json(
-        { error: `Failed to send SMS notification: ${smsError.message}` },
-        { status: 500 }
-      );
-    }
-    
-    // Send audit email
-    try {
-      await sendAuditEmail({
-        name,
-        email,
-        company,
-        reason,
-        requestId
+    } 
+    // If this is just a regular message (not a resume request)
+    else {
+      // Send regular message email
+      try {
+        await sendRegularMessage({
+          name,
+          email,
+          company,
+          message
+        });
+      } catch (emailError) {
+        console.error('Email sending error:', emailError);
+        return NextResponse.json(
+          { 
+            success: false,
+            message: `Failed to send message: ${emailError.message}`
+          },
+          { status: 500 }
+        );
+      }
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Message sent successfully'
       });
-    } catch (emailError) {
-      console.error('Email sending error:', emailError);
-      // Continue execution even if email fails
-      // We don't return an error here since SMS is the primary notification
     }
-    
-    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing resume request:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json(
-      { error: `Failed to process request: ${error.message}` },
+      { 
+        success: false,
+        message: `Failed to process request: ${error.message}`
+      },
       { status: 500 }
     );
   }

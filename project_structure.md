@@ -2,7 +2,6 @@ lowrys-website/
 ├── public/
 │   ├── documents/
 │   │   └── jim-lowry-resume.pdf
-│   │   ├── project_structure.md
 │   ├── favicon/
 │   │   ├── android-chrome-192x192.png
 │   │   ├── android-chrome-512x512.png
@@ -21,7 +20,7 @@ lowrys-website/
 │   │       │   └── NetworkTraffic.gif
 │   │       └── web-development/
 │   │           └── airtisan-platform.png
-│   ├── firebase-messaging-sw.js      # FCM service worker (required in public directory)
+│   ├── firebase-messaging-sw.js      # FCM service worker for background notifications
 │   ├── icon-192x192.png              # Icon for FCM notifications
 │   ├── icon-512x512.png              # Icon for FCM notifications
 │   ├── file.svg
@@ -33,21 +32,19 @@ lowrys-website/
 │   ├── app/
 │   │   ├── about/
 │   │   │   └── page.tsx
-│   │   ├── admin/                    # New admin area for FCM notifications
-│   │   │   └── page.tsx              # React-based admin interface
+│   │   ├── admin/                    # Admin area for FCM notifications
+│   │   │   └── page.tsx              # React-based admin interface for managing resume requests
 │   │   ├── api/
-│   │   │   ├── approve-resume-request/    # API endpoint for FCM approval
+│   │   │   ├── approve-resume-request/    # API endpoint for approving resume requests
 │   │   │   │   └── route.js
-│   │   │   ├── deny-resume-request/       # API endpoint for FCM denial
+│   │   │   ├── deny-resume-request/       # API endpoint for denying resume requests
 │   │   │   │   └── route.js
-│   │   │   ├── request-resume-access/
+│   │   │   ├── request-resume-access/     # Updated to handle both messages and resume requests
 │   │   │   │   └── route.js
-│   │   │   ├── twilio-webhook/
-│   │   │   │   └── route.js               # Can be kept for future use
 │   │   │   └── validate-passcode/
 │   │   │       └── route.js
 │   │   ├── contact/
-│   │   │   └── page.tsx
+│   │   │   └── page.tsx               # Updated to support both messages and resume requests
 │   │   ├── projects/
 │   │   │   └── page.tsx
 │   │   ├── resources/
@@ -58,17 +55,17 @@ lowrys-website/
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── components/
-│   │   ├── AdminNotifications.jsx    # New React component for FCM notifications
+│   │   ├── AdminNotifications.tsx    # React component for FCM notifications
 │   │   ├── Header.tsx
 │   │   ├── Layout.tsx
 │   │   ├── MobileNavigation.tsx
 │   │   ├── Navigation.tsx
-│   │   ├── ResumeAccess.jsx
+│   │   ├── ResumeAccess.tsx          # Updated to work with FCM instead of Twilio
 │   │   └── SocialLinks.tsx
 │   └── lib/
-│       ├── firebase-admin.js         # Server-side Firebase admin SDK
-│       ├── firebase-client.js        # New client-side Firebase config for FCM
-│       └── resumeAccessUtils.js      # Modified to use FCM instead of Twilio
+│       ├── firebase-admin.js         # Server-side Firebase Admin SDK initialization
+│       ├── firebase-client.ts        # Client-side Firebase config for FCM with TypeScript
+│       └── resumeAccessUtils.js      # Updated to use FCM instead of Twilio
 ├── .env.local                        # Updated with FCM environment variables:
 │                                     # - NEXT_PUBLIC_FIREBASE_API_KEY
 │                                     # - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
@@ -77,15 +74,20 @@ lowrys-website/
 │                                     # - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
 │                                     # - NEXT_PUBLIC_FIREBASE_APP_ID
 │                                     # - NEXT_PUBLIC_FIREBASE_VAPID_KEY
+│                                     # - FIREBASE_CLIENT_EMAIL
+│                                     # - FIREBASE_PRIVATE_KEY
+│                                     # - EMAIL_* configuration
+│                                     # - SITE_URL
 ├── .eslintrc.json
 ├── .gitignore
 ├── eslint.config.mjs
 ├── next.config.js
 ├── next.config.ts
 ├── next-env.d.ts
-├── package.json
 ├── package.json                      # Updated with FCM dependencies:
 │                                     # - firebase
+│                                     # - firebase-admin
 ├── postcss.config.mjs
 ├── README.md
+├── project_structure.md              # This file (moved from public/documents/)
 └── tsconfig.json
