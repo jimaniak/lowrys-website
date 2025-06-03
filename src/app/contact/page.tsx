@@ -29,7 +29,37 @@ export default function Contact() {
     }
     
     try {
-      // Submit to Formspree
+      // If resume was requested, send to API first
+      if (requestResume) {
+        try {
+          const resumeResponse = await fetch('/api/request-resume-access', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              company,
+              reason
+            })
+          });
+          
+          // Check if the response is ok before trying to parse it
+          if (!resumeResponse.ok) {
+            const errorText = await resumeResponse.text();
+            console.error('API response error:', errorText);
+            throw new Error(errorText || 'Failed to process resume request');
+          }
+        } catch (err) {
+          console.error('Error processing resume request:', err);
+          setError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          setStatus('error');
+          return; // Stop execution if resume request fails
+        }
+      }
+      
+      // Then submit to Formspree (regardless of resume request)
       const formspreeResponse = await fetch('https://formspree.io/f/xwkdkwgj', {
         method: 'POST',
         headers: {
@@ -42,48 +72,15 @@ export default function Contact() {
           requestResume,
           company: requestResume ? company : 'N/A',
           reason: requestResume ? reason : 'N/A'
-        } )
+        })
       });
       
       if (!formspreeResponse.ok) {
         throw new Error('Failed to submit form');
       }
       
-      // If resume was requested, send approval request
-		// In your handleSubmit function, modify the resume request section:
-		if (requestResume) {
-		  try {
-			const resumeResponse = await fetch('/api/request-resume-access', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json'
-			  },
-			  body: JSON.stringify({
-				name,
-				email,
-				company,
-				reason
-			  })
-			});
-			
-			// Check if the response is ok before trying to parse it
-			if (!resumeResponse.ok) {
-			  const errorText = await resumeResponse.text();
-			  console.error('API response error:', errorText);
-			  throw new Error(errorText || 'Failed to process resume request');
-			}
-			
-			const responseData = await resumeResponse.json();
-			setStatus('success-resume');
-		  } catch (err) {
-			console.error('Error processing resume request:', err);
-			setError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-			setStatus('error');
-			return; // Stop execution if resume request fails
-		  }
-		} else {
-		  setStatus('success');
-		}
+      // Set success status based on whether resume was requested
+      setStatus(requestResume ? 'success-resume' : 'success');
       
       // Clear form
       setName('');
