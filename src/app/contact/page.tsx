@@ -75,7 +75,7 @@ export default function Contact() {
 			setStatus('success-resume');
 		  } catch (err) {
 			console.error('Error processing resume request:', err);
-			setError(`Resume request error: ${err.message}`);
+			setError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
 			setStatus('error');
 			return; // Stop execution if resume request fails
 		  }
