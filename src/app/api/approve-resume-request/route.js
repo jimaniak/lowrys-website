@@ -1,7 +1,8 @@
 // src/app/api/approve-resume-request/route.js
 import { NextResponse } from 'next/server';
 import { admin } from '../../../lib/firebase-admin';
-import { sendPasscodeEmail, generatePasscode } from '../../../lib/resumeAccessUtils';
+import nodemailer from 'nodemailer';
+import { generatePasscode } from '../../../lib/resumeAccessUtils';
 
 export async function GET(request) {
   try {
@@ -16,10 +17,17 @@ export async function GET(request) {
       );
     }
     
-    // Update the request status in Firestore
+    // Generate a passcode
+    const passcode = generatePasscode();
+    
+    // Update the request status in Firestore and store the passcode in the same document
     await admin.firestore().collection('resumeRequests').doc(id).update({
       status: 'approved',
-      approvedAt: admin.firestore.FieldValue.serverTimestamp()
+      approvedAt: admin.firestore.FieldValue.serverTimestamp(),
+      passcode: passcode,
+      passcodeExpiresAt: admin.firestore.Timestamp.fromDate(
+        new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
+      )
     });
     
     // Get the request details to send a confirmation email
@@ -84,11 +92,43 @@ export async function GET(request) {
     
     // Send passcode email to the requester
     try {
-      // Use the existing generatePasscode function instead of generating directly
-      const passcode = generatePasscode();
+      // Create email transporter
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_SECURE === 'true',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD
+        },
+        tls: {
+          // Do not fail on invalid certs
+          rejectUnauthorized: false
+        }
+      });
       
-      // Call the existing sendPasscodeEmail function to send the email and store the passcode
-      await sendPasscodeEmail(requestData.email, passcode, id);
+      // Email content
+      const mailOptions = {
+        from: `"Resume Access System" <${process.env.EMAIL_USER}>`,
+        to: requestData.email,
+        subject: `Your Resume Access Passcode`,
+        text: `
+          Your passcode to access the resume is: ${passcode}
+          
+          This passcode will expire in 24 hours.
+          
+          If you did not request access to the resume, please ignore this email.
+        `,
+        html: `
+          <h2>Your Resume Access Passcode</h2>
+          <p>Your passcode to access the resume is: <strong>${passcode}</strong></p>
+          <p>This passcode will expire in 24 hours.</p>
+          <p>If you did not request access to the resume, please ignore this email.</p>
+        `
+      };
+      
+      // Send email
+      await transporter.sendMail(mailOptions);
       
       console.log(`Passcode ${passcode} sent to ${requestData.email}`);
     } catch (emailError) {
