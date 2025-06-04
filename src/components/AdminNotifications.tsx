@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { doc, setDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '@/firebase/config';
+import { app } from '@/firebase/config'; // Make sure to import the Firebase app instance
 
 export default function AdminNotifications() {
   const [notificationPermission, setNotificationPermission] = useState<string>('default');
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [tokenSaved, setTokenSaved] = useState<boolean>(false);
 
   // Function to log errors to Firestore for easier debugging
   const logErrorToFirestore = async (errorType: string, errorMessage: string, errorDetails?: any) => {
@@ -22,6 +24,26 @@ export default function AdminNotifications() {
       console.log('Error logged to Firestore:', errorType, errorMessage);
     } catch (err) {
       console.error('Failed to log error to Firestore:', err);
+    }
+  };
+
+  // Function to register the service worker
+  const registerServiceWorker = async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        console.log('Registering service worker...'); // Debug log
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+          scope: '/'
+        });
+        console.log('Service Worker registered with scope:', registration.scope); // Debug log
+        return registration;
+      } else {
+        throw new Error('Service workers not supported');
+      }
+    } catch (error) {
+      console.error('Service Worker registration failed:', error);
+      await logErrorToFirestore('service_worker_registration', 'Service Worker registration failed', error);
+      throw error;
     }
   };
 
@@ -50,18 +72,12 @@ export default function AdminNotifications() {
         if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
           console.log('Service Worker is supported by this browser'); // Debug log
           
-          // Check service worker registrations
+          // Register service worker explicitly
           try {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            console.log('Service Worker registrations:', registrations); // Debug log
-            
-            if (registrations.length === 0) {
-              const errorMsg = 'No service workers registered';
-              setError(errorMsg);
-              logErrorToFirestore('service_worker', errorMsg);
-            }
+            const registration = await registerServiceWorker();
+            console.log('Service Worker registration successful:', registration); // Debug log
           } catch (err) {
-            const errorMsg = `Error checking service worker registrations: ${err}`;
+            const errorMsg = `Error registering service worker: ${err}`;
             setError(errorMsg);
             logErrorToFirestore('service_worker', errorMsg, err);
             console.error(errorMsg);
@@ -87,7 +103,7 @@ export default function AdminNotifications() {
           
           // Initialize Firebase Messaging
           try {
-            const messaging = getMessaging();
+            const messaging = getMessaging(app); // Use the imported app instance
             console.log('Firebase messaging initialized'); // Debug log
             
             // Request permission if not already granted
@@ -121,10 +137,15 @@ export default function AdminNotifications() {
             // Log VAPID key first few characters for debugging
             console.log('VAPID key starts with:', vapidKey.substring(0, 10) + '...'); // Debug log
             
-            // Get token using your VAPID key
+            // Get token using your VAPID key and the registered service worker
             try {
+              // Get service worker registration
+              const swRegistration = await navigator.serviceWorker.ready;
+              console.log('Service worker ready:', swRegistration); // Debug log
+              
               const token = await getToken(messaging, {
-                vapidKey: vapidKey
+                vapidKey: vapidKey,
+                serviceWorkerRegistration: swRegistration
               });
               
               if (token) {
@@ -141,9 +162,11 @@ export default function AdminNotifications() {
                   console.log('Attempting to update existing FCM token document'); // Debug log
                   await updateDoc(tokenRef, {
                     token: token,
+                    device: navigator.userAgent,
                     timestamp: new Date()
                   });
                   console.log('FCM token document updated successfully'); // Debug log
+                  setTokenSaved(true);
                 } catch (err: any) {
                   console.log('Error updating FCM token document:', err.code); // Debug log
                   
@@ -153,9 +176,11 @@ export default function AdminNotifications() {
                     try {
                       await setDoc(doc(db, 'fcmTokens', uid), {
                         token: token,
+                        device: navigator.userAgent,
                         timestamp: new Date()
                       });
                       console.log('New FCM token document created successfully'); // Debug log
+                      setTokenSaved(true);
                     } catch (setDocErr) {
                       const errorMsg = `Error creating FCM token document: ${setDocErr}`;
                       setError(errorMsg);
@@ -236,7 +261,7 @@ export default function AdminNotifications() {
         
         // Re-initialize FCM after permission is granted
         try {
-          const messaging = getMessaging();
+          const messaging = getMessaging(app); // Use the imported app instance
           const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
           
           if (!vapidKey) {
@@ -247,8 +272,12 @@ export default function AdminNotifications() {
             return;
           }
           
+          // Register service worker explicitly
+          const registration = await registerServiceWorker();
+          
           const token = await getToken(messaging, {
-            vapidKey: vapidKey
+            vapidKey: vapidKey,
+            serviceWorkerRegistration: registration
           });
           console.log('New FCM token obtained:', token); // Debug log
           setFcmToken(token);
@@ -260,9 +289,11 @@ export default function AdminNotifications() {
             try {
               await setDoc(doc(db, 'fcmTokens', uid), {
                 token: token,
+                device: navigator.userAgent,
                 timestamp: new Date()
               });
               console.log('New FCM token saved successfully'); // Debug log
+              setTokenSaved(true);
             } catch (err) {
               const errorMsg = `Error saving FCM token: ${err}`;
               setError(errorMsg);
@@ -285,6 +316,19 @@ export default function AdminNotifications() {
     }
   };
 
+  // Function to test notifications
+  const testNotification = () => {
+    try {
+      new Notification('Test Notification', {
+        body: 'This is a test notification to verify your browser settings',
+        icon: '/favicon.ico'
+      });
+    } catch (error) {
+      console.error('Error creating test notification:', error);
+      setError(`Error creating test notification: ${error.message}`);
+    }
+  };
+
   return (
     <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
@@ -297,6 +341,12 @@ export default function AdminNotifications() {
               ? 'Blocked' 
               : 'Not enabled'}
         </p>
+        
+        {tokenSaved && (
+          <p className="text-green-600 mb-2">
+            ✓ FCM token successfully registered and saved to Firestore
+          </p>
+        )}
         
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -318,9 +368,27 @@ export default function AdminNotifications() {
         )}
         
         {notificationPermission === 'granted' && (
-          <p className="text-green-600">
-            You will receive real-time notifications when new resume requests are submitted.
-          </p>
+          <>
+            <p className="text-green-600 mb-4">
+              You will receive real-time notifications when new resume requests are submitted.
+            </p>
+            
+            <button
+              onClick={testNotification}
+              className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 mr-2"
+            >
+              Test Notification
+            </button>
+            
+            {!tokenSaved && (
+              <button
+                onClick={requestPermission}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Retry Token Registration
+              </button>
+            )}
+          </>
         )}
         
         {fcmToken && (
@@ -328,6 +396,15 @@ export default function AdminNotifications() {
             Device registered for notifications
           </p>
         )}
+      </div>
+      
+      <div className="text-sm text-gray-600 mt-4">
+        <p>Troubleshooting:</p>
+        <ul className="list-disc pl-5 mt-1">
+          <li>Make sure you're using Chrome browser</li>
+          <li>Check that notifications are enabled in your browser settings</li>
+          <li>If issues persist, try clearing your browser cache and cookies</li>
+        </ul>
       </div>
     </div>
   );
