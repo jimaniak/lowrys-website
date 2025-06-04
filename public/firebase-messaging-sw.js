@@ -15,20 +15,38 @@ firebase.initializeApp({
 // Retrieve an instance of Firebase Messaging
 const messaging = firebase.messaging();
 
+// Create a set to track already processed request IDs
+const processedRequestIds = new Set();
+
 // Handle background messages
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   
+  // Extract request ID from payload
+  const requestId = payload.data?.requestId;
+  
+  // Check if this is a notification for a request we've already processed
+  if (requestId && processedRequestIds.has(requestId)) {
+    console.log(`Already processed request ${requestId}, not showing notification with actions`);
+    
+    // Still show a notification, but without action buttons
+    self.registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
+      icon: '/favicon.ico'
+    });
+    
+    return;
+  }
+  
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/favicon.ico'
+    icon: '/favicon.ico',
+    data: payload.data // Store the data for use in the click handler
   };
   
   // Only add actions if this is NOT a confirmation notification
   if (payload.data && payload.data.isConfirmation !== 'true' && payload.data.showActions === 'true') {
-    const requestId = payload.data.requestId;
-    
     notificationOptions.actions = [
       {
         action: 'approve',
@@ -56,6 +74,13 @@ self.addEventListener('notificationclick', (event) => {
   
   if (action === 'approve') {
     const requestId = data.requestId;
+    
+    // Add this request ID to our processed set to prevent loops
+    if (requestId) {
+      processedRequestIds.add(requestId);
+      console.log(`Marked request ${requestId} as processed`);
+    }
+    
     const url = `/api/approve-resume-request?id=${requestId}`;
     
     event.waitUntil(
@@ -65,6 +90,13 @@ self.addEventListener('notificationclick', (event) => {
     );
   } else if (action === 'deny') {
     const requestId = data.requestId;
+    
+    // Add this request ID to our processed set to prevent loops
+    if (requestId) {
+      processedRequestIds.add(requestId);
+      console.log(`Marked request ${requestId} as processed`);
+    }
+    
     const url = `/api/deny-resume-request?id=${requestId}`;
     
     event.waitUntil(
