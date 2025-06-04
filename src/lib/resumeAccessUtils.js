@@ -56,13 +56,31 @@ export async function sendNotification(requestId, name, email, company, reason, 
         reason: reason || 'Not specified',
         message: message || 'No message provided',
         click_action: 'OPEN_ADMIN_PANEL'
-      },
-      tokens: tokens // Add tokens directly to the message
+      }
+    };
+    
+    // Use sendMulticast for sending to multiple tokens
+    const multicastMessage = {
+      ...notificationMessage,
+      tokens: tokens
     };
     
     // Send to all tokens using the correct method
-    await admin.messaging().send(notificationMessage);
-    console.log(`Notification sent to ${tokens.length} devices`);
+    const response = await admin.messaging().sendMulticast(multicastMessage);
+    console.log(`Notification sent to ${response.successCount} devices`);
+    
+    if (response.failureCount > 0) {
+      const failedTokens = [];
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          failedTokens.push({
+            token: tokens[idx],
+            error: resp.error
+          });
+        }
+      });
+      console.error('Failed to send to some tokens:', failedTokens);
+    }
   } catch (error) {
     console.error('Error sending notification:', error);
     throw error;
