@@ -2,36 +2,33 @@
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
-// Your Firebase configuration - hardcoded for service worker
-const firebaseConfig = {
-  apiKey: "AIzaSyA7j1WzBAmFdWaNNavTshMvqctIisvpj94",
-  authDomain: "lowrys-resume-access.firebaseapp.com",
-  projectId: "lowrys-resume-access",
-  storageBucket: "lowrys-resume-access.firebasestorage.app",
-  messagingSenderId: "162127606605",
-  appId: "1:162127606605:web:213ac1a1a28089ad9a3d04"
-};
+// Initialize the Firebase app in the service worker
+firebase.initializeApp({
+  apiKey: "AIzaSyBGMzxdIJfHEUXHpWS9YYmLGKDkgMHmH-s",
+  authDomain: "lowrys-website.firebaseapp.com",
+  projectId: "lowrys-website",
+  storageBucket: "lowrys-website.appspot.com",
+  messagingSenderId: "1004942448336",
+  appId: "1:1004942448336:web:a1f0e5e9f0b0f0b0f0b0f0"
+});
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Initialize Firebase Cloud Messaging
+// Retrieve an instance of Firebase Messaging
 const messaging = firebase.messaging();
 
 // Handle background messages
 messaging.onBackgroundMessage((payload) => {
-  console.log('Received background message:', payload);
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
   
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/icon-192x192.png',
-    badge: '/icon-192x192.png',
-    data: payload.data
+    icon: '/favicon.ico'
   };
   
-  // Add action buttons only if showActions flag is set
-  if (payload.data && payload.data.showActions === 'true') {
+  // Only add actions if this is NOT a confirmation notification
+  if (payload.data && payload.data.isConfirmation !== 'true' && payload.data.showActions === 'true') {
+    const requestId = payload.data.requestId;
+    
     notificationOptions.actions = [
       {
         action: 'approve',
@@ -47,40 +44,57 @@ messaging.onBackgroundMessage((payload) => {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Handle notification click
+// Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
-  console.log('Notification clicked:', event);
+  console.log('[firebase-messaging-sw.js] Notification click ', event);
   
-  event.notification.close();
+  const notification = event.notification;
+  const action = event.action;
+  const data = notification.data;
   
-  // Handle action buttons
-  if (event.action === 'approve') {
-    const requestId = event.notification.data.requestId;
+  notification.close();
+  
+  if (action === 'approve') {
+    const requestId = data.requestId;
     const url = `/api/approve-resume-request?id=${requestId}`;
     
-    fetch(url)
-      .then(response => console.log('Approved request:', response))
-      .catch(error => console.error('Error approving request:', error));
-      
-    // Open admin page
-    clients.openWindow('/admin');
-  } else if (event.action === 'deny') {
-    const requestId = event.notification.data.requestId;
+    event.waitUntil(
+      fetch(url)
+        .then(response => console.log('Approved request:', response))
+        .catch(error => console.error('Error approving request:', error))
+    );
+  } else if (action === 'deny') {
+    const requestId = data.requestId;
     const url = `/api/deny-resume-request?id=${requestId}`;
     
-    fetch(url)
-      .then(response => console.log('Denied request:', response))
-      .catch(error => console.error('Error denying request:', error));
-      
-    // Open admin page
-    clients.openWindow('/admin');
+    event.waitUntil(
+      fetch(url)
+        .then(response => console.log('Denied request:', response))
+        .catch(error => console.error('Error denying request:', error))
+    );
   } else {
-    // Default click behavior - open admin page
-    clients.openWindow('/admin');
+    // Open the admin panel
+    const urlToOpen = new URL('/admin', self.location.origin).href;
+    
+    event.waitUntil(
+      clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+      })
+      .then((windowClients) => {
+        // Check if there is already a window/tab open with the target URL
+        for (let i = 0; i < windowClients.length; i++) {
+          const client = windowClients[i];
+          // If so, focus it
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // If not, open a new window/tab
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
+    );
   }
-});
-
-// Handle push subscription change
-self.addEventListener('pushsubscriptionchange', (event) => {
-  console.log('Push subscription changed:', event);
 });

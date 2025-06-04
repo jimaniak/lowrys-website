@@ -54,6 +54,7 @@ export async function GET(request) {
         });
         
         // Create a simple notification without the problematic 'actions' field
+        // Add isConfirmation flag to indicate this is a confirmation notification
         const notificationMessage = {
           notification: {
             title: 'Resume Request Approved',
@@ -64,6 +65,7 @@ export async function GET(request) {
             name: requestData.name,
             email: requestData.email,
             status: 'approved',
+            isConfirmation: 'true', // Add this flag to indicate it's a confirmation
             click_action: 'OPEN_ADMIN_PANEL'
           }
         };
