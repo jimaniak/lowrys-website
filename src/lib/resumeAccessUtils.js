@@ -1,338 +1,168 @@
 // src/lib/resumeAccessUtils.js
-import { v4 as uuidv4 } from 'uuid';
+import admin from './firebase-admin';
+import { db } from '@/firebase/config'; // Import Firestore from your Firebase config
 import nodemailer from 'nodemailer';
-import crypto from 'crypto';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, getDoc, collection } from 'firebase/firestore';
-import { admin } from './firebase-admin';
-
-// Your Firebase configuration - store these in environment variables
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID
-};
-
-// Initialize Firebase
-let app;
-let db;
-
-// Initialize Firebase safely (handling server-side rendering)
-try {
-  // Check if Firebase is already initialized
-  if (!global._firebaseInitialized) {
-    app = initializeApp(firebaseConfig);
-    global._firebaseInitialized = true;
-  } else {
-    app = global._firebaseApp;
-  }
-  
-  db = getFirestore(app);
-  global._firebaseApp = app;
-} catch (error) {
-  console.error('Firebase initialization error:', error);
-}
 
 // Generate a unique request ID
 export function generateRequestId() {
-  return uuidv4().substring(0, 8);
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
 }
 
-// Store request in Firebase
-export async function storeRequest(requestId, data) {
-  try {
-    await setDoc(doc(db, "resumeRequests", requestId), {
-      ...data,
-      createdAt: new Date().toISOString()
-    });
-    console.log(`Stored request ${requestId} in Firebase`);
-    return true;
-  } catch (error) {
-    console.error('Error storing request in Firebase:', error);
-    throw error;
-  }
+// Store request in Firestore instead of IndexedDB
+export async function storeRequest(requestId, requestData) {
+  // Save to Firestore resumeRequests collection
+  await admin.firestore().collection('resumeRequests').doc(requestId).set({
+    id: requestId,
+    ...requestData,
+    timestamp: admin.firestore.FieldValue.serverTimestamp()
+  });
+  return requestId;
 }
 
-// Retrieve request from Firebase
-export async function getRequest(requestId) {
-  try {
-    const docRef = doc(db, "resumeRequests", requestId);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error('Error retrieving request from Firebase:', error);
-    return null;
-  }
-}
-
-// Send notification via Firebase Cloud Messaging
+// Send FCM notification
 export async function sendNotification(requestId, name, email, company, reason, message) {
   try {
-    // Get the admin FCM token from Firestore
-    const tokenDoc = await admin.firestore().collection('fcmTokens').doc('admin').get();
-    if (!tokenDoc.exists) {
-      console.error('No admin FCM token found');
-      return false;
+    // Get all FCM tokens
+    const tokensSnapshot = await admin.firestore().collection('fcmTokens').get();
+    
+    if (tokensSnapshot.empty) {
+      console.log('No FCM tokens found');
+      return;
     }
     
-    const token = tokenDoc.data().token;
+    const tokens = [];
+    tokensSnapshot.forEach(doc => {
+      tokens.push(doc.data().token);
+    });
     
-    // Send the notification via Firebase Cloud Messaging
-    const fcmMessage = {
+    // Create notification message
+    const notificationMessage = {
       notification: {
-        title: 'New Resume Access Request',
-        body: `${name} from ${company} has requested access to your resume.`
+        title: 'New Resume Request',
+        body: `${name} (${email}) has requested access to your resume`
       },
       data: {
         requestId: requestId,
         name: name,
         email: email,
-        company: company || 'Not provided',
-        reason: reason || 'Not provided',
+        company: company || 'Not specified',
+        reason: reason || 'Not specified',
         message: message || 'No message provided',
-        click_action: 'OPEN_ADMIN_PAGE'
-      },
-      token: token
+        click_action: 'OPEN_ADMIN_PANEL'
+      }
     };
     
-    // Send via Firebase Admin SDK
-    const response = await admin.messaging().send(fcmMessage);
-    console.log('Successfully sent notification:', response);
-    return true;
-  } catch (error) {
-    console.error('Error sending notification:', error);
-    return false;
-  }
-}
-
-// Send audit email for resume requests
-export async function sendAuditEmail({ name, email, company, reason, message, requestId }) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-  
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to: process.env.EMAIL_TO,
-    subject: `Resume Request: ${name} (${company || 'No company'})`,
-    text: `
-Resume Access Request
-
-Name: ${name}
-Email: ${email}
-Company: ${company || 'Not provided'}
-Reason: ${reason || 'Not provided'}
-Message: ${message || 'No message provided'}
-
-Request ID: ${requestId}
-
-Visit the admin page to approve or deny this request: ${process.env.SITE_URL}/admin
-    `,
-    html: `
-<h2>Resume Access Request</h2>
-
-<p><strong>Name:</strong> ${name}</p>
-<p><strong>Email:</strong> ${email}</p>
-<p><strong>Company:</strong> ${company || 'Not provided'}</p>
-<p><strong>Reason:</strong> ${reason || 'Not provided'}</p>
-<p><strong>Message:</strong> ${message || 'No message provided'}</p>
-
-<p><strong>Request ID:</strong> ${requestId}</p>
-
-<p>Visit the <a href="${process.env.SITE_URL}/admin">admin page</a> to approve or deny this request.</p>
-    `
-  });
-}
-
-// Send regular message email (without resume request)
-export async function sendRegularMessage({ name, email, company, message }) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-  
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to: process.env.EMAIL_TO,
-    subject: `Message from ${name}`,
-    text: `
-Message from Website
-
-Name: ${name}
-Email: ${email}
-Company: ${company || 'Not provided'}
-
-Message:
-${message}
-    `,
-    html: `
-<h2>Message from Website</h2>
-
-<p><strong>Name:</strong> ${name}</p>
-<p><strong>Email:</strong> ${email}</p>
-<p><strong>Company:</strong> ${company || 'Not provided'}</p>
-
-<h3>Message:</h3>
-<p>${message}</p>
-    `
-  });
-  
-  return true;
-}
-
-// Generate a passcode
-export function generatePasscode() {
-  return crypto.randomInt(100000, 999999).toString();
-}
-
-// Store passcode in Firebase
-export async function storePasscode(email, passcode) {
-  try {
-    // Use email as document ID (after sanitizing)
-    const docId = email.replace(/[.#$[\]]/g, '_');
-    
-    await setDoc(doc(db, "resumePasscodes", docId), {
-      email,
-      passcode,
-      timestamp: new Date().toISOString()
+    // Send to all tokens
+    const sendPromises = tokens.map(token => {
+      return admin.messaging().sendToDevice(token, notificationMessage);
     });
     
-    return true;
+    await Promise.all(sendPromises);
+    console.log(`Notification sent to ${tokens.length} devices`);
   } catch (error) {
-    console.error('Error storing passcode in Firebase:', error);
+    console.error('Error sending notification:', error);
     throw error;
   }
 }
 
-// Validate passcode from Firebase
-export async function validatePasscode(email, passcode) {
-  try {
-    // Use email as document ID (after sanitizing)
-    const docId = email.replace(/[.#$[\]]/g, '_');
-    const docRef = doc(db, "resumePasscodes", docId);
-    const docSnap = await getDoc(docRef);
-    
-    if (!docSnap.exists()) {
-      return false;
-    }
-    
-    const storedData = docSnap.data();
-    
-    // Check if passcode matches
-    if (storedData.passcode !== passcode) {
-      return false;
-    }
-    
-    // Check if passcode is expired (24 hours)
-    const storedTime = new Date(storedData.timestamp);
-    const currentTime = new Date();
-    const diffHours = (currentTime - storedTime) / (1000 * 60 * 60);
-    
-    if (diffHours > 24) {
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error validating passcode from Firebase:', error);
-    return false;
-  }
-}
-
-// Send passcode email
-export async function sendPasscodeEmail(email, passcode) {
+// Send audit email
+export async function sendAuditEmail(requestData) {
+  const { name, email, company, reason, message, requestId } = requestData;
+  
+  // Create email transporter
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_SECURE === 'true',
+    secure: true,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD
     }
   });
   
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to: email,
-    subject: 'Your Resume Access Passcode',
+  // Email content
+  const mailOptions = {
+    from: `"Resume Access System" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_ADMIN,
+    subject: `[AUDIT] New Resume Request from ${name}`,
     text: `
-Your resume access request has been approved!
-
-Your passcode is: ${passcode}
-
-This passcode will expire in 24 hours.
-
-Visit ${process.env.SITE_URL}/resume and enter this passcode to access the resume.
+      New resume access request:
+      
+      Request ID: ${requestId}
+      Name: ${name}
+      Email: ${email}
+      Company: ${company || 'Not specified'}
+      Reason: ${reason || 'Not specified'}
+      Message: ${message || 'No message provided'}
+      
+      You can approve or deny this request from your admin panel.
     `,
     html: `
-<h2>Your resume access request has been approved!</h2>
-
-<p>Your passcode is: <strong>${passcode}</strong></p>
-
-<p>This passcode will expire in 24 hours.</p>
-
-<p>Visit <a href="${process.env.SITE_URL}/resume">${process.env.SITE_URL}/resume</a> and enter this passcode to access the resume.</p>
+      <h2>New Resume Access Request</h2>
+      <p><strong>Request ID:</strong> ${requestId}</p>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Company:</strong> ${company || 'Not specified'}</p>
+      <p><strong>Reason:</strong> ${reason || 'Not specified'}</p>
+      <p><strong>Message:</strong> ${message || 'No message provided'}</p>
+      <p>You can approve or deny this request from your admin panel.</p>
     `
+  };
+  
+  // Send email
+  await transporter.sendMail(mailOptions);
+}
+
+// Send regular message email
+export async function sendRegularMessage(messageData) {
+  const { name, email, company, message } = messageData;
+  
+  // Create email transporter
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
   });
+  
+  // Email content
+  const mailOptions = {
+    from: `"Website Contact Form" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_ADMIN,
+    subject: `New message from ${name}`,
+    text: `
+      New message from your website:
+      
+      Name: ${name}
+      Email: ${email}
+      Company: ${company || 'Not specified'}
+      Message: ${message}
+    `,
+    html: `
+      <h2>New Message from Website</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Company:</strong> ${company || 'Not specified'}</p>
+      <p><strong>Message:</strong> ${message}</p>
+    `
+  };
+  
+  // Send email
+  await transporter.sendMail(mailOptions);
 }
 
-// Handle resume request - main function that orchestrates the process
-export async function handleResumeRequest(name, email, company, reason, message) {
-  try {
-    const requestId = generateRequestId();
-    
-    // Store the request in Firestore
-    await storeRequest(requestId, {
-      name,
-      email,
-      company,
-      reason,
-      message,
-      status: 'pending',
-      timestamp: new Date().toISOString()
-    });
-    
-    // Send FCM notification
-    await sendNotification(requestId, name, email, company, reason, message);
-    
-    // Send the audit email
-    await sendAuditEmail({ name, email, company, reason, message, requestId });
-    
-    return { success: true, message: 'Resume request submitted successfully' };
-  } catch (error) {
-    console.error('Error handling resume request:', error);
-    return { success: false, message: 'Error submitting resume request' };
-  }
+// Handle resume request (placeholder for future use)
+export async function handleResumeRequest(requestData) {
+  // This function can be expanded in the future
+  return await storeRequest(generateRequestId(), requestData);
 }
 
-// Handle message submission - for regular messages without resume request
-export async function handleMessageSubmission(name, email, company, message) {
-  try {
-    // Send regular message email
-    await sendRegularMessage({ name, email, company, message });
-    
-    return { success: true, message: 'Message sent successfully' };
-  } catch (error) {
-    console.error('Error sending message:', error);
-    return { success: false, message: 'Error sending message' };
-  }
+// Handle message submission (placeholder for future use)
+export async function handleMessageSubmission(messageData) {
+  // This function can be expanded in the future
+  return await sendRegularMessage(messageData);
 }
