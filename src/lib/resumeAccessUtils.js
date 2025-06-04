@@ -71,15 +71,19 @@ export async function sendAuditEmail(requestData) {
   const { name, email, company, reason, message, requestId } = requestData;
   
   // Create email transporter
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
+	const transporter = nodemailer.createTransport({
+	  host: process.env.EMAIL_HOST,
+	  port: process.env.EMAIL_PORT,
+	  secure: process.env.EMAIL_SECURE === 'true',
+	  auth: {
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASSWORD
+	  },
+	  tls: {
+		// Do not fail on invalid certs
+		rejectUnauthorized: false
+	  }
+	});
   
   // Email content
   const mailOptions = {
@@ -119,15 +123,20 @@ export async function sendRegularMessage(messageData) {
   const { name, email, company, message } = messageData;
   
   // Create email transporter
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
+	const transporter = nodemailer.createTransport({
+	  host: process.env.EMAIL_HOST,
+	  port: process.env.EMAIL_PORT,
+	  secure: process.env.EMAIL_SECURE === 'true',
+	  auth: {
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASSWORD
+	  },
+	  tls: {
+		// Do not fail on invalid certs
+		rejectUnauthorized: false
+	  }
+	});
+
   
   // Email content
   const mailOptions = {
