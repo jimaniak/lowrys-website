@@ -1,6 +1,6 @@
 // src/app/api/approve-resume-request/route.js
 import { NextResponse } from 'next/server';
-import { admin } from '../../../firebase-admin';
+import { admin } from '../../../lib/firebase-admin';
 import { sendPasscodeEmail, generatePasscode } from '../../../lib/resumeAccessUtils';
 
 export async function GET(request) {
