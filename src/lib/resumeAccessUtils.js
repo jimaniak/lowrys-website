@@ -1,6 +1,5 @@
 // src/lib/resumeAccessUtils.js
-import admin from './firebase-admin';
-import { db } from '@/firebase/config'; // Import Firestore from your Firebase config
+import { admin } from './firebase-admin';
 import nodemailer from 'nodemailer';
 
 // Generate a unique request ID
