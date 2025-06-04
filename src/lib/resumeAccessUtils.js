@@ -59,27 +59,28 @@ export async function sendNotification(requestId, name, email, company, reason, 
       }
     };
     
-    // Use sendMulticast for sending to multiple tokens
-    const multicastMessage = {
-      ...notificationMessage,
-      tokens: tokens
-    };
+    // Send to each token individually
+    const sendPromises = [];
+    for (const token of tokens) {
+      sendPromises.push(
+        admin.messaging().send({
+          token: token,
+          notification: notificationMessage.notification,
+          data: notificationMessage.data
+        })
+      );
+    }
     
-    // Send to all tokens using the correct method
-    const response = await admin.messaging().sendMulticast(multicastMessage);
-    console.log(`Notification sent to ${response.successCount} devices`);
+    const results = await Promise.all(sendPromises.map(p => p.catch(e => e)));
     
-    if (response.failureCount > 0) {
-      const failedTokens = [];
-      response.responses.forEach((resp, idx) => {
-        if (!resp.success) {
-          failedTokens.push({
-            token: tokens[idx],
-            error: resp.error
-          });
-        }
-      });
-      console.error('Failed to send to some tokens:', failedTokens);
+    // Count successes and failures
+    const successes = results.filter(result => !(result instanceof Error));
+    const failures = results.filter(result => result instanceof Error);
+    
+    console.log(`Notification sent to ${successes.length} devices`);
+    
+    if (failures.length > 0) {
+      console.error(`Failed to send to ${failures.length} devices:`, failures);
     }
   } catch (error) {
     console.error('Error sending notification:', error);
