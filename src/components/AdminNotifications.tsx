@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { doc, setDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '@/firebase/config';
-import { app } from '@/firebase/config'; // Make sure to import the Firebase app instance
+// Remove the problematic app import and use getMessaging() without parameters
 
 export default function AdminNotifications() {
   const [notificationPermission, setNotificationPermission] = useState<string>('default');
@@ -101,9 +101,10 @@ export default function AdminNotifications() {
             console.error(errorMsg);
           }
           
-          // Initialize Firebase Messaging
+          // Initialize Firebase Messaging without explicitly passing the app
           try {
-            const messaging = getMessaging(app); // Use the imported app instance
+            // Use getMessaging() without parameters - it will use the default app
+            const messaging = getMessaging();
             console.log('Firebase messaging initialized'); // Debug log
             
             // Request permission if not already granted
@@ -261,7 +262,8 @@ export default function AdminNotifications() {
         
         // Re-initialize FCM after permission is granted
         try {
-          const messaging = getMessaging(app); // Use the imported app instance
+          // Use getMessaging() without parameters - it will use the default app
+          const messaging = getMessaging();
           const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
           
           if (!vapidKey) {
@@ -325,7 +327,8 @@ export default function AdminNotifications() {
       });
     } catch (error) {
       console.error('Error creating test notification:', error);
-      setError(`Error creating test notification: ${error.message}`);
+      // Fix the TypeScript error by checking if error is an instance of Error
+      setError(`Error creating test notification: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
