@@ -27,8 +27,12 @@ messaging.onBackgroundMessage((payload) => {
     body: payload.notification.body,
     icon: '/icon-192x192.png',
     badge: '/icon-192x192.png',
-    data: payload.data,
-    actions: [
+    data: payload.data
+  };
+  
+  // Add action buttons only if showActions flag is set
+  if (payload.data && payload.data.showActions === 'true') {
+    notificationOptions.actions = [
       {
         action: 'approve',
         title: 'Approve'
@@ -37,8 +41,8 @@ messaging.onBackgroundMessage((payload) => {
         action: 'deny',
         title: 'Deny'
       }
-    ]
-  };
+    ];
+  }
   
   self.registration.showNotification(notificationTitle, notificationOptions);
 });

@@ -42,7 +42,7 @@ export async function sendNotification(requestId, name, email, company, reason, 
       tokens.push(doc.data().token);
     });
     
-    // Create notification message with actions
+    // Create notification message
     const notificationMessage = {
       notification: {
         title: 'New Resume Request',
@@ -56,124 +56,37 @@ export async function sendNotification(requestId, name, email, company, reason, 
         reason: reason || 'Not specified',
         message: message || 'No message provided',
         click_action: 'OPEN_ADMIN_PANEL',
-        // Add action information in the data payload to ensure consistent behavior
-        actions: JSON.stringify([
-          {
-            action: 'approve',
-            title: 'Approve'
-          },
-          {
-            action: 'deny',
-            title: 'Deny'
-          }
-        ])
-      },
-      // Add FCM v1 style notification actions for platforms that support it
-      fcmOptions: {
-        analyticsLabel: 'resumeRequest'
-      },
-      android: {
-        notification: {
-          clickAction: 'OPEN_ADMIN_PANEL',
-          // Ensure Android notifications show actions
-          actions: [
-            {
-              action: 'approve',
-              title: 'Approve'
-            },
-            {
-              action: 'deny',
-              title: 'Deny'
-            }
-          ]
-        }
-      },
-      webpush: {
-        notification: {
-          // Ensure web push notifications show actions
-          actions: [
-            {
-              action: 'approve',
-              title: 'Approve'
-            },
-            {
-              action: 'deny',
-              title: 'Deny'
-            }
-          ]
-        }
+        // Add action information as a string in the data payload
+        // This will be used by the service worker to show action buttons
+        showActions: 'true'
       }
     };
     
     // Send to each token individually
     const sendPromises = [];
     for (const token of tokens) {
-      // Create a message specific to this token
-      const tokenMessage = {
-        token: token,
-        notification: notificationMessage.notification,
-        data: notificationMessage.data,
-        // Include platform-specific configurations
-        android: notificationMessage.android,
-        webpush: notificationMessage.webpush,
-        fcmOptions: notificationMessage.fcmOptions
-      };
-      
       sendPromises.push(
-        admin.messaging().send(tokenMessage)
-          .then(response => {
-            console.log('Successfully sent message to token:', token.substring(0, 10) + '...', response);
-            return { success: true, token, response };
-          })
-          .catch(error => {
-            console.error('Error sending message to token:', token.substring(0, 10) + '...', error);
-            return { success: false, token, error };
-          })
+        admin.messaging().send({
+          token: token,
+          notification: notificationMessage.notification,
+          data: notificationMessage.data
+        })
       );
     }
     
-    const results = await Promise.all(sendPromises);
+    const results = await Promise.all(sendPromises.map(p => p.catch(e => e)));
     
     // Count successes and failures
-    const successes = results.filter(result => result.success);
-    const failures = results.filter(result => !result.success);
+    const successes = results.filter(result => !(result instanceof Error));
+    const failures = results.filter(result => result instanceof Error);
     
     console.log(`Notification sent to ${successes.length} devices`);
     
     if (failures.length > 0) {
       console.error(`Failed to send to ${failures.length} devices:`, failures);
-      
-      // Log failures to Firestore for debugging
-      await admin.firestore().collection('fcmErrors').add({
-        type: 'notification_send_failure',
-        failures: failures.map(f => ({
-          token: f.token.substring(0, 10) + '...',
-          error: f.error.toString()
-        })),
-        timestamp: admin.firestore.FieldValue.serverTimestamp()
-      });
     }
-    
-    return {
-      success: successes.length > 0,
-      successCount: successes.length,
-      failureCount: failures.length
-    };
   } catch (error) {
     console.error('Error sending notification:', error);
-    
-    // Log the error to Firestore
-    try {
-      await admin.firestore().collection('fcmErrors').add({
-        type: 'notification_send_error',
-        error: error.toString(),
-        stack: error.stack,
-        timestamp: admin.firestore.FieldValue.serverTimestamp()
-      });
-    } catch (logError) {
-      console.error('Error logging to Firestore:', logError);
-    }
-    
     throw error;
   }
 }
