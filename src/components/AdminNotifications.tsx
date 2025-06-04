@@ -1,257 +1,163 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  getDocs, 
-  doc, 
-  setDoc,
-  DocumentData,
-  QueryDocumentSnapshot 
-} from 'firebase/firestore';
-import { db, messaging, getToken, onMessage } from '../lib/firebase-client';
-import { MessagePayload } from 'firebase/messaging';
-import { Firestore } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/firebase/config';
 
-// TypeScript interfaces
-interface ResumeRequest {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  reason: string;
-  timestamp: string | { toDate: () => Date };
-  status: string;
-}
-
-interface NotificationData {
-  title: string;
-  body: string;
-  data?: {
-    requestId?: string;
-    name?: string;
-    email?: string;
-    company?: string;
-    reason?: string;
-    click_action?: string;
-  };
-}
-
-interface ApiResponse {
-  success: boolean;
-  message?: string;
-}
-
-const AdminNotifications: React.FC = () => {
-  const [requests, setRequests] = useState<ResumeRequest[]>([]);
-  const [notification, setNotification] = useState<NotificationData | null>(null);
+export default function AdminNotifications() {
+  const [notificationPermission, setNotificationPermission] = useState<string>('default');
   const [fcmToken, setFcmToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Request notification permission and set up FCM
-    if (messaging) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          console.log('Notification permission granted.');
+    // Check if browser supports notifications
+    if (!('Notification' in window)) {
+      console.log('This browser does not support notifications');
+      return;
+    }
+
+    // Set initial permission state
+    setNotificationPermission(Notification.permission);
+
+    // Set up FCM
+    const setupFCM = async () => {
+      try {
+        // Check if we're in a browser and if the browser supports service workers
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+          const messaging = getMessaging();
           
-          // Get FCM token - Add extra null check to satisfy TypeScript
-          if (messaging) { // Extra null check for TypeScript
-            getToken(messaging, { 
-              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY 
-            })
-              .then((token) => {
-                if (token) {
-                  console.log('FCM Token:', token);
-                  setFcmToken(token);
-                  saveTokenToDatabase(token);
-                }
-              })
-              .catch((err: Error) => {
-                console.error('Failed to get token:', err);
+          // Request permission if not already granted
+          if (Notification.permission !== 'granted') {
+            const permission = await Notification.requestPermission();
+            setNotificationPermission(permission);
+            if (permission !== 'granted') {
+              console.error('Notification permission not granted');
+              return;
+            }
+          }
+          
+          // Get token using your VAPID key
+          const token = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+          });
+          
+          if (token) {
+            setFcmToken(token);
+            
+            // Save token to your database
+            const uid = 'admin'; // Or get actual user ID if you have authentication
+            const tokenRef = doc(db, 'fcmTokens', uid);
+            
+            try {
+              // Try to update existing document
+              await updateDoc(tokenRef, {
+                token: token,
+                timestamp: new Date()
               });
+            } catch (err: any) {
+              // If document doesn't exist, create it
+              if (err.code === 'not-found') {
+                await setDoc(doc(db, 'fcmTokens', uid), {
+                  token: token,
+                  timestamp: new Date()
+                });
+              } else {
+                throw err;
+              }
+            }
+            
+            console.log('FCM token registered:', token);
             
             // Handle foreground messages
-            const unsubscribe = onMessage(messaging, (payload: MessagePayload) => {
-              console.log('Message received:', payload);
+            onMessage(messaging, (payload) => {
+              console.log('Received foreground message:', payload);
+              // You can display a custom notification here if desired
               if (payload.notification) {
-                setNotification({
-                  title: payload.notification.title || 'New Notification',
-                  body: payload.notification.body || '',
-                  data: payload.data
+                const { title, body } = payload.notification;
+                // Create a custom notification or update UI
+                new Notification(title || 'New Notification', {
+                  body: body || 'You have a new notification'
                 });
               }
-              loadRequests();
             });
-            
-            return () => unsubscribe();
+          } else {
+            console.error('No registration token available');
           }
+        } else {
+          console.log('This browser does not support notifications or service workers');
         }
-      });
-    }
+      } catch (error) {
+        console.error('Error setting up FCM:', error);
+      }
+    };
     
-    // Load initial requests
-    loadRequests();
+    setupFCM();
   }, []);
-  
-  const saveTokenToDatabase = async (token: string): Promise<void> => {
-    // Save token to Firestore
+
+  const requestPermission = async () => {
     try {
-      if (!db) {
-        console.error('Firestore db is not initialized');
-        return;
-      }
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
       
-      await setDoc(doc(db, 'fcmTokens', 'admin'), {
-        token,
-        timestamp: new Date()
-      });
-    } catch (error) {
-      console.error('Error saving token:', error);
-    }
-  };
-  
-  const loadRequests = async (): Promise<void> => {
-    try {
-      if (!db) {
-        console.error('Firestore db is not initialized');
-        return;
-      }
-      
-      const q = query(
-        collection(db, 'resumeRequests'),
-        where('status', '==', 'pending'),
-        orderBy('timestamp', 'desc')
-      );
-      
-      const snapshot = await getDocs(q);
-      const requestsData: ResumeRequest[] = [];
-      
-      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-        const data = doc.data();
-        requestsData.push({
-          id: doc.id,
-          name: data.name || '',
-          email: data.email || '',
-          company: data.company || '',
-          reason: data.reason || '',
-          timestamp: data.timestamp,
-          status: data.status || 'pending'
+      if (permission === 'granted') {
+        // Re-initialize FCM after permission is granted
+        const messaging = getMessaging();
+        const token = await getToken(messaging, {
+          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
         });
-      });
-      
-      setRequests(requestsData);
-    } catch (error) {
-      console.error('Error loading requests:', error);
-    }
-  };
-  
-  const approveRequest = async (requestId: string): Promise<void> => {
-    try {
-      const response = await fetch('/api/approve-resume-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId })
-      });
-      
-      const data: ApiResponse = await response.json();
-      
-      if (data.success) {
-        alert('Request approved! Passcode sent to user.');
-        loadRequests();
-      } else {
-        alert('Error approving request: ' + (data.message || 'Unknown error'));
+        setFcmToken(token);
+        
+        // Save token to database
+        if (token) {
+          const uid = 'admin';
+          await setDoc(doc(db, 'fcmTokens', uid), {
+            token: token,
+            timestamp: new Date()
+          });
+        }
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error approving request');
+      console.error('Error requesting notification permission:', error);
     }
   };
-  
-  const denyRequest = async (requestId: string): Promise<void> => {
-    try {
-      const response = await fetch('/api/deny-resume-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestId })
-      });
-      
-      const data: ApiResponse = await response.json();
-      
-      if (data.success) {
-        alert('Request denied.');
-        loadRequests();
-      } else {
-        alert('Error denying request: ' + (data.message || 'Unknown error'));
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error denying request');
-    }
-  };
-  
-  // Helper function to format timestamp
-  const formatTimestamp = (timestamp: string | { toDate: () => Date }): string => {
-    if (typeof timestamp === 'string') {
-      return new Date(timestamp).toLocaleString();
-    } else if (timestamp && typeof timestamp.toDate === 'function') {
-      return timestamp.toDate().toLocaleString();
-    }
-    return 'Unknown date';
-  };
-  
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Resume Access Requests</h1>
+    <div className="mb-8 p-4 bg-white rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
       
-      {fcmToken && (
-        <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-          <p>Notifications enabled! Your device is registered to receive alerts.</p>
-        </div>
-      )}
-      
-      {notification && (
-        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
-          <h3 className="font-bold">{notification.title}</h3>
-          <p>{notification.body}</p>
-        </div>
-      )}
-      
-      <h2 className="text-xl font-semibold mb-2">Pending Requests</h2>
-      
-      {requests.length === 0 ? (
-        <p>No pending requests</p>
-      ) : (
-        <div className="space-y-4">
-          {requests.map((request) => (
-            <div key={request.id} className="border rounded p-4">
-              <h3 className="font-bold">Request from {request.name}</h3>
-              <p><strong>Company:</strong> {request.company}</p>
-              <p><strong>Email:</strong> {request.email}</p>
-              <p><strong>Reason:</strong> {request.reason}</p>
-              <p><strong>Time:</strong> {formatTimestamp(request.timestamp)}</p>
-              <div className="mt-2 space-x-2">
-                <button 
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                  onClick={() => approveRequest(request.id)}
-                >
-                  Approve
-                </button>
-                <button 
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => denyRequest(request.id)}
-                >
-                  Deny
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="mb-4">
+        <p className="mb-2">
+          <strong>Notification Status:</strong> {notificationPermission === 'granted' 
+            ? 'Enabled' 
+            : notificationPermission === 'denied' 
+              ? 'Blocked' 
+              : 'Not enabled'}
+        </p>
+        
+        {notificationPermission !== 'granted' && (
+          <button
+            onClick={requestPermission}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={notificationPermission === 'denied'}
+          >
+            {notificationPermission === 'denied' 
+              ? 'Notifications Blocked (check browser settings)' 
+              : 'Enable Notifications'}
+          </button>
+        )}
+        
+        {notificationPermission === 'granted' && (
+          <p className="text-green-600">
+            You will receive real-time notifications when new resume requests are submitted.
+          </p>
+        )}
+        
+        {fcmToken && (
+          <p className="mt-2 text-sm text-gray-600">
+            Device registered for notifications
+          </p>
+        )}
+      </div>
     </div>
   );
-};
-
-export default AdminNotifications;
+}
