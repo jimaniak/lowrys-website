@@ -21,6 +21,16 @@ export default function Contact() {
     setStatus('submitting');
     setError('');
     
+    // Debug log form data before submission
+    console.log('Form data being submitted:', {
+      name,
+      email,
+      message,
+      requestResume,
+      company,
+      reason
+    });
+    
     // Validate form
     if (requestResume && (!name || !email || !company || !reason)) {
       setError('Please complete all required fields for resume access');
@@ -31,6 +41,7 @@ export default function Contact() {
     try {
       // If resume was requested, send to API first
       if (requestResume) {
+        console.log('Sending resume request to API'); // Debug log
         try {
           const resumeResponse = await fetch('/api/request-resume-access', {
             method: 'POST',
@@ -41,9 +52,13 @@ export default function Contact() {
               name,
               email,
               company,
-              reason
+              message, // Added message to the resume request payload
+              reason,
+              requestResume: true // Explicitly set requestResume flag
             })
           });
+          
+          console.log('Resume request API response status:', resumeResponse.status); // Debug log
           
           // Check if the response is ok before trying to parse it
           if (!resumeResponse.ok) {
@@ -51,15 +66,55 @@ export default function Contact() {
             console.error('API response error:', errorText);
             throw new Error(errorText || 'Failed to process resume request');
           }
+          
+          const responseData = await resumeResponse.json();
+          console.log('Resume request API response data:', responseData); // Debug log
+          
         } catch (err) {
           console.error('Error processing resume request:', err);
           setError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return; // Stop execution if resume request fails
         }
+      } else {
+        // If not a resume request, still send to our API for regular message processing
+        console.log('Sending regular message to API'); // Debug log
+        try {
+          const messageResponse = await fetch('/api/request-resume-access', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              company,
+              message,
+              requestResume: false // Explicitly set requestResume flag to false
+            })
+          });
+          
+          console.log('Regular message API response status:', messageResponse.status); // Debug log
+          
+          if (!messageResponse.ok) {
+            const errorText = await messageResponse.text();
+            console.error('API response error:', errorText);
+            throw new Error(errorText || 'Failed to send message');
+          }
+          
+          const responseData = await messageResponse.json();
+          console.log('Regular message API response data:', responseData); // Debug log
+          
+        } catch (err) {
+          console.error('Error sending message:', err);
+          setError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          setStatus('error');
+          return;
+        }
       }
       
       // Then submit to Formspree (regardless of resume request)
+      console.log('Submitting to Formspree'); // Debug log
       const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
         method: 'POST',
         headers: {
@@ -75,12 +130,15 @@ export default function Contact() {
         })
       });
       
+      console.log('Formspree response status:', formspreeResponse.status); // Debug log
+      
       if (!formspreeResponse.ok) {
         throw new Error('Failed to submit form');
       }
       
       // Set success status based on whether resume was requested
       setStatus(requestResume ? 'success-resume' : 'success');
+      console.log('Form submission successful, status set to:', requestResume ? 'success-resume' : 'success'); // Debug log
       
       // Clear form
       setName('');

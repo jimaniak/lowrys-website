@@ -13,10 +13,14 @@ import {
 export async function POST(request) {
   try {
     const body = await request.json();
+    console.log('Received form submission:', body); // Debug log
+    
     const { name, email, company, message, requestResume } = body; // Added requestResume flag
+    console.log('Extracted form data:', { name, email, company, message, requestResume }); // Debug log
     
     // Validate request
     if (!name || !email) {
+      console.log('Missing required fields:', { name, email }); // Debug log
       return NextResponse.json(
         { 
           success: false,
@@ -28,19 +32,26 @@ export async function POST(request) {
     
     // If this is a resume request
     if (requestResume) {
+      console.log('Processing resume request for:', email); // Debug log
+      
       // Generate request ID
       const requestId = generateRequestId();
+      console.log('Generated request ID:', requestId); // Debug log
       
       // Store request - now including the message field
       try {
-        await storeRequest(requestId, { 
+        const requestData = { 
           name, 
           email, 
           company, 
           message, // Store the message content
           status: 'pending',
           timestamp: new Date().toISOString() 
-        });
+        };
+        console.log('Storing request with ID:', requestId, 'with data:', requestData); // Debug log
+        
+        await storeRequest(requestId, requestData);
+        console.log('Request stored successfully in Firestore'); // Debug log
       } catch (storeError) {
         console.error('Error storing request:', storeError);
         return NextResponse.json(
@@ -54,6 +65,8 @@ export async function POST(request) {
       
       // Send FCM notification with detailed error handling
       try {
+        console.log('Sending FCM notification for request:', requestId); // Debug log
+        
         await sendNotification(
           requestId,
           name,
@@ -62,6 +75,8 @@ export async function POST(request) {
           null, // reason parameter
           message || 'No message provided'
         );
+        
+        console.log('FCM notification sent successfully'); // Debug log
       } catch (notificationError) {
         console.error('Notification sending error:', notificationError);
         return NextResponse.json(
@@ -75,6 +90,8 @@ export async function POST(request) {
       
       // Send audit email - now including the message in the email
       try {
+        console.log('Sending audit email for request:', requestId); // Debug log
+        
         await sendAuditEmail({
           name,
           email,
@@ -83,10 +100,14 @@ export async function POST(request) {
           message,
           requestId
         });
+        
+        console.log('Audit email sent successfully'); // Debug log
       } catch (emailError) {
         console.error('Email sending error:', emailError);
         // Continue execution even if email fails
       }
+      
+      console.log('Resume request processed successfully:', requestId); // Debug log
       
       return NextResponse.json({ 
         success: true, 
@@ -96,14 +117,20 @@ export async function POST(request) {
     } 
     // If this is just a regular message (not a resume request)
     else {
+      console.log('Processing regular message from:', email); // Debug log
+      
       // Send regular message email
       try {
+        console.log('Sending regular message email'); // Debug log
+        
         await sendRegularMessage({
           name,
           email,
           company,
           message
         });
+        
+        console.log('Regular message email sent successfully'); // Debug log
       } catch (emailError) {
         console.error('Email sending error:', emailError);
         return NextResponse.json(
@@ -114,6 +141,8 @@ export async function POST(request) {
           { status: 500 }
         );
       }
+      
+      console.log('Regular message processed successfully'); // Debug log
       
       return NextResponse.json({ 
         success: true, 
