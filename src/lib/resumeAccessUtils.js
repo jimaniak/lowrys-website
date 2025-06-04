@@ -56,15 +56,12 @@ export async function sendNotification(requestId, name, email, company, reason, 
         reason: reason || 'Not specified',
         message: message || 'No message provided',
         click_action: 'OPEN_ADMIN_PANEL'
-      }
+      },
+      tokens: tokens // Add tokens directly to the message
     };
     
-    // Send to all tokens
-    const sendPromises = tokens.map(token => {
-      return admin.messaging().sendToDevice(token, notificationMessage);
-    });
-    
-    await Promise.all(sendPromises);
+    // Send to all tokens using the correct method
+    await admin.messaging().send(notificationMessage);
     console.log(`Notification sent to ${tokens.length} devices`);
   } catch (error) {
     console.error('Error sending notification:', error);
