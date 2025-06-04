@@ -2,14 +2,14 @@
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
-// Your Firebase configuration
+// Your Firebase configuration - hardcoded for service worker
 const firebaseConfig = {
-  apiKey: self.FIREBASE_API_KEY,
-  authDomain: self.FIREBASE_AUTH_DOMAIN,
-  projectId: self.FIREBASE_PROJECT_ID,
-  storageBucket: self.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: self.FIREBASE_MESSAGING_SENDER_ID,
-  appId: self.FIREBASE_APP_ID
+  apiKey: "AIzaSyA7j1WzBAmFdWaNNavTshMvqctIisvpj94",
+  authDomain: "lowrys-resume-access.firebaseapp.com",
+  projectId: "lowrys-resume-access",
+  storageBucket: "lowrys-resume-access.firebasestorage.app",
+  messagingSenderId: "162127606605",
+  appId: "1:162127606605:web:213ac1a1a28089ad9a3d04"
 };
 
 // Initialize Firebase
