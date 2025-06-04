@@ -1,11 +1,18 @@
 // src/lib/resumeAccessUtils.js
 import { admin } from './firebase-admin';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 // Generate a unique request ID
 export function generateRequestId() {
   return Math.random().toString(36).substring(2, 15) + 
          Math.random().toString(36).substring(2, 15);
+}
+
+// Generate a passcode for resume access
+export function generatePasscode() {
+  // Generate a 6-digit numeric passcode
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 // Store request in Firestore instead of IndexedDB
@@ -161,6 +168,95 @@ export async function sendRegularMessage(messageData) {
   
   // Send email
   await transporter.sendMail(mailOptions);
+}
+
+// Send passcode email for resume access
+export async function sendPasscodeEmail(email, passcode, requestId) {
+  // Create email transporter
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+      // Do not fail on invalid certs
+      rejectUnauthorized: false
+    }
+  });
+  
+  // Email content
+  const mailOptions = {
+    from: `"Resume Access System" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `Your Resume Access Passcode`,
+    text: `
+      Your passcode to access the resume is: ${passcode}
+      
+      This passcode will expire in 15 minutes.
+      
+      If you did not request access to the resume, please ignore this email.
+    `,
+    html: `
+      <h2>Your Resume Access Passcode</h2>
+      <p>Your passcode to access the resume is: <strong>${passcode}</strong></p>
+      <p>This passcode will expire in 15 minutes.</p>
+      <p>If you did not request access to the resume, please ignore this email.</p>
+    `
+  };
+  
+  // Send email
+  await transporter.sendMail(mailOptions);
+  
+  // Store passcode in Firestore with expiration
+  const expirationTime = new Date();
+  expirationTime.setMinutes(expirationTime.getMinutes() + 15); // 15 minutes expiration
+  
+  await admin.firestore().collection('passcodes').doc(requestId).set({
+    passcode,
+    email,
+    requestId,
+    expiresAt: admin.firestore.Timestamp.fromDate(expirationTime),
+    used: false
+  });
+}
+
+// Validate passcode
+export async function validatePasscode(requestId, passcode) {
+  // Get passcode document from Firestore
+  const passcodeDoc = await admin.firestore().collection('passcodes').doc(requestId).get();
+  
+  if (!passcodeDoc.exists) {
+    return { valid: false, message: 'Invalid request ID' };
+  }
+  
+  const passcodeData = passcodeDoc.data();
+  
+  // Check if passcode is expired
+  const now = admin.firestore.Timestamp.now();
+  if (passcodeData.expiresAt.seconds < now.seconds) {
+    return { valid: false, message: 'Passcode has expired' };
+  }
+  
+  // Check if passcode has been used
+  if (passcodeData.used) {
+    return { valid: false, message: 'Passcode has already been used' };
+  }
+  
+  // Check if passcode matches
+  if (passcodeData.passcode !== passcode) {
+    return { valid: false, message: 'Invalid passcode' };
+  }
+  
+  // Mark passcode as used
+  await admin.firestore().collection('passcodes').doc(requestId).update({
+    used: true,
+    usedAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+  
+  return { valid: true, message: 'Passcode validated successfully' };
 }
 
 // Handle resume request (placeholder for future use)

@@ -18,7 +18,7 @@ interface FirebaseConfig {
   appId: string;
 }
 
-// Your Firebase configuration
+// Your Firebase configuration - reuse existing config from resumeAccessUtils.js
 const firebaseConfig: FirebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
@@ -29,11 +29,16 @@ const firebaseConfig: FirebaseConfig = {
 };
 
 // Initialize Firebase
-let app: FirebaseApp | undefined;
-let db: Firestore | undefined;
-let messaging: Messaging | null = null;
+// Create a dummy app for server-side to avoid type errors
+const dummyApp = {} as FirebaseApp;
+const dummyDb = {} as Firestore;
+const dummyMessaging = null as Messaging | null;
 
 // Initialize Firebase safely (handling client-side only)
+let app: FirebaseApp = dummyApp;
+let db: Firestore = dummyDb;
+let messaging: Messaging | null = dummyMessaging;
+
 if (typeof window !== 'undefined') {
   try {
     app = initializeApp(firebaseConfig);
