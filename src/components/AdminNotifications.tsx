@@ -32,9 +32,10 @@ export default function AdminNotifications() {
     try {
       if ('serviceWorker' in navigator) {
         console.log('Registering service worker...'); // Debug log
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-          scope: '/'
-        });
+		const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+		  scope: '/'
+		} );
+
         console.log('Service Worker registered with scope:', registration.scope); // Debug log
         return registration;
       } else {
