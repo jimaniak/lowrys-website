@@ -2,19 +2,50 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
-import { FaFileAlt, FaLock, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaFileAlt, FaLock, FaTimes, FaCheck, FaExclamationCircle } from 'react-icons/fa';
+import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
 
 interface ResumeAccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+// Passcode validation regex (alphanumeric, exactly 6 characters)
+const PASSCODE_REGEX = /^[A-Z0-9]{6}$/;
+
 export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModalProps) {
-  const [passcode, setPasscode] = useState<string>('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'downloaded' | 'error'>('idle');
-  const [error, setError] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Define validation rules for passcode
+  const validationRules: FieldValidationRules = {
+    passcode: {
+      required: true,
+      pattern: PASSCODE_REGEX,
+      errorMessage: 'Please enter a valid 6-character access code'
+    }
+  };
+
+  // Initial form values
+  const initialValues = {
+    passcode: ''
+  };
+
+  // Use our custom form validation hook
+  const {
+    values,
+    errors,
+    touched,
+    isValid,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    resetForm
+  } = useFormValidation(initialValues, validationRules);
+
+  // Additional state for modal status
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'downloaded' | 'error'>('idle');
+  const [apiError, setApiError] = useState<string>('');
   
   // Handle escape key and outside clicks
   useEffect(() => {
@@ -50,16 +81,22 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
   useEffect(() => {
     if (!isOpen) {
       // Reset all states when modal closes
-      setPasscode('');
+      resetForm();
       setStatus('idle');
-      setError('');
+      setApiError('');
     }
-  }, [isOpen]);
+  }, [isOpen, resetForm]);
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Check if form is valid before submission
+    if (!isValid && touched.passcode) {
+      return;
+    }
+    
     setStatus('loading');
-    setError('');
+    setApiError('');
     
     try {
       const response = await fetch('/api/validate-passcode', {
@@ -69,7 +106,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
         },
         body: JSON.stringify({ 
           email: '', // This could be added as a field if needed
-          passcode 
+          passcode: values.passcode 
         })
       });
       
@@ -79,18 +116,36 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
         setStatus('success');
       } else {
         setStatus('error');
-        setError(data.message || 'Invalid passcode');
+        setApiError(data.message || 'Invalid passcode');
       }
     } catch (err) {
       console.error('Error validating passcode:', err);
       setStatus('error');
-      setError('An error occurred. Please try again.');
+      setApiError('An error occurred. Please try again.');
     }
   };
 
   // Handle download click
   const handleDownload = () => {
     setStatus('downloaded');
+  };
+  
+  // Function to determine if a field has an error
+  const hasError = (field: string) => touched[field] && errors[field];
+
+  // Function to get input class based on validation state
+  const getInputClass = (field: string) => {
+    const baseClass = "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2";
+    
+    if (hasError(field)) {
+      return `${baseClass} border-red-500 focus:ring-red-500`;
+    }
+    
+    if (touched[field] && !errors[field]) {
+      return `${baseClass} border-green-500 focus:ring-green-500`;
+    }
+    
+    return `${baseClass} border-gray-300 focus:ring-blue-500`;
   };
   
   if (!isOpen) return null;
@@ -178,28 +233,45 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
                 <label htmlFor="passcode" className="block text-sm font-medium text-gray-700 mb-1">
                   Access Code
                 </label>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  id="passcode"
-                  value={passcode}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setPasscode(e.target.value.toUpperCase())}
-                  placeholder="Enter your 6-digit code"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  maxLength={6}
-                  required
-                />
+                <div className="relative">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    id="passcode"
+                    value={values.passcode}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => 
+                      handleChange('passcode', e.target.value.toUpperCase())
+                    }
+                    onBlur={() => handleBlur('passcode')}
+                    placeholder="Enter your 6-digit code"
+                    className={getInputClass('passcode')}
+                    maxLength={6}
+                    required
+                  />
+                  {hasError('passcode') && (
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <FaExclamationCircle className="text-red-500" />
+                    </div>
+                  )}
+                </div>
+                {hasError('passcode') && (
+                  <p className="mt-1 text-sm text-red-600">{errors.passcode}</p>
+                )}
               </div>
               
-              {status === 'error' && (
-                <p className="text-red-600 text-sm">{error}</p>
+              {status === 'error' && apiError && (
+                <p className="text-red-600 text-sm">{apiError}</p>
               )}
               
               <div className="flex space-x-3">
                 <button
                   type="submit"
-                  disabled={status === 'loading'}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition flex-1"
+                  disabled={status === 'loading' || (hasError('passcode') && touched.passcode)}
+                  className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition flex-1 ${
+                    (status === 'loading' || (hasError('passcode') && touched.passcode)) 
+                      ? 'opacity-70 cursor-not-allowed' 
+                      : ''
+                  }`}
                 >
                   {status === 'loading' ? 'Validating...' : 'Submit'}
                 </button>
