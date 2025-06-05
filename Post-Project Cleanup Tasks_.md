@@ -64,9 +64,9 @@ lowrys-website/
 │   │   ├── MobileNavigation.tsx
 │   │   ├── Navigation.tsx
 │   │   ├── ResumeAccess.jsx          # Original component - can be removed after modal implementation
-│   │   ├── ResumeAccessButton.jsx    # NEW: Button to trigger the resume access modal
-│   │   ├── ResumeAccessContext.jsx   # NEW: Context provider for modal state management
-│   │   ├── ResumeAccessModal.jsx     # NEW: Modal component for resume access
+│   │   ├── ResumeAccessButton.tsx    # NEW: Button to trigger the resume access modal
+│   │   ├── ResumeAccessContext.tsx   # NEW: Context provider for modal state management
+│   │   ├── ResumeAccessModal.tsx     # NEW: Modal component for resume access
 │   │   └── SocialLinks.tsx
 │   ├── firebase/
 │   │   └── config.ts                 # CLEANUP: Consider consolidating with firebase-client.ts

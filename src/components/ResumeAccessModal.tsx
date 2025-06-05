@@ -1,24 +1,29 @@
-// src/components/ResumeAccessModal.jsx
+// src/components/ResumeAccessModal.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
 import { FaFileAlt, FaLock, FaTimes } from 'react-icons/fa';
 
-export default function ResumeAccessModal({ isOpen, onClose }) {
-  const [passcode, setPasscode] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
-  const modalRef = useRef(null);
-  const inputRef = useRef(null);
+interface ResumeAccessModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModalProps) {
+  const [passcode, setPasscode] = useState<string>('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [error, setError] = useState<string>('');
+  const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   // Handle escape key and outside clicks
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     
-    const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
         onClose();
       }
     };
@@ -53,7 +58,7 @@ export default function ResumeAccessModal({ isOpen, onClose }) {
     }
   }, [isOpen, status]);
   
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('loading');
     setError('');
@@ -139,7 +144,7 @@ export default function ResumeAccessModal({ isOpen, onClose }) {
                   type="text"
                   id="passcode"
                   value={passcode}
-                  onChange={(e) => setPasscode(e.target.value.toUpperCase())}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setPasscode(e.target.value.toUpperCase())}
                   placeholder="Enter your 6-digit code"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   maxLength={6}

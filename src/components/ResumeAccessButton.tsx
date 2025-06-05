@@ -1,10 +1,18 @@
-// src/components/ResumeAccessButton.jsx
+// src/components/ResumeAccessButton.tsx
 'use client';
 
 import { FaLock } from 'react-icons/fa';
 import { useResumeAccess } from './ResumeAccessContext';
 
-export default function ResumeAccessButton({ className, variant = 'default' }) {
+interface ResumeAccessButtonProps {
+  className?: string;
+  variant?: 'default' | 'primary' | 'secondary' | 'link';
+}
+
+export default function ResumeAccessButton({ 
+  className = '', 
+  variant = 'default' 
+}: ResumeAccessButtonProps) {
   const { openModal } = useResumeAccess();
   
   // Different styling variants
@@ -20,7 +28,7 @@ export default function ResumeAccessButton({ className, variant = 'default' }) {
   return (
     <button 
       onClick={openModal}
-      className={`${buttonStyle} ${className || ''}`}
+      className={`${buttonStyle} ${className}`}
       aria-label="Access Resume"
     >
       <FaLock size={variant === 'link' ? 14 : 18} />
