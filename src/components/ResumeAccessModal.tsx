@@ -11,7 +11,7 @@ interface ResumeAccessModalProps {
 
 export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModalProps) {
   const [passcode, setPasscode] = useState<string>('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'downloaded'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'downloaded' | 'error'>('idle');
   const [error, setError] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
