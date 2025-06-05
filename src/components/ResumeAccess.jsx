@@ -29,7 +29,7 @@ export default function ResumeAccess() {
       
       const data = await response.json();
       
-      if (response.ok && data.success) {
+      if (response.ok && data.valid) {
         setStatus('success');
       } else {
         setStatus('error');

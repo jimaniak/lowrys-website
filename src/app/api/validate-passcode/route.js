@@ -69,7 +69,7 @@ export async function POST(request) {
     });
     
 	return NextResponse.json({ 
-	  success: true, 
+	  valid: true, 
 	  message: 'Passcode validated successfully',
 	  requestId
 	});
