@@ -1,8 +1,9 @@
-'use client';
+// src/app/admin/page.tsx;
 
 import React from 'react';
 import Layout from '@/components/Layout';
 import AdminNotifications from '@/components/AdminNotifications';
+import PendingRequestsTable from '@/components/PendingRequestsTable';
 
 export default function AdminPage() {
   return (
@@ -18,6 +19,11 @@ export default function AdminPage() {
       
       <section className="py-16">
         <div className="container mx-auto px-4">
+          {/* Pending Requests Table */}
+          <PendingRequestsTable />
+          
+          {/* Notifications Component */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Notifications</h2>
           <AdminNotifications />
         </div>
       </section>

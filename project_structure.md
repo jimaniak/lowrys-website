@@ -33,15 +33,15 @@ lowrys-website/
 │   │   ├── about/
 │   │   │   └── page.tsx
 │   │   ├── admin/                    # Admin area for FCM notifications
-│   │   │   └── page.tsx              # React-based admin interface for managing resume requests
+│   │   │   └── page.tsx              # Enhanced admin interface with pending requests table
 │   │   ├── api/
-│   │   │   ├── approve-resume-request/    # API endpoint for approving resume requests
+│   │   │   ├── approve-resume-request/    # API endpoint for approving resume requests with category support
 │   │   │   │   └── route.js
 │   │   │   ├── deny-resume-request/       # API endpoint for denying resume requests
 │   │   │   │   └── route.js
-│   │   │   ├── request-resume-access/     # Updated to handle both messages and resume requests
+│   │   │   ├── request-resume-access/     # Updated to handle both messages and resume requests with categories
 │   │   │   │   └── route.js
-│   │   │   └── validate-passcode/
+│   │   │   └── validate-passcode/         # Updated to validate passcodes with category support
 │   │   │       └── route.js
 │   │   ├── contact/
 │   │   │   └── page.tsx               # Updated to support both messages and resume requests
@@ -56,16 +56,21 @@ lowrys-website/
 │   │   └── page.tsx
 │   ├── components/
 │   │   ├── AdminNotifications.tsx    # React component for FCM notifications
+│   │   ├── ContactFormMessage.tsx    # Component for displaying form submission messages
 │   │   ├── Header.tsx
 │   │   ├── Layout.tsx
 │   │   ├── MobileNavigation.tsx
 │   │   ├── Navigation.tsx
+│   │   ├── PendingRequestsTable.tsx  # New component for displaying and managing pending requests
 │   │   ├── ResumeAccess.tsx          # Updated to work with FCM instead of Twilio
+│   │   ├── ResumeAccessButton.tsx    # Button component for triggering resume access modal
+│   │   ├── ResumeAccessContext.tsx   # Context provider for resume access state
+│   │   ├── ResumeAccessModal.tsx     # Modal component for entering passcode
 │   │   └── SocialLinks.tsx
 │   └── lib/
 │       ├── firebase-admin.js         # Server-side Firebase Admin SDK initialization
 │       ├── firebase-client.ts        # Client-side Firebase config for FCM with TypeScript
-│       └── resumeAccessUtils.js      # Updated to use FCM instead of Twilio
+│       └── resumeAccessUtils.js      # Updated to use FCM instead of Twilio with category support
 ├── .env.local                        # Updated with FCM environment variables:
 │                                     # - NEXT_PUBLIC_FIREBASE_API_KEY
 │                                     # - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
