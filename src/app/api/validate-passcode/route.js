@@ -68,10 +68,11 @@ export async function POST(request) {
       usedAt: admin.firestore.FieldValue.serverTimestamp()
     });
     
-    return NextResponse.json({ 
-      valid: true, 
-      message: 'Passcode validated successfully' 
-    });
+	return NextResponse.json({ 
+	  success: true, 
+	  message: 'Passcode validated successfully',
+	  requestId
+	});
   } catch (error) {
     console.error('Error validating passcode:', error);
     return NextResponse.json(
