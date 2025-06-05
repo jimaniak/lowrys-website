@@ -2,49 +2,100 @@
 'use client';
 
 import Layout from '@/components/Layout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaExclamationCircle } from 'react-icons/fa';
 import ResumeAccessButton from '@/components/ResumeAccessButton';
 import ContactFormMessage from '@/components/ContactFormMessage';
+import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
+
+// Email validation regex
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function Contact() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [requestResume, setRequestResume] = useState(false);
-  const [company, setCompany] = useState('');
-  const [reason, setReason] = useState('');
+  // Define validation rules for form fields
+  const validationRules: FieldValidationRules = {
+    name: {
+      required: true,
+      minLength: 2,
+      errorMessage: 'Please enter your full name (minimum 2 characters)'
+    },
+    email: {
+      required: true,
+      pattern: EMAIL_REGEX,
+      errorMessage: 'Please enter a valid email address'
+    },
+    message: {
+      minLength: 10,
+      errorMessage: 'Message should be at least 10 characters'
+    },
+    company: {
+      required: true,
+      minLength: 2,
+      errorMessage: 'Please enter your company or organization name'
+    },
+    reason: {
+      required: true,
+      minLength: 20,
+      errorMessage: 'Please provide a detailed reason for requesting access (minimum 20 characters)'
+    }
+  };
+
+  // Initial form values
+  const initialValues = {
+    name: '',
+    email: '',
+    message: '',
+    company: '',
+    reason: '',
+    requestResume: false
+  };
+
+  // Use our custom form validation hook
+  const {
+    values,
+    errors,
+    touched,
+    isValid,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    resetForm,
+    validateForm
+  } = useFormValidation(initialValues, validationRules);
+
+  // Additional state for form submission status
   const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
+  const [apiError, setApiError] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Effect to conditionally validate company and reason fields based on requestResume
+  useEffect(() => {
+    // No need to validate company and reason if not requesting resume
+    if (!values.requestResume) {
+      // Clear any existing errors for these fields
+      const updatedErrors = { ...errors };
+      delete updatedErrors.company;
+      delete updatedErrors.reason;
+      
+      // Force validation update
+      validateForm();
+    }
+  }, [values.requestResume]);
+
+  // Handle form submission
+  const submitForm = async () => {
     setStatus('submitting');
-    setError('');
+    setApiError('');
     setFormSubmitted(false);
     
     // Debug log form data before submission
-    console.log('Form data being submitted:', {
-      name,
-      email,
-      message,
-      requestResume,
-      company,
-      reason
-    });
-    
-    // Validate form
-    if (requestResume && (!name || !email || !company || !reason)) {
-      setError('Please complete all required fields for resume access');
-      setStatus('error');
-      return;
-    }
+    console.log('Form data being submitted:', values);
     
     try {
       // If resume was requested, send to API first
-      if (requestResume) {
+      if (values.requestResume) {
         console.log('Sending resume request to API'); // Debug log
         try {
           const resumeResponse = await fetch('/api/request-resume-access', {
@@ -53,11 +104,11 @@ export default function Contact() {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              name,
-              email,
-              company,
-              message, // Added message to the resume request payload
-              reason,
+              name: values.name,
+              email: values.email,
+              company: values.company,
+              message: values.message,
+              reason: values.reason,
               requestResume: true // Explicitly set requestResume flag
             })
           });
@@ -76,7 +127,7 @@ export default function Contact() {
           
         } catch (err) {
           console.error('Error processing resume request:', err);
-          setError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          setApiError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return; // Stop execution if resume request fails
         }
@@ -90,10 +141,10 @@ export default function Contact() {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              name,
-              email,
-              company,
-              message,
+              name: values.name,
+              email: values.email,
+              company: values.company,
+              message: values.message,
               requestResume: false // Explicitly set requestResume flag to false
             })
           });
@@ -111,7 +162,7 @@ export default function Contact() {
           
         } catch (err) {
           console.error('Error sending message:', err);
-          setError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          setApiError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return;
         }
@@ -125,12 +176,12 @@ export default function Contact() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name,
-          email,
-          message,
-          requestResume,
-          company: requestResume ? company : 'N/A',
-          reason: requestResume ? reason : 'N/A'
+          name: values.name,
+          email: values.email,
+          message: values.message,
+          requestResume: values.requestResume,
+          company: values.requestResume ? values.company : 'N/A',
+          reason: values.requestResume ? values.reason : 'N/A'
         })
       });
       
@@ -145,18 +196,31 @@ export default function Contact() {
       setFormSubmitted(true);
       console.log('Form submission successful, status set to: success'); // Debug log
       
-      // Clear form
-      setName('');
-      setEmail('');
-      setMessage('');
-      setRequestResume(false);
-      setCompany('');
-      setReason('');
+      // Reset form
+      resetForm();
     } catch (err) {
       console.error('Error submitting form:', err);
-      setError('An error occurred. Please try again.');
+      setApiError('An error occurred. Please try again.');
       setStatus('error');
     }
+  };
+
+  // Function to determine if a field has an error
+  const hasError = (field: string) => touched[field] && errors[field];
+
+  // Function to get input class based on validation state
+  const getInputClass = (field: string) => {
+    const baseClass = "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2";
+    
+    if (hasError(field)) {
+      return `${baseClass} border-red-500 focus:ring-red-500`;
+    }
+    
+    if (touched[field] && !errors[field]) {
+      return `${baseClass} border-green-500 focus:ring-green-500`;
+    }
+    
+    return `${baseClass} border-gray-300 focus:ring-blue-500`;
   };
 
   return (
@@ -246,54 +310,90 @@ export default function Contact() {
             <div>
               <h2 className="text-3xl font-bold mb-8">Send a Message</h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(submitForm);
+              }} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Name *
                   </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e ) => setName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="name"
+                      value={values.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      onBlur={() => handleBlur('name')}
+                      className={getInputClass('name')}
+                      required
+                    />
+                    {hasError('name') && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <FaExclamationCircle className="text-red-500" />
+                      </div>
+                    )}
+                  </div>
+                  {hasError('name') && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
                 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email *
                   </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="email"
+                      id="email"
+                      value={values.email}
+                      onChange={(e) => handleChange('email', e.target.value)}
+                      onBlur={() => handleBlur('email')}
+                      className={getInputClass('email')}
+                      required
+                    />
+                    {hasError('email') && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <FaExclamationCircle className="text-red-500" />
+                      </div>
+                    )}
+                  </div>
+                  {hasError('email') && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
                 </div>
                 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                     Message
                   </label>
-                  <textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      value={values.message}
+                      onChange={(e) => handleChange('message', e.target.value)}
+                      onBlur={() => handleBlur('message')}
+                      rows={5}
+                      className={getInputClass('message')}
+                    />
+                    {hasError('message') && (
+                      <div className="absolute top-2 right-2 pointer-events-none">
+                        <FaExclamationCircle className="text-red-500" />
+                      </div>
+                    )}
+                  </div>
+                  {hasError('message') && (
+                    <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                  )}
                 </div>
                 
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     id="requestResume"
-                    checked={requestResume}
-                    onChange={(e) => setRequestResume(e.target.checked)}
+                    checked={values.requestResume}
+                    onChange={(e) => handleChange('requestResume', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="requestResume" className="ml-2 block text-sm text-gray-700">
@@ -301,56 +401,78 @@ export default function Contact() {
                   </label>
                 </div>
                 
-                {requestResume && (
+                {values.requestResume && (
                   <>
                     <div>
                       <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
                         Company/Organization *
                       </label>
-                      <input
-                        type="text"
-                        id="company"
-                        value={company}
-                        onChange={(e) => setCompany(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="company"
+                          value={values.company}
+                          onChange={(e) => handleChange('company', e.target.value)}
+                          onBlur={() => handleBlur('company')}
+                          className={getInputClass('company')}
+                          required
+                        />
+                        {hasError('company') && (
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <FaExclamationCircle className="text-red-500" />
+                          </div>
+                        )}
+                      </div>
+                      {hasError('company') && (
+                        <p className="mt-1 text-sm text-red-600">{errors.company}</p>
+                      )}
                     </div>
                     
                     <div>
                       <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
                         Reason for requesting resume *
                       </label>
-                      <textarea
-                        id="reason"
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
+                      <div className="relative">
+                        <textarea
+                          id="reason"
+                          value={values.reason}
+                          onChange={(e) => handleChange('reason', e.target.value)}
+                          onBlur={() => handleBlur('reason')}
+                          rows={3}
+                          className={getInputClass('reason')}
+                          required
+                        />
+                        {hasError('reason') && (
+                          <div className="absolute top-2 right-2 pointer-events-none">
+                            <FaExclamationCircle className="text-red-500" />
+                          </div>
+                        )}
+                      </div>
+                      {hasError('reason') && (
+                        <p className="mt-1 text-sm text-red-600">{errors.reason}</p>
+                      )}
                     </div>
                   </>
                 )}
                 
-                {error && (
+                {apiError && (
                   <div className="bg-red-50 border-l-4 border-red-500 p-4">
-                    <p className="text-red-700">{error}</p>
+                    <p className="text-red-700">{apiError}</p>
                   </div>
                 )}
                 
                 {formSubmitted && (
-                  <ContactFormMessage isResumeRequest={requestResume} />
+                  <ContactFormMessage isResumeRequest={values.requestResume} />
                 )}
                 
                 <button
                   type="submit"
-                  disabled={status === 'submitting'}
+                  disabled={isSubmitting || status === 'submitting'}
                   className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ${
-                    status === 'submitting' ? 'opacity-70 cursor-not-allowed' : ''
+                    (isSubmitting || status === 'submitting') ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
-                  {status === 'submitting' ? 'Sending...' : 'Send Message'}
+                  {(isSubmitting || status === 'submitting') ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>
