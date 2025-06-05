@@ -3,8 +3,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase-client';
 import { FaCheck, FaTimes, FaFilter, FaSpinner } from 'react-icons/fa';
+
+// Import Firebase from your project's structure
+// Using relative path instead of @/ alias
+import { db } from '../lib/firebase-client';
 
 interface Request {
   id: string;
@@ -323,8 +326,7 @@ export default function PendingRequestsTable() {
           </tbody>
         </table>
       </div>
-      
-      {/* Request Details Modal could be added here in the future */}
     </div>
   );
 }
+

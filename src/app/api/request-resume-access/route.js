@@ -9,13 +9,14 @@ import {
   handleResumeRequest,
   handleMessageSubmission
 } from '@/lib/resumeAccessUtils';
+import { db } from '@/lib/firebase-admin';
 
 export async function POST(request) {
   try {
     const body = await request.json();
     console.log('Received form submission:', body); // Debug log
     
-    const { name, email, company, message, requestResume, category = 'resume' } = body; // Added category with default
+    const { name, email, company, message, requestResume, category = 'resume', reason } = body; // Added category with default
     console.log('Extracted form data:', { name, email, company, message, requestResume, category }); // Debug log
     
     // Validate request
@@ -34,6 +35,32 @@ export async function POST(request) {
     if (requestResume) {
       console.log(`Processing ${category} request for:`, email); // Debug log
       
+      // Check for existing active requests in the same category
+      try {
+        const resumeRequestsRef = db.collection('resumeRequests');
+        const existingRequests = await resumeRequestsRef
+          .where('email', '==', email)
+          .where('category', '==', category)
+          .where('status', 'in', ['pending', 'approved'])
+          .get();
+        
+        if (!existingRequests.empty) {
+          console.log(`User ${email} already has an active request for category: ${category}`);
+          return NextResponse.json(
+            { 
+              success: false,
+              message: `You already have an active request for ${getCategoryDisplayName(category)}. Please wait for approval or use your existing access code.`
+            },
+            { status: 400 }
+          );
+        }
+        
+        console.log('No duplicate requests found, proceeding with new request');
+      } catch (checkError) {
+        console.error('Error checking for existing requests:', checkError);
+        // Continue with request creation even if check fails (fail open for better UX)
+      }
+      
       // Generate request ID
       const requestId = generateRequestId();
       console.log('Generated request ID:', requestId); // Debug log
@@ -45,6 +72,7 @@ export async function POST(request) {
           email, 
           company, 
           message, // Store the message content
+          reason, // Store the reason if provided
           category, // Store the category
           status: 'pending',
           timestamp: new Date().toISOString() 
@@ -73,7 +101,7 @@ export async function POST(request) {
           name,
           email,
           company || 'No company',
-          null, // reason parameter
+          reason || null, // reason parameter
           message || 'No message provided',
           category // Add category to notification
         );
@@ -98,7 +126,7 @@ export async function POST(request) {
           name,
           email,
           company,
-          reason: null,
+          reason: reason || null,
           message,
           requestId,
           category // Add category to audit email

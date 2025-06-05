@@ -12,6 +12,13 @@ import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidati
 // Email validation regex
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+// Resource categories
+const RESOURCE_CATEGORIES = [
+  { value: 'resume', label: 'Resume' },
+  { value: 'free_item', label: 'Free Item' },
+  { value: 'portfolio', label: 'Portfolio' }
+];
+
 export default function Contact() {
   // Define validation rules for form fields
   const validationRules: FieldValidationRules = {
@@ -38,6 +45,10 @@ export default function Contact() {
       required: true,
       minLength: 20,
       errorMessage: 'Please provide a detailed reason for requesting access (minimum 20 characters)'
+    },
+    category: {
+      required: true,
+      errorMessage: 'Please select a resource category'
     }
   };
 
@@ -48,7 +59,8 @@ export default function Contact() {
     message: '',
     company: '',
     reason: '',
-    requestResume: false
+    requestResume: false,
+    category: 'resume' // Default category
   };
 
   // Use our custom form validation hook
@@ -72,12 +84,13 @@ export default function Contact() {
 
   // Effect to conditionally validate company and reason fields based on requestResume
   useEffect(() => {
-    // No need to validate company and reason if not requesting resume
+    // No need to validate company, reason, and category if not requesting resume
     if (!values.requestResume) {
       // Clear any existing errors for these fields
       const updatedErrors = { ...errors };
       delete updatedErrors.company;
       delete updatedErrors.reason;
+      delete updatedErrors.category;
       
       // Force validation update
       validateForm();
@@ -96,7 +109,7 @@ export default function Contact() {
     try {
       // If resume was requested, send to API first
       if (values.requestResume) {
-        console.log('Sending resume request to API'); // Debug log
+        console.log('Sending resource request to API'); // Debug log
         try {
           const resumeResponse = await fetch('/api/request-resume-access', {
             method: 'POST',
@@ -109,30 +122,31 @@ export default function Contact() {
               company: values.company,
               message: values.message,
               reason: values.reason,
-              requestResume: true // Explicitly set requestResume flag
+              requestResume: true, // Explicitly set requestResume flag
+              category: values.category // Include the selected category
             })
           });
           
-          console.log('Resume request API response status:', resumeResponse.status); // Debug log
+          console.log('Resource request API response status:', resumeResponse.status); // Debug log
           
           // Check if the response is ok before trying to parse it
           if (!resumeResponse.ok) {
             const errorText = await resumeResponse.text();
             console.error('API response error:', errorText);
-            throw new Error(errorText || 'Failed to process resume request');
+            throw new Error(errorText || 'Failed to process resource request');
           }
           
           const responseData = await resumeResponse.json();
-          console.log('Resume request API response data:', responseData); // Debug log
+          console.log('Resource request API response data:', responseData); // Debug log
           
         } catch (err) {
-          console.error('Error processing resume request:', err);
-          setApiError(`Resume request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          console.error('Error processing resource request:', err);
+          setApiError(`Resource request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
-          return; // Stop execution if resume request fails
+          return; // Stop execution if resource request fails
         }
       } else {
-        // If not a resume request, still send to our API for regular message processing
+        // If not a resource request, still send to our API for regular message processing
         console.log('Sending regular message to API'); // Debug log
         try {
           const messageResponse = await fetch('/api/request-resume-access', {
@@ -168,7 +182,7 @@ export default function Contact() {
         }
       }
       
-      // Then submit to Formspree (regardless of resume request)
+      // Then submit to Formspree (regardless of resource request)
       console.log('Submitting to Formspree'); // Debug log
       const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
         method: 'POST',
@@ -180,6 +194,7 @@ export default function Contact() {
           email: values.email,
           message: values.message,
           requestResume: values.requestResume,
+          category: values.requestResume ? values.category : 'N/A',
           company: values.requestResume ? values.company : 'N/A',
           reason: values.requestResume ? values.reason : 'N/A'
         })
@@ -221,6 +236,12 @@ export default function Contact() {
     }
     
     return `${baseClass} border-gray-300 focus:ring-blue-500`;
+  };
+
+  // Get category label from value
+  const getCategoryLabel = (value: string) => {
+    const category = RESOURCE_CATEGORIES.find(cat => cat.value === value);
+    return category ? category.label : value;
   };
 
   return (
@@ -397,12 +418,43 @@ export default function Contact() {
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="requestResume" className="ml-2 block text-sm text-gray-700">
-                    Request access to resume
+                    Request access to resources
                   </label>
                 </div>
                 
                 {values.requestResume && (
                   <>
+                    {/* Category Selection Dropdown */}
+                    <div>
+                      <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                        Resource Category *
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="category"
+                          value={values.category}
+                          onChange={(e) => handleChange('category', e.target.value)}
+                          onBlur={() => handleBlur('category')}
+                          className={getInputClass('category')}
+                          required
+                        >
+                          {RESOURCE_CATEGORIES.map((category) => (
+                            <option key={category.value} value={category.value}>
+                              {category.label}
+                            </option>
+                          ))}
+                        </select>
+                        {hasError('category') && (
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <FaExclamationCircle className="text-red-500" />
+                          </div>
+                        )}
+                      </div>
+                      {hasError('category') && (
+                        <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+                      )}
+                    </div>
+                    
                     <div>
                       <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
                         Company/Organization *
@@ -430,7 +482,7 @@ export default function Contact() {
                     
                     <div>
                       <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
-                        Reason for requesting resume *
+                        Reason for requesting {getCategoryLabel(values.category)} *
                       </label>
                       <div className="relative">
                         <textarea

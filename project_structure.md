@@ -2,6 +2,10 @@ lowrys-website/
 ├── public/
 │   ├── documents/
 │   │   └── jim-lowry-resume.pdf
+│   ├── protected-documents/          # NEW: Directory for access-controlled files by category
+│   │   ├── resume/                   # Resume-specific protected files
+│   │   ├── free_item/                # Free item downloads
+│   │   └── portfolio/                # Portfolio-specific protected files
 │   ├── favicon/
 │   │   ├── android-chrome-192x192.png
 │   │   ├── android-chrome-512x512.png
@@ -40,11 +44,11 @@ lowrys-website/
 │   │   │   ├── deny-resume-request/       # API endpoint for denying resume requests
 │   │   │   │   └── route.js
 │   │   │   ├── request-resume-access/     # Updated to handle both messages and resume requests with categories
-│   │   │   │   └── route.js
+│   │   │   │   └── route.js               # Now includes duplicate request prevention by category
 │   │   │   └── validate-passcode/         # Updated to validate passcodes with category support
 │   │   │       └── route.js
 │   │   ├── contact/
-│   │   │   └── page.tsx               # Updated to support both messages and resume requests
+│   │   │   └── page.tsx               # Updated with category selection dropdown
 │   │   ├── projects/
 │   │   │   └── page.tsx
 │   │   ├── resources/
@@ -61,16 +65,20 @@ lowrys-website/
 │   │   ├── Layout.tsx
 │   │   ├── MobileNavigation.tsx
 │   │   ├── Navigation.tsx
-│   │   ├── PendingRequestsTable.tsx  # New component for displaying and managing pending requests
+│   │   ├── PendingRequestsTable.tsx  # New component for displaying and managing pending requests with category support
 │   │   ├── ResumeAccess.tsx          # Updated to work with FCM instead of Twilio
 │   │   ├── ResumeAccessButton.tsx    # Button component for triggering resume access modal
 │   │   ├── ResumeAccessContext.tsx   # Context provider for resume access state
-│   │   ├── ResumeAccessModal.tsx     # Modal component for entering passcode
+│   │   ├── ResumeAccessModal.tsx     # Modal component for entering passcode with validation
 │   │   └── SocialLinks.tsx
+│   ├── hooks/
+│   │   └── useFormValidation.ts      # Custom hook for form validation
 │   └── lib/
 │       ├── firebase-admin.js         # Server-side Firebase Admin SDK initialization
 │       ├── firebase-client.ts        # Client-side Firebase config for FCM with TypeScript
 │       └── resumeAccessUtils.js      # Updated to use FCM instead of Twilio with category support
+├── docs/
+│   └── category_testing_guide.md     # Guide for testing the category-based access management system
 ├── .env.local                        # Updated with FCM environment variables:
 │                                     # - NEXT_PUBLIC_FIREBASE_API_KEY
 │                                     # - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
@@ -96,3 +104,21 @@ lowrys-website/
 ├── README.md
 ├── project_structure.md              # This file (moved from public/documents/)
 └── tsconfig.json
+
+# Database Schema Updates:
+# - resumeRequests collection now includes 'category' field (string)
+#   - Values: 'resume', 'free_item', 'portfolio', etc.
+#   - Default: 'resume' for backward compatibility
+#
+# - Each request document structure:
+#   {
+#     name: string,
+#     email: string,
+#     company: string,
+#     message: string,
+#     reason: string,
+#     category: string,
+#     status: 'pending' | 'approved' | 'denied' | 'used' | 'expired',
+#     timestamp: timestamp,
+#     passcode: string (when approved)
+#   }
