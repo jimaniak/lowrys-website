@@ -15,8 +15,8 @@ export async function POST(request) {
     const body = await request.json();
     console.log('Received form submission:', body); // Debug log
     
-    const { name, email, company, message, requestResume } = body; // Added requestResume flag
-    console.log('Extracted form data:', { name, email, company, message, requestResume }); // Debug log
+    const { name, email, company, message, requestResume, category = 'resume' } = body; // Added category with default
+    console.log('Extracted form data:', { name, email, company, message, requestResume, category }); // Debug log
     
     // Validate request
     if (!name || !email) {
@@ -32,19 +32,20 @@ export async function POST(request) {
     
     // If this is a resume request
     if (requestResume) {
-      console.log('Processing resume request for:', email); // Debug log
+      console.log(`Processing ${category} request for:`, email); // Debug log
       
       // Generate request ID
       const requestId = generateRequestId();
       console.log('Generated request ID:', requestId); // Debug log
       
-      // Store request - now including the message field
+      // Store request - now including the message field and category
       try {
         const requestData = { 
           name, 
           email, 
           company, 
           message, // Store the message content
+          category, // Store the category
           status: 'pending',
           timestamp: new Date().toISOString() 
         };
@@ -73,7 +74,8 @@ export async function POST(request) {
           email,
           company || 'No company',
           null, // reason parameter
-          message || 'No message provided'
+          message || 'No message provided',
+          category // Add category to notification
         );
         
         console.log('FCM notification sent successfully'); // Debug log
@@ -88,7 +90,7 @@ export async function POST(request) {
         );
       }
       
-      // Send audit email - now including the message in the email
+      // Send audit email - now including the message and category in the email
       try {
         console.log('Sending audit email for request:', requestId); // Debug log
         
@@ -98,7 +100,8 @@ export async function POST(request) {
           company,
           reason: null,
           message,
-          requestId
+          requestId,
+          category // Add category to audit email
         });
         
         console.log('Audit email sent successfully'); // Debug log
@@ -107,12 +110,13 @@ export async function POST(request) {
         // Continue execution even if email fails
       }
       
-      console.log('Resume request processed successfully:', requestId); // Debug log
+      console.log(`${category} request processed successfully:`, requestId); // Debug log
       
       return NextResponse.json({ 
         success: true, 
-        message: 'Resume request submitted successfully',
-        requestId: requestId
+        message: `${getCategoryDisplayName(category)} request submitted successfully`,
+        requestId: requestId,
+        category: category
       });
     } 
     // If this is just a regular message (not a resume request)
@@ -159,4 +163,15 @@ export async function POST(request) {
       { status: 500 }
     );
   }
+}
+
+// Helper function to get a display name for a category
+function getCategoryDisplayName(category) {
+  const displayNames = {
+    'resume': 'Resume',
+    'free_item': 'Free item',
+    'portfolio': 'Portfolio'
+  };
+  
+  return displayNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
 }

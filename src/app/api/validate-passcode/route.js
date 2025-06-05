@@ -5,7 +5,7 @@ import { admin } from '../../../lib/firebase-admin';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { passcode } = body;
+    const { passcode, category = 'resume' } = body; // Added category with default
     
     if (!passcode) {
       return NextResponse.json(
@@ -14,15 +14,16 @@ export async function POST(request) {
       );
     }
     
-    // Query for requests with this passcode
+    // Query for requests with this passcode and category
     const requestsSnapshot = await admin.firestore()
       .collection('resumeRequests')
       .where('passcode', '==', passcode)
+      .where('category', '==', category) // Added category filter
       .get();
     
     if (requestsSnapshot.empty) {
       return NextResponse.json(
-        { success: false, message: 'Invalid passcode' },
+        { success: false, message: 'Invalid passcode for this resource' },
         { status: 400 }
       );
     }
@@ -71,11 +72,12 @@ export async function POST(request) {
         usedAt: admin.firestore.FieldValue.serverTimestamp()
       });
       
-      // Return success response - using success: true to match client expectations
+      // Return success response with category information
       return NextResponse.json({ 
         success: true, 
         message: 'Passcode validated successfully',
-        requestId
+        requestId,
+        category: requestData.category || 'resume' // Return category, default if not found
       });
     } catch (updateError) {
       console.error('Error updating status to used:', updateError);
@@ -83,7 +85,8 @@ export async function POST(request) {
       return NextResponse.json({ 
         success: true, 
         message: 'Passcode validated successfully',
-        requestId
+        requestId,
+        category: requestData.category || 'resume' // Return category, default if not found
       });
     }
   } catch (error) {

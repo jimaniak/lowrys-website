@@ -17,6 +17,19 @@ export async function GET(request) {
       );
     }
     
+    // Get the request details to determine category
+    const requestDoc = await admin.firestore().collection('resumeRequests').doc(id).get();
+    
+    if (!requestDoc.exists) {
+      return NextResponse.json(
+        { success: false, message: 'Request not found' },
+        { status: 404 }
+      );
+    }
+    
+    const requestData = requestDoc.data();
+    const category = requestData.category || 'resume'; // Default to 'resume' for backward compatibility
+    
     // Generate a passcode
     const passcode = generatePasscode();
     
@@ -29,18 +42,6 @@ export async function GET(request) {
         new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
       )
     });
-    
-    // Get the request details to send a confirmation email
-    const requestDoc = await admin.firestore().collection('resumeRequests').doc(id).get();
-    
-    if (!requestDoc.exists) {
-      return NextResponse.json(
-        { success: false, message: 'Request not found' },
-        { status: 404 }
-      );
-    }
-    
-    const requestData = requestDoc.data();
     
     // Send a confirmation notification to the admin (without using 'actions' field)
     try {
@@ -57,13 +58,14 @@ export async function GET(request) {
         // Add isConfirmation flag to indicate this is a confirmation notification
         const notificationMessage = {
           notification: {
-            title: 'Resume Request Approved',
-            body: `You approved the resume request from ${requestData.name} (${requestData.email})`
+            title: `${getCategoryDisplayName(category)} Request Approved`,
+            body: `You approved the ${category} request from ${requestData.name} (${requestData.email})`
           },
           data: {
             requestId: id,
             name: requestData.name,
             email: requestData.email,
+            category: category,
             status: 'approved',
             isConfirmation: 'true', // Add this flag to indicate it's a confirmation
             click_action: 'OPEN_ADMIN_PANEL'
@@ -109,30 +111,33 @@ export async function GET(request) {
         }
       });
       
+      // Get resource name based on category
+      const resourceName = getCategoryDisplayName(category);
+      
       // Email content
       const mailOptions = {
-        from: `"Resume Access System" <${process.env.EMAIL_USER}>`,
+        from: `"${resourceName} Access System" <${process.env.EMAIL_USER}>`,
         to: requestData.email,
-        subject: `Your Resume Access Passcode`,
+        subject: `Your ${resourceName} Access Passcode`,
         text: `
-          Your passcode to access the resume is: ${passcode}
+          Your passcode to access the ${category} is: ${passcode}
           
           This passcode will expire in 24 hours.
           
-          If you did not request access to the resume, please ignore this email.
+          If you did not request access to the ${resourceName.toLowerCase()}, please ignore this email.
         `,
         html: `
-          <h2>Your Resume Access Passcode</h2>
-          <p>Your passcode to access the resume is: <strong>${passcode}</strong></p>
+          <h2>Your ${resourceName} Access Passcode</h2>
+          <p>Your passcode to access the ${resourceName.toLowerCase()} is: <strong>${passcode}</strong></p>
           <p>This passcode will expire in 24 hours.</p>
-          <p>If you did not request access to the resume, please ignore this email.</p>
+          <p>If you did not request access to the ${resourceName.toLowerCase()}, please ignore this email.</p>
         `
       };
       
       // Send email
       await transporter.sendMail(mailOptions);
       
-      console.log(`Passcode ${passcode} sent to ${requestData.email}`);
+      console.log(`Passcode ${passcode} for ${category} sent to ${requestData.email}`);
     } catch (emailError) {
       console.error('Error sending passcode email:', emailError);
       // Log the error to Firestore for debugging
@@ -142,6 +147,7 @@ export async function GET(request) {
           error: emailError.toString(),
           stack: emailError.stack,
           requestId: id,
+          category: category,
           timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
       } catch (logError) {
@@ -153,14 +159,26 @@ export async function GET(request) {
     
     return NextResponse.json({ 
       success: true, 
-      message: 'Resume request approved successfully',
-      requestId: id
+      message: `${getCategoryDisplayName(category)} request approved successfully`,
+      requestId: id,
+      category: category
     });
   } catch (error) {
-    console.error('Error approving resume request:', error);
+    console.error('Error approving request:', error);
     return NextResponse.json(
       { success: false, message: `Failed to approve request: ${error.message}` },
       { status: 500 }
     );
   }
+}
+
+// Helper function to get a display name for a category
+function getCategoryDisplayName(category) {
+  const displayNames = {
+    'resume': 'Resume',
+    'free_item': 'Free Item',
+    'portfolio': 'Portfolio'
+  };
+  
+  return displayNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
 }
