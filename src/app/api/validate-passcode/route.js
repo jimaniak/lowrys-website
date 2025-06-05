@@ -9,74 +9,87 @@ export async function POST(request) {
     
     if (!passcode) {
       return NextResponse.json(
-        { valid: false, message: 'Passcode is required' },
+        { success: false, message: 'Passcode is required' },
         { status: 400 }
       );
     }
     
-    // Query Firestore to find the request with this passcode
+    // Query for requests with this passcode
     const requestsSnapshot = await admin.firestore()
       .collection('resumeRequests')
       .where('passcode', '==', passcode)
-      .limit(1)
       .get();
     
     if (requestsSnapshot.empty) {
       return NextResponse.json(
-        { valid: false, message: 'Invalid passcode' },
+        { success: false, message: 'Invalid passcode' },
         { status: 400 }
       );
     }
     
-    // Get the first matching document
+    // Get the first matching request
     const requestDoc = requestsSnapshot.docs[0];
     const requestData = requestDoc.data();
+    const requestId = requestDoc.id;
     
-    // Check if request is already used or expired
+    // Check if the status is already 'used'
     if (requestData.status === 'used') {
       return NextResponse.json(
-        { valid: false, message: 'Passcode has already been used' },
+        { success: false, message: 'Passcode already used' },
         { status: 400 }
       );
     }
     
-    if (requestData.status === 'expired') {
+    // Check if the status is not 'approved'
+    if (requestData.status !== 'approved') {
       return NextResponse.json(
-        { valid: false, message: 'Passcode has expired' },
+        { success: false, message: `Invalid passcode status: ${requestData.status}` },
         { status: 400 }
       );
     }
     
-    // Check if passcode is expired based on timestamp
-    const now = admin.firestore.Timestamp.now();
-    if (requestData.passcodeExpiresAt && requestData.passcodeExpiresAt.seconds < now.seconds) {
+    // Check if passcode has expired
+    const passcodeExpiresAt = requestData.passcodeExpiresAt?.toDate();
+    if (passcodeExpiresAt && passcodeExpiresAt < new Date()) {
       // Update status to expired
-      await admin.firestore().collection('resumeRequests').doc(requestDoc.id).update({
+      await admin.firestore().collection('resumeRequests').doc(requestId).update({
         status: 'expired',
         expiredAt: admin.firestore.FieldValue.serverTimestamp()
       });
       
       return NextResponse.json(
-        { valid: false, message: 'Passcode has expired' },
+        { success: false, message: 'Passcode has expired' },
         { status: 400 }
       );
     }
     
-    // Mark passcode as used by updating status
-    await admin.firestore().collection('resumeRequests').doc(requestDoc.id).update({
-      status: 'used',
-      usedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-    
-	return NextResponse.json({ 
-	  valid: true, 
-	  message: 'Passcode validated successfully',
-	  requestId
-	});
+    // Only update status to 'used' if we're going to return success
+    try {
+      // Update status to used
+      await admin.firestore().collection('resumeRequests').doc(requestId).update({
+        status: 'used',
+        usedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      
+      // Return success response - using success: true to match client expectations
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Passcode validated successfully',
+        requestId
+      });
+    } catch (updateError) {
+      console.error('Error updating status to used:', updateError);
+      // Still return success since the passcode is valid, but log the error
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Passcode validated successfully',
+        requestId
+      });
+    }
   } catch (error) {
     console.error('Error validating passcode:', error);
     return NextResponse.json(
-      { valid: false, message: 'Failed to validate passcode' },
+      { success: false, message: `Failed to validate passcode: ${error.message}` },
       { status: 500 }
     );
   }
