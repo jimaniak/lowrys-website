@@ -1,10 +1,11 @@
+// src/app/about/page.tsx
 'use client';
 
 import Layout from '@/components/Layout';
 import Image from 'next/image';
-import { FaLinkedin, FaFileAlt } from 'react-icons/fa';
+import { FaLinkedin } from 'react-icons/fa';
 import Head from 'next/head';
-import ResumeAccess from '@/components/ResumeAccess';
+import ResumeAccessButton from '@/components/ResumeAccessButton';
 //import SocialLinks from '@/components/SocialLinks';
 
 export default function About() {
@@ -162,9 +163,9 @@ export default function About() {
                     <FaLinkedin size={24} />
                     <span>LinkedIn Profile</span>
                   </a>
-				{/* Resume Access */}
-				<ResumeAccess />
-
+                  
+                  {/* Resume Access Button - Replaced ResumeAccess component */}
+                  <ResumeAccessButton variant="primary" />
                 </div>
               </div>
             </div>

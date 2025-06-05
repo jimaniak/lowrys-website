@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import { useState } from 'react';
 import Head from 'next/head';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub } from 'react-icons/fa';
+import ResumeAccessButton from '@/components/ResumeAccessButton';
 
 export default function Contact() {
   const [name, setName] = useState('');
@@ -227,6 +228,12 @@ export default function Contact() {
                     <h3 className="font-semibold text-lg">GitHub</h3>
                     <a href="https://github.com/jimaniak" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">github.com/MyGitHub</a>
                   </div>
+                </div>
+                
+                {/* Added Resume Access Button */}
+                <div className="mt-8 pt-4 border-t border-gray-200">
+                  <h3 className="font-semibold text-lg mb-2">Already have an access code?</h3>
+                  <ResumeAccessButton variant="secondary" />
                 </div>
               </div>
             </div>
