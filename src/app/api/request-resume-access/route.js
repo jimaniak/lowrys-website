@@ -1,4 +1,5 @@
 // src/app/api/request-resume-access/route.js
+
 import { NextResponse } from 'next/server';
 import { 
   generateRequestId,
@@ -8,8 +9,8 @@ import {
   sendRegularMessage,
   handleResumeRequest,
   handleMessageSubmission
-} from '@/lib/resumeAccessUtils';
-import { db } from '@/lib/firebase-admin';
+} from '../../../lib/resumeAccessUtils';
+import { db } from '../../../lib/firebase-admin';
 
 export async function POST(request) {
   try {

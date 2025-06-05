@@ -1,13 +1,13 @@
 // src/app/contact/page.tsx
 'use client';
 
-import Layout from '@/components/Layout';
+import Layout from '../../components/Layout';
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaExclamationCircle } from 'react-icons/fa';
-import ResumeAccessButton from '@/components/ResumeAccessButton';
-import ContactFormMessage from '@/components/ContactFormMessage';
-import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
+import ResumeAccessButton from '../../components/ResumeAccessButton';
+import ContactFormMessage from '../../components/ContactFormMessage';
+import { useFormValidation, FieldValidationRules } from '../../hooks/useFormValidation';
 
 // Email validation regex
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -422,9 +422,9 @@ export default function Contact() {
                   </label>
                 </div>
                 
+                {/* Show additional fields if requesting resume */}
                 {values.requestResume && (
                   <>
-                    {/* Category Selection Dropdown */}
                     <div>
                       <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
                         Resource Category *
@@ -467,7 +467,7 @@ export default function Contact() {
                           onChange={(e) => handleChange('company', e.target.value)}
                           onBlur={() => handleBlur('company')}
                           className={getInputClass('company')}
-                          required
+                          required={values.requestResume}
                         />
                         {hasError('company') && (
                           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -482,7 +482,7 @@ export default function Contact() {
                     
                     <div>
                       <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
-                        Reason for requesting {getCategoryLabel(values.category)} *
+                        Why do you need access to the {getCategoryLabel(values.category)}? *
                       </label>
                       <div className="relative">
                         <textarea
@@ -492,7 +492,7 @@ export default function Contact() {
                           onBlur={() => handleBlur('reason')}
                           rows={3}
                           className={getInputClass('reason')}
-                          required
+                          required={values.requestResume}
                         />
                         {hasError('reason') && (
                           <div className="absolute top-2 right-2 pointer-events-none">

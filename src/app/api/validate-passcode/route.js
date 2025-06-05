@@ -1,4 +1,5 @@
 // src/app/api/validate-passcode/route.js
+
 import { NextResponse } from 'next/server';
 import { admin } from '../../../lib/firebase-admin';
 

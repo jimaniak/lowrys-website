@@ -1,9 +1,10 @@
-// src/app/admin/page.tsx;
+// src/app/admin/page.tsx
+'use client';
 
 import React from 'react';
-import Layout from '@/components/Layout';
-import AdminNotifications from '@/components/AdminNotifications';
-import PendingRequestsTable from '@/components/PendingRequestsTable';
+import Layout from '../../components/Layout';
+import AdminNotifications from '../../components/AdminNotifications';
+import PendingRequestsTable from '../../components/PendingRequestsTable';
 
 export default function AdminPage() {
   return (
