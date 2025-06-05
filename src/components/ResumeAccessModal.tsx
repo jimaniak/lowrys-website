@@ -130,8 +130,10 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
     setStatus('downloaded');
   };
   
-  // Function to determine if a field has an error
-  const hasError = (field: string) => touched[field] && errors[field];
+  // Function to determine if a field has an error - returns a boolean
+  const hasError = (field: string): boolean => {
+    return Boolean(touched[field] && errors[field]);
+  };
 
   // Function to get input class based on validation state
   const getInputClass = (field: string) => {
@@ -266,9 +268,9 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
               <div className="flex space-x-3">
                 <button
                   type="submit"
-                  disabled={status === 'loading' || (hasError('passcode') && touched.passcode)}
+                  disabled={status === 'loading' || hasError('passcode')}
                   className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition flex-1 ${
-                    (status === 'loading' || (hasError('passcode') && touched.passcode)) 
+                    (status === 'loading' || hasError('passcode')) 
                       ? 'opacity-70 cursor-not-allowed' 
                       : ''
                   }`}
