@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
-import { FaFileAlt, FaLock, FaTimes } from 'react-icons/fa';
+import { FaFileAlt, FaLock, FaTimes, FaCheck } from 'react-icons/fa';
 
 interface ResumeAccessModalProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface ResumeAccessModalProps {
 
 export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModalProps) {
   const [passcode, setPasscode] = useState<string>('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'downloaded'>('idle');
   const [error, setError] = useState<string>('');
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,14 +49,12 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
-      // Only reset if not in success state
-      if (status !== 'success') {
-        setPasscode('');
-        setStatus('idle');
-        setError('');
-      }
+      // Reset all states when modal closes
+      setPasscode('');
+      setStatus('idle');
+      setError('');
     }
-  }, [isOpen, status]);
+  }, [isOpen]);
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,6 +87,11 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
       setError('An error occurred. Please try again.');
     }
   };
+
+  // Handle download click
+  const handleDownload = () => {
+    setStatus('downloaded');
+  };
   
   if (!isOpen) return null;
   
@@ -114,21 +117,57 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
           <span>Resume Access</span>
         </h2>
         
-        {status === 'success' ? (
+        {status === 'success' && (
           <div className="text-center py-4">
             <p className="text-green-600 mb-4">Passcode validated successfully!</p>
             <a
               href="/documents/jim-lowry-resume.pdf"
-              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition mb-4"
               target="_blank"
               rel="noopener noreferrer"
               download
+              onClick={handleDownload}
             >
               <FaFileAlt size={20} />
               <span>Download Resume</span>
             </a>
+            <button
+              onClick={onClose}
+              className="block w-full text-gray-600 hover:text-gray-800 px-4 py-2 rounded border border-gray-300 transition mt-2"
+            >
+              Close
+            </button>
           </div>
-        ) : (
+        )}
+
+        {status === 'downloaded' && (
+          <div className="text-center py-4">
+            <div className="flex items-center justify-center text-green-600 mb-2">
+              <FaCheck size={24} className="mr-2" />
+              <p className="text-lg font-medium">Download initiated!</p>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Your download has started. If it doesn't begin automatically, 
+              <a 
+                href="/documents/jim-lowry-resume.pdf" 
+                className="text-blue-600 hover:underline ml-1"
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                click here
+              </a>.
+            </p>
+            <button
+              onClick={onClose}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            >
+              Close
+            </button>
+          </div>
+        )}
+        
+        {(status === 'idle' || status === 'loading' || status === 'error') && (
           <>
             <p className="text-gray-600 mb-4">
               Enter your access code to view and download Jim Lowry's resume.

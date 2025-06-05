@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub } from 'react-icons/fa';
 import ResumeAccessButton from '@/components/ResumeAccessButton';
+import ContactFormMessage from '@/components/ContactFormMessage';
 
 export default function Contact() {
   const [name, setName] = useState('');
@@ -16,11 +17,13 @@ export default function Contact() {
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('submitting');
     setError('');
+    setFormSubmitted(false);
     
     // Debug log form data before submission
     console.log('Form data being submitted:', {
@@ -137,9 +140,10 @@ export default function Contact() {
         throw new Error('Failed to submit form');
       }
       
-      // Set success status based on whether resume was requested
-      setStatus(requestResume ? 'success-resume' : 'success');
-      console.log('Form submission successful, status set to:', requestResume ? 'success-resume' : 'success'); // Debug log
+      // Set success status and formSubmitted flag
+      setStatus('success');
+      setFormSubmitted(true);
+      console.log('Form submission successful, status set to: success'); // Debug log
       
       // Clear form
       setName('');
@@ -335,18 +339,8 @@ export default function Contact() {
                   </div>
                 )}
                 
-                {status === 'success' && (
-                  <div className="bg-green-50 border-l-4 border-green-500 p-4">
-                    <p className="text-green-700">Your message has been sent successfully!</p>
-                  </div>
-                )}
-                
-                {status === 'success-resume' && (
-                  <div className="bg-green-50 border-l-4 border-green-500 p-4">
-                    <p className="text-green-700">
-                      Your message and resume request have been submitted. You&apos;ll receive access once approved.
-                    </p>
-                  </div>
+                {formSubmitted && (
+                  <ContactFormMessage isResumeRequest={requestResume} />
                 )}
                 
                 <button
