@@ -1,3 +1,6 @@
+// src/components/Header.tsx
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image'; // Add this import
 import { FaBars, FaTimes } from 'react-icons/fa';
