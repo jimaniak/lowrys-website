@@ -1,17 +1,18 @@
+// src/app/page.tsx
+
 import Image from "next/image";
-import Layout from '@/components/Layout';
 import { FaChartLine, FaLaptopCode, FaTools } from 'react-icons/fa';
 import Head from 'next/head';
 
 export default function Home() {
   return (
-    <Layout>
+    <>
       <Head>
         <title>Jim Lowry, B.S. | Business Process Automation & Financial Analysis Solutions</title>
         <meta name="description" content="Expert in business process optimization, financial analysis, and workflow automation solutions. Bridging technical implementation with business objectives for measurable results." />
         <meta name="keywords" content="business process automation, financial analysis solutions, workflow optimization, data-driven decision making, business technology advisor, process efficiency improvement" />
         <link rel="canonical" href="https://www.lowrys.org/" />
-        
+
         {/* LocalBusiness Schema Markup */}
         <script type="application/ld+json">
           {`
@@ -145,6 +146,6 @@ export default function Home() {
           </a>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

@@ -2,10 +2,10 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image'; // Add this import
+import Image from 'next/image';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import Navigation from './Navigation';
-import MobileNavigation from './MobileNavigation';
+import Navigation from '@/components/Navigation';
+import MobileNavigation from '@/components/MobileNavigation';
 import { useState } from 'react';
 
 const Header = () => {

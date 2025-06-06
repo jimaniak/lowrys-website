@@ -1,10 +1,13 @@
+// src/app/resources/page.tsx
 'use client';
 
-import Layout from '@/components/Layout';
 import { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { FaFileExcel, FaGoogleDrive, FaDownload, FaLock, FaFileAlt, FaChartBar, FaTools, FaClipboardCheck, FaArrowRight, FaEnvelope, FaCheckCircle, FaClock } from 'react-icons/fa';
+import { 
+  FaFileExcel, FaGoogleDrive, FaDownload, FaLock, FaFileAlt, FaChartBar, FaTools, 
+  FaClipboardCheck, FaArrowRight, FaEnvelope, FaCheckCircle, FaClock 
+} from 'react-icons/fa';
 
 // SEO metadata component
 const ResourcesMetadata = () => {
@@ -164,7 +167,7 @@ const ResourceCard = ({ title, description, icon, downloadUrl, isGated = false, 
 
 export default function Resources() {
   return (
-    <Layout>
+    <>
       <ResourcesMetadata />
       
       {/* Hero Section */}
@@ -355,6 +358,6 @@ export default function Resources() {
           </a>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

@@ -1,12 +1,12 @@
+// src/app/skills/page.tsx
 'use client';
 
-import Layout from '@/components/Layout';
 import { FaChartLine, FaLaptopCode, FaTools, FaCheck } from 'react-icons/fa';
 import Head from 'next/head';
 
 export default function Skills() {
   return (
-    <Layout>
+    <>
       <Head>
         <title>Business Automation & Financial Analysis Solutions | Jim Lowry, B.S.</title>
         <meta name="description" content="Specialized expertise in financial process automation, data visualization, workflow optimization, and business intelligence solutions that reduce operational costs and improve decision accuracy." />
@@ -317,6 +317,6 @@ export default function Skills() {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

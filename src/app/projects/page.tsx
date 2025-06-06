@@ -1,6 +1,5 @@
-'use client';
+// src/app/projects/page.tsx
 
-import Layout from '@/components/Layout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaChartBar, FaCode, FaTools, FaExternalLinkAlt, FaDatabase, FaProjectDiagram, FaRobot, FaChartLine, FaLightbulb, FaCheckCircle, FaArrowRight, FaNetworkWired, FaHome, FaShieldAlt, FaWrench, FaServer } from 'react-icons/fa';
@@ -8,7 +7,7 @@ import Head from 'next/head';
 
 export default function Projects() {
   return (
-    <Layout>
+    <>
       <Head>
         <title>Business Solutions & Personal Projects | Jim Lowry, B.S.</title>
         <meta name="description" content="Explore business solutions that delivered measurable results alongside personal technical projects that demonstrate practical implementation skills and technical versatility." />
@@ -750,6 +749,6 @@ export default function Projects() {
           </a>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

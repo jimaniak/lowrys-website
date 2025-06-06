@@ -1,7 +1,6 @@
 // src/app/about/page.tsx
 'use client';
 
-import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { FaLinkedin } from 'react-icons/fa';
 import Head from 'next/head';
@@ -10,7 +9,7 @@ import ResumeAccessButton from '@/components/ResumeAccessButton';
 
 export default function About() {
   return (
-    <Layout>
+    <>
       <Head>
         <title>Experienced Business Process Consultant | Jim Lowry, B.S.</title>
         <meta name="description" content="Versatile consultant with cross-domain expertise in financial analysis, process automation, and technical implementation. Solving complex business challenges with practical solutions." />
@@ -172,6 +171,6 @@ export default function About() {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

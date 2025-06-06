@@ -1,13 +1,12 @@
 // src/app/contact/page.tsx
 'use client';
 
-import Layout from '../../components/Layout';
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaExclamationCircle } from 'react-icons/fa';
-import ResumeAccessButton from '../../components/ResumeAccessButton';
-import ContactFormMessage from '../../components/ContactFormMessage';
-import { useFormValidation, FieldValidationRules } from '../../hooks/useFormValidation';
+import ResumeAccessButton from '@/components/ResumeAccessButton';
+import ContactFormMessage from '@/components/ContactFormMessage';
+import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
 
 // Email validation regex
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -245,7 +244,7 @@ export default function Contact() {
   };
 
   return (
-    <Layout>
+    <>
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
@@ -531,6 +530,6 @@ export default function Contact() {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }
