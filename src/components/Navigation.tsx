@@ -6,32 +6,34 @@ import { usePathname } from 'next/navigation';
 
 const Navigation = () => {
   const pathname = usePathname();
-  
-  const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'About', path: '/about' },
-    { label: 'Skills', path: '/skills' },
-    { label: 'Projects', path: '/projects' },
-    { label: 'Resources', path: '/resources' },
-    { label: 'Contact', path: '/contact' },
-  ];
+
+  const isActive = (path: string) => {
+    return pathname === path ? 'text-blue-400' : 'hover:text-blue-400';
+  };
 
   return (
     <nav className="hidden md:flex space-x-8">
-      {navItems.map((item) => {
-        const isActive = pathname === item.path;
-        return (
-          <Link
-            key={item.path}
-            href={item.path}
-            className={`text-sm font-medium transition-colors hover:text-blue-500 ${
-              isActive ? 'text-blue-600' : 'text-gray-100'
-            }`}
-          >
-            {item.label}
-          </Link>
-        );
-      })}
+      <Link href="/" className={`transition duration-300 ${isActive('/')}`}>
+        Home
+      </Link>
+      <Link href="/about" className={`transition duration-300 ${isActive('/about')}`}>
+        About
+      </Link>
+      <Link href="/skills" className={`transition duration-300 ${isActive('/skills')}`}>
+        Skills
+      </Link>
+      <Link href="/projects" className={`transition duration-300 ${isActive('/projects')}`}>
+        Projects
+      </Link>
+      <Link
+        href="/resources"
+        className={`transition duration-300 ${isActive('/resources')}`}
+      >
+        Resources
+      </Link>
+      <Link href="/contact" className={`transition duration-300 ${isActive('/contact')}`}>
+        Contact
+      </Link>
     </nav>
   );
 };
