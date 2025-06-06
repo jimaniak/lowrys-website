@@ -1,4 +1,4 @@
-//  /src/components/Navigation.tsx
+// src/components/Navigation.tsx
 'use client';
 
 import Link from 'next/link';
@@ -37,4 +37,3 @@ const Navigation = () => {
 };
 
 export default Navigation;
-

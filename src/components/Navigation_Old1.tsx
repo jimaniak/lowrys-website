@@ -1,4 +1,4 @@
-//  /src/components/Navigation.tsx
+// src/components/Navigation.tsx
 'use client';
 
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 
 const Navigation = () => {
   const pathname = usePathname();
-  
+
   const isActive = (path: string) => {
     return pathname === path ? 'text-blue-400' : 'hover:text-blue-400';
   };
@@ -25,9 +25,12 @@ const Navigation = () => {
       <Link href="/projects" className={`transition duration-300 ${isActive('/projects')}`}>
         Projects
       </Link>
-	  <Link href="/resources" className={pathname === '/resources' ? 'active-link' : ''}>
-		Resources
-	  </Link>
+      <Link
+        href="/resources"
+        className={`transition duration-300 ${isActive('/resources')}`}
+      >
+        Resources
+      </Link>
       <Link href="/contact" className={`transition duration-300 ${isActive('/contact')}`}>
         Contact
       </Link>

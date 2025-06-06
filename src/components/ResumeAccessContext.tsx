@@ -2,7 +2,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import ResumeAccessModal from './ResumeAccessModal';
+import ResumeAccessModal from '@/components/ResumeAccessModal';
 
 // Define the context type
 interface ResumeAccessContextType {
@@ -21,10 +21,10 @@ interface ResumeAccessProviderProps {
 // Provider component
 export function ResumeAccessProvider({ children }: ResumeAccessProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   return (
     <ResumeAccessContext.Provider value={{ openModal, closeModal }}>
       {children}

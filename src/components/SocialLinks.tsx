@@ -1,3 +1,5 @@
+// src/components/SocialLinks.tsx
+
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 
 interface SocialLinksProps {
