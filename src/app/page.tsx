@@ -2,68 +2,10 @@
 
 import Image from "next/image";
 import { FaChartLine, FaLaptopCode, FaTools } from 'react-icons/fa';
-import Head from 'next/head';
 
 export default function Home() {
   return (
-    <>
-      <Head>
-        <title>Jim Lowry, B.S. | Business Process Automation & Financial Analysis Solutions</title>
-        <meta name="description" content="Expert in business process optimization, financial analysis, and workflow automation solutions. Bridging technical implementation with business objectives for measurable results." />
-        <meta name="keywords" content="business process automation, financial analysis solutions, workflow optimization, data-driven decision making, business technology advisor, process efficiency improvement" />
-        <link rel="canonical" href="https://www.lowrys.org/" />
-
-        {/* LocalBusiness Schema Markup */}
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "Jim Lowry Business Solutions",
-              "description": "Business process optimization and financial analysis solutions for improved efficiency and data-driven decision making",
-              "url": "https://www.lowrys.org/",
-              "image": "https://www.lowrys.org/images/jim-lowry-profile.jpg",
-              "telephone": "[Your Business Phone]",
-              "email": "[Your Business Email]",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "[Your City]",
-                "addressRegion": "[Your State]",
-                "postalCode": "[Your Zip]",
-                "addressCountry": "US"
-              },
-              "priceRange": "$$",
-              "makesOffer": [
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Business Process Automation",
-                    "description": "Custom workflow automation solutions that reduce manual tasks and operational costs"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Financial Analysis Solutions",
-                    "description": "Data visualization and financial reporting systems that improve decision accuracy"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Technical Implementation",
-                    "description": "Expert implementation of business technology solutions for measurable results"
-                  }
-                }
-              ]
-            }
-          `}
-        </script>
-      </Head>
-
+    <main>
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
@@ -146,6 +88,6 @@ export default function Home() {
           </a>
         </div>
       </section>
-    </>
+    </main>
   );
 }

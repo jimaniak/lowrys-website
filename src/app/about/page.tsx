@@ -3,59 +3,12 @@
 
 import Image from 'next/image';
 import { FaLinkedin } from 'react-icons/fa';
-import Head from 'next/head';
 import ResumeAccessButton from '@/components/ResumeAccessButton';
-//import SocialLinks from '@/components/SocialLinks';
 
+// Note: Metadata should be in a separate layout.tsx file or using generateMetadata
 export default function About() {
   return (
     <>
-      <Head>
-        <title>Experienced Business Process Consultant | Jim Lowry, B.S.</title>
-        <meta name="description" content="Versatile consultant with cross-domain expertise in financial analysis, process automation, and technical implementation. Solving complex business challenges with practical solutions." />
-        <meta name="keywords" content="business process consultant, cross-domain expertise, technical implementation specialist, business solutions expert, process optimization consultant, business efficiency improvements" />
-        <link rel="canonical" href="https://www.lowrys.org/about" />
-        
-        {/* Person Schema Markup */}
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "Person",
-              "name": "Jim Lowry",
-              "givenName": "Jim",
-              "familyName": "Lowry",
-              "honorificSuffix": "B.S.",
-              "description": "Business process optimization and financial analysis solutions consultant specializing in workflow automation and data-driven decision making",
-              "jobTitle": "Business Solutions Consultant",
-              "knowsAbout": [
-                "Business Process Automation",
-                "Financial Analysis",
-                "Data Visualization",
-                "Power Platform Implementation",
-                "Workflow Optimization"
-              ],
-              "alumniOf": {
-                "@type": "CollegeOrUniversity",
-                "name": "Webster University",
-                "department": "George Herbert Walker School of Business & Technology"
-              },
-              "hasCredential": {
-                "@type": "EducationalOccupationalCredential",
-                "credentialCategory": "degree",
-                "name": "Bachelor of Science in Information Management",
-                "educationalLevel": "Undergraduate"
-              },
-              "url": "https://www.lowrys.org/",
-              "image": "https://www.lowrys.org/images/jim-lowry-profile.jpg",
-              "sameAs": [
-                "https://www.linkedin.com/in/jimsitsecurity"
-              ]
-            }
-          `}
-        </script>
-      </Head>
-
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-16">
         <div className="container mx-auto px-4">

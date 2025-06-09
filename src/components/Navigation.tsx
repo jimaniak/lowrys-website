@@ -27,6 +27,7 @@ const Navigation = () => {
             className={`text-sm font-medium transition-colors hover:text-blue-500 ${
               isActive ? 'text-blue-600' : 'text-gray-100'
             }`}
+            prefetch={true}
           >
             {item.label}
           </Link>
