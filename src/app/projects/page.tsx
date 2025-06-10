@@ -3,120 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaChartBar, FaCode, FaTools, FaExternalLinkAlt, FaDatabase, FaProjectDiagram, FaRobot, FaChartLine, FaLightbulb, FaCheckCircle, FaArrowRight, FaNetworkWired, FaHome, FaShieldAlt, FaWrench, FaServer } from 'react-icons/fa';
-import Head from 'next/head';
 
 export default function Projects() {
   return (
-    <>
-      <Head>
-        <title>Business Solutions & Personal Projects | Jim Lowry, B.S.</title>
-        <meta name="description" content="Explore business solutions that delivered measurable results alongside personal technical projects that demonstrate practical implementation skills and technical versatility." />
-        <meta name="keywords" content="business solution case studies, process automation projects, financial dashboard implementation, technical implementation projects, home automation, networking projects" />
-        <link rel="canonical" href="https://www.lowrys.org/projects" />
-        
-        {/* ItemList Schema for Projects */}
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              "itemListElement": [
-                {
-                  "@type": "ListItem",
-                  "position": 1,
-                  "item": {
-                    "@type": "Project",
-                    "name": "AI-Enhanced Web Platform Development",
-                    "description": "Created AIrtisan.net using Next.js and React, leveraging AI collaboration for enhanced development efficiency with advanced SEO optimization.",
-                    "url": "https://www.lowrys.org/projects#airtisan-platform",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Next.js", "React", "AI Development", "SEO Optimization", "Web Platform"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "item": {
-                    "@type": "Project",
-                    "name": "Enterprise Data Unification Initiative",
-                    "description": "Created a unified data architecture with an innovative two-tier development and deployment system that filtered bad data and created accountability.",
-                    "url": "https://www.lowrys.org/projects#enterprise-data-unification",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Data Integration", "Data Governance", "Process Improvement"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 3,
-                  "item": {
-                    "@type": "Project",
-                    "name": "Proactive Resource Management System",
-                    "description": "Developed integration between business planning and project management that automatically created entries in an Automated Work Log at early planning stages.",
-                    "url": "https://www.lowrys.org/projects#resource-management",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Resource Planning", "Process Automation", "Cross-functional Collaboration"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 4,
-                  "item": {
-                    "@type": "Project",
-                    "name": "Enterprise-Grade Home Network",
-                    "description": "Designed and implemented a semi-commercial network infrastructure using professional-grade Ubiquiti equipment including a UDM-Pro, multiple managed switches, and dedicated WiFi access points.",
-                    "url": "https://www.lowrys.org/projects#home-network",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Network Architecture", "Security Implementation", "Redundancy Planning"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 5,
-                  "item": {
-                    "@type": "Project",
-                    "name": "Laundry Room Rebuild",
-                    "description": "Complete renovation of a laundry room including electrical work, plumbing, cabinetry, and smart home integration.",
-                    "url": "https://www.lowrys.org/projects#laundry-room",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Home Improvement", "Electrical Work", "Cabinetry", "Smart Home Integration"]
-                  }
-                },
-                {
-                  "@type": "ListItem",
-                  "position": 6,
-                  "item": {
-                    "@type": "Project",
-                    "name": "Garage Workshop Conversion",
-                    "description": "Ongoing transformation of a garage into a multifunctional space with enhanced electrical systems, custom storage solutions, and optimized workflow layout.",
-                    "url": "https://www.lowrys.org/projects#garage-workshop",
-                    "provider": {
-                      "@type": "Person",
-                      "name": "Jim Lowry, B.S."
-                    },
-                    "keywords": ["Workshop Design", "Custom Storage", "Workflow Optimization"]
-                  }
-                }
-              ]
-            }
-          `}
-        </script>
-      </Head>
-
+    <main>
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
@@ -749,6 +639,6 @@ export default function Projects() {
           </a>
         </div>
       </section>
-    </>
+    </main>
   );
 }

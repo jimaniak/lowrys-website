@@ -1,6 +1,7 @@
 // src/app/page.tsx
 
 import Image from "next/image";
+import Link from "next/link";
 import { FaChartLine, FaLaptopCode, FaTools } from 'react-icons/fa';
 
 export default function Home() {
@@ -17,12 +18,12 @@ export default function Home() {
                 Helping businesses improve efficiency, reduce costs, and make data-driven decisions through customized automation and analytical solutions.
               </p>
               <div className="flex flex-wrap gap-4">
-                <a href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
+                <Link href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
                   Get in Touch
-                </a>
-                <a href="/projects" className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-6 py-3 border border-white rounded-lg transition duration-300">
+                </Link>
+                <Link href="/projects" className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-6 py-3 border border-white rounded-lg transition duration-300">
                   View My Work
-                </a>
+                </Link>
               </div>
             </div>
             <div className="md:w-1/2 flex justify-center">

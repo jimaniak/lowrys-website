@@ -85,7 +85,9 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
       setStatus('idle');
       setApiError('');
     }
-  }, [isOpen, resetForm]);
+    // Only depend on isOpen to avoid infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
