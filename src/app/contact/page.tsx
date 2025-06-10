@@ -103,12 +103,11 @@ export default function Contact() {
     setFormSubmitted(false);
     
     // Debug log form data before submission
-    console.log('Form data being submitted:', values);
+    //
     
     try {
       // If resume was requested, send to API first
       if (values.requestResume) {
-        console.log('Sending resource request to API'); // Debug log
         try {
           const resumeResponse = await fetch('/api/request-resume-access', {
             method: 'POST',
@@ -125,28 +124,39 @@ export default function Contact() {
               category: values.category // Include the selected category
             })
           });
-          
-          console.log('Resource request API response status:', resumeResponse.status); // Debug log
-          
-          // Check if the response is ok before trying to parse it
-          if (!resumeResponse.ok) {
+
+          let responseData;
+          try {
+            responseData = await resumeResponse.json();
+          } catch (jsonErr) {
+            // fallback to text if not JSON
             const errorText = await resumeResponse.text();
-            console.error('API response error:', errorText);
             throw new Error(errorText || 'Failed to process resource request');
           }
-          
-          const responseData = await resumeResponse.json();
-          console.log('Resource request API response data:', responseData); // Debug log
-          
+
+          if (!resumeResponse.ok) {
+            // If the backend provided a structured error, show it nicely
+            if (responseData && responseData.message) {
+              let msg = responseData.message;
+              if (responseData.remaining || responseData.expiresAt) {
+                msg += `\nExpires: ${responseData.expiresAt ? new Date(responseData.expiresAt).toLocaleString() : ''}`;
+                if (responseData.remaining) msg += ` (in ${responseData.remaining})`;
+              }
+              setApiError(msg);
+            } else {
+              setApiError(`Resource request error: ${responseData && responseData.message ? responseData.message : 'Unknown error'}`);
+            }
+            setStatus('error');
+            return;
+          }
         } catch (err) {
-          console.error('Error processing resource request:', err);
           setApiError(`Resource request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
-          return; // Stop execution if resource request fails
+          return;
         }
       } else {
         // If not a resource request, still send to our API for regular message processing
-        console.log('Sending regular message to API'); // Debug log
+        //
         try {
           const messageResponse = await fetch('/api/request-resume-access', {
             method: 'POST',
@@ -162,19 +172,19 @@ export default function Contact() {
             })
           });
           
-          console.log('Regular message API response status:', messageResponse.status); // Debug log
+          //
           
           if (!messageResponse.ok) {
             const errorText = await messageResponse.text();
-            console.error('API response error:', errorText);
+            // Optionally handle error in production
             throw new Error(errorText || 'Failed to send message');
           }
           
           const responseData = await messageResponse.json();
-          console.log('Regular message API response data:', responseData); // Debug log
+          //
           
         } catch (err) {
-          console.error('Error sending message:', err);
+          // Optionally handle error in production
           setApiError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return;
@@ -182,7 +192,7 @@ export default function Contact() {
       }
       
       // Then submit to Formspree (regardless of resource request)
-      console.log('Submitting to Formspree'); // Debug log
+      //
       const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
         method: 'POST',
         headers: {
@@ -199,7 +209,7 @@ export default function Contact() {
         })
       });
       
-      console.log('Formspree response status:', formspreeResponse.status); // Debug log
+      //
       
       if (!formspreeResponse.ok) {
         throw new Error('Failed to submit form');
@@ -208,12 +218,12 @@ export default function Contact() {
       // Set success status and formSubmitted flag
       setStatus('success');
       setFormSubmitted(true);
-      console.log('Form submission successful, status set to: success'); // Debug log
+      //
       
       // Reset form
       resetForm();
     } catch (err) {
-      console.error('Error submitting form:', err);
+      // Optionally handle error in production
       setApiError('An error occurred. Please try again.');
       setStatus('error');
     }
@@ -304,7 +314,7 @@ export default function Contact() {
                   <div>
                     <h3 className="font-semibold text-lg">LinkedIn</h3>
                     <a href="https://www.linkedin.com/in/jimsitsecurity" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">linkedin.com/in/MyLinkedIn
-					</a>
+          </a>
                   </div>
                 </div>
                 

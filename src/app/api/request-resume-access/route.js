@@ -15,14 +15,14 @@ import { db } from '@/lib/firebase-admin';
 export async function POST(request) {
   try {
     const body = await request.json();
-    console.log('Received form submission:', body); // Debug log
+    //
     
     const { name, email, company, message, requestResume, category = 'resume', reason } = body; // Added category with default
-    console.log('Extracted form data:', { name, email, company, message, requestResume, category }); // Debug log
+    //
     
     // Validate request
     if (!name || !email) {
-      console.log('Missing required fields:', { name, email }); // Debug log
+      //
       return NextResponse.json(
         { 
           success: false,
@@ -34,37 +34,76 @@ export async function POST(request) {
     
     // If this is a resume request
     if (requestResume) {
-      console.log(`Processing ${category} request for:`, email); // Debug log
+      //
       
-      // Check for existing active requests in the same category
+      // Check for existing active, unexpired requests in the same category
       try {
+        const now = new Date();
         const resumeRequestsRef = db.collection('resumeRequests');
         const existingRequests = await resumeRequestsRef
           .where('email', '==', email)
           .where('category', '==', category)
           .where('status', 'in', ['pending', 'approved'])
+          .where('passcodeExpiresAt', '>', now)
           .get();
-        
+
         if (!existingRequests.empty) {
-          console.log(`User ${email} already has an active request for category: ${category}`);
-          return NextResponse.json(
-            { 
-              success: false,
-              message: `You already have an active request for ${getCategoryDisplayName(category)}. Please wait for approval or use your existing access code.`
-            },
-            { status: 400 }
-          );
+          // Get the soonest expiring request
+          let soonestDoc = null;
+          let soonest = null;
+          existingRequests.forEach(doc => {
+            const data = doc.data();
+            if (!soonest || (data.passcodeExpiresAt && data.passcodeExpiresAt.toDate() < soonest.passcodeExpiresAt.toDate())) {
+              soonest = data;
+              soonestDoc = doc;
+            }
+          });
+          let expiresAt = soonest?.passcodeExpiresAt?.toDate();
+          let remainingMs = expiresAt ? expiresAt - now : null;
+          let remainingStr = remainingMs ? `${Math.floor(remainingMs/3600000)}h ${Math.floor((remainingMs%3600000)/60000)}m` : 'unknown';
+
+          // If status is 'approved', resend passcode email
+          if (soonest && soonest.status === 'approved') {
+            try {
+              if (soonest.email && soonest.passcode && soonestDoc && soonestDoc.id) {
+                const { sendPasscodeEmail } = await import('@/lib/resumeAccessUtils');
+                await sendPasscodeEmail(soonest.email, soonest.passcode, soonestDoc.id);
+              }
+            } catch (resendError) {
+              // Optionally log resend error
+            }
+            return NextResponse.json(
+              {
+                success: false,
+                message: `You already have an active request for ${getCategoryDisplayName(category)}. The passcode email has been resent. It will expire in ${remainingStr} (at ${expiresAt ? expiresAt.toLocaleString() : 'unknown'}).`,
+                expiresAt: expiresAt,
+                remaining: remainingStr,
+                resent: true
+              },
+              { status: 400 }
+            );
+          } else {
+            // If status is 'pending', inform user to wait for approval
+            return NextResponse.json(
+              {
+                success: false,
+                message: `You already have a pending request for ${getCategoryDisplayName(category)}. It is still awaiting approval and will expire in ${remainingStr} (at ${expiresAt ? expiresAt.toLocaleString() : 'unknown'}).`,
+                expiresAt: expiresAt,
+                remaining: remainingStr,
+                resent: false
+              },
+              { status: 400 }
+            );
+          }
         }
-        
-        console.log('No duplicate requests found, proceeding with new request');
       } catch (checkError) {
-        console.error('Error checking for existing requests:', checkError);
+        // Optionally handle error in production
         // Continue with request creation even if check fails (fail open for better UX)
       }
       
       // Generate request ID
       const requestId = generateRequestId();
-      console.log('Generated request ID:', requestId); // Debug log
+      //
       
       // Store request - now including the message field and category
       try {
@@ -78,12 +117,12 @@ export async function POST(request) {
           status: 'pending',
           timestamp: new Date().toISOString() 
         };
-        console.log('Storing request with ID:', requestId, 'with data:', requestData); // Debug log
+        //
         
         await storeRequest(requestId, requestData);
-        console.log('Request stored successfully in Firestore'); // Debug log
+        //
       } catch (storeError) {
-        console.error('Error storing request:', storeError);
+        // Optionally handle error in production
         return NextResponse.json(
           { 
             success: false,
@@ -95,7 +134,7 @@ export async function POST(request) {
       
       // Send FCM notification with detailed error handling
       try {
-        console.log('Sending FCM notification for request:', requestId); // Debug log
+        //
         
         await sendNotification(
           requestId,

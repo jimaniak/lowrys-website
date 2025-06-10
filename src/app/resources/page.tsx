@@ -67,7 +67,7 @@ const ResourceCard = ({ title, description, icon, downloadUrl, isGated = false, 
     e.preventDefault();
     // In a real implementation, this would send the data to your backend
     // and then either redirect to the download or email the resource
-    console.log('Resource requested:', { name, email, resource: title });
+    //
     setSubmitted(true);
   };
   

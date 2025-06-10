@@ -33,7 +33,7 @@ export async function sendNotification(requestId, name, email, company, reason, 
     const tokensSnapshot = await admin.firestore().collection('fcmTokens').get();
     
     if (tokensSnapshot.empty) {
-      console.log('No FCM tokens found');
+      //
       return;
     }
     
@@ -80,13 +80,13 @@ export async function sendNotification(requestId, name, email, company, reason, 
     const successes = results.filter(result => !(result instanceof Error));
     const failures = results.filter(result => result instanceof Error);
     
-    console.log(`Notification sent to ${successes.length} devices`);
+    //
     
     if (failures.length > 0) {
-      console.error(`Failed to send to ${failures.length} devices:`, failures);
+      // Optionally handle error in production
     }
   } catch (error) {
-    console.error('Error sending notification:', error);
+    // Optionally handle error in production
     throw error;
   }
 }
@@ -96,19 +96,19 @@ export async function sendAuditEmail(requestData) {
   const { name, email, company, reason, message, requestId } = requestData;
   
   // Create email transporter
-	const transporter = nodemailer.createTransport({
-	  host: process.env.EMAIL_HOST,
-	  port: process.env.EMAIL_PORT,
-	  secure: process.env.EMAIL_SECURE === 'true',
-	  auth: {
-		user: process.env.EMAIL_USER,
-		pass: process.env.EMAIL_PASSWORD
-	  },
-	  tls: {
-		// Do not fail on invalid certs
-		rejectUnauthorized: false
-	  }
-	});
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+    // Do not fail on invalid certs
+    rejectUnauthorized: false
+    }
+  });
   
   // Email content
   const mailOptions = {
@@ -148,19 +148,19 @@ export async function sendRegularMessage(messageData) {
   const { name, email, company, message } = messageData;
   
   // Create email transporter
-	const transporter = nodemailer.createTransport({
-	  host: process.env.EMAIL_HOST,
-	  port: process.env.EMAIL_PORT,
-	  secure: process.env.EMAIL_SECURE === 'true',
-	  auth: {
-		user: process.env.EMAIL_USER,
-		pass: process.env.EMAIL_PASSWORD
-	  },
-	  tls: {
-		// Do not fail on invalid certs
-		rejectUnauthorized: false
-	  }
-	});
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+    // Do not fail on invalid certs
+    rejectUnauthorized: false
+    }
+  });
 
   
   // Email content

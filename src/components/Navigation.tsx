@@ -18,8 +18,7 @@ const Navigation = () => {
   ];
 
   const handleClick = (path: string) => {
-    console.log('Navigation clicked:', path);
-    console.log('Current pathname:', pathname);
+
   };
 
   return (

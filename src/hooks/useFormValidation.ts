@@ -142,7 +142,7 @@ export function useFormValidation<T extends Record<string, any>>(
       try {
         await onSubmit(values);
       } catch (error) {
-        console.error('Form submission error:', error);
+        // Optionally handle error in production
       } finally {
         setIsSubmitting(false);
       }

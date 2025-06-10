@@ -8,7 +8,7 @@ if (!global.firebaseAdmin) {
     if (!process.env.FIREBASE_PROJECT_ID || 
         !process.env.FIREBASE_CLIENT_EMAIL || 
         !process.env.FIREBASE_PRIVATE_KEY) {
-      console.error('Missing required Firebase Admin environment variables');
+      // Optionally handle error in production
       // Initialize with a minimal config for development/build
       admin.initializeApp({
         projectId: process.env.FIREBASE_PROJECT_ID || 'lowrys-resume-access'
@@ -34,12 +34,12 @@ if (!global.firebaseAdmin) {
     }
     
     global.firebaseAdmin = admin;
-    console.log('Firebase Admin initialized successfully');
+    //
   } catch (error) {
-    console.error('Firebase Admin initialization error:', error);
+    // Optionally handle error in production
   }
 } else {
-  console.log('Firebase Admin already initialized');
+  //
 }
 
 // Create and export the Firestore database instance

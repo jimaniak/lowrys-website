@@ -21,9 +21,9 @@ export default function AdminNotifications() {
         errorDetails: errorDetails ? JSON.stringify(errorDetails) : null,
         timestamp: new Date()
       });
-      console.log('Error logged to Firestore:', errorType, errorMessage);
+      // Optionally handle error in production
     } catch (err) {
-      console.error('Failed to log error to Firestore:', err);
+      // Optionally handle error in production
     }
   };
 
@@ -31,17 +31,17 @@ export default function AdminNotifications() {
   const registerServiceWorker = async () => {
     try {
       if ('serviceWorker' in navigator) {
-        console.log('Registering service worker...');
+        //
         const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
           scope: '/'
         });
-        console.log('Service Worker registered with scope:', registration.scope);
+        //
         return registration;
       } else {
         throw new Error('Service workers not supported');
       }
     } catch (error) {
-      console.error('Service Worker registration failed:', error);
+      // Optionally handle error in production
       await logErrorToFirestore('service_worker_registration', 'Service Worker registration failed', error);
       throw error;
     }
@@ -53,23 +53,23 @@ export default function AdminNotifications() {
       const errorMsg = 'This browser does not support notifications';
       setError(errorMsg);
       logErrorToFirestore('browser_support', errorMsg);
-      console.log(errorMsg);
+      //
       return;
     }
 
-    console.log('AdminNotifications component mounted');
+    //
 
     // Set initial permission state
     setNotificationPermission(Notification.permission);
-    console.log('Initial notification permission:', Notification.permission);
+    //
 
     // Set up FCM
     const setupFCM = async () => {
       try {
-        console.log('Setting up Firebase Cloud Messaging...');
+        //
 
         if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-          console.log('Service Worker is supported by this browser');
+          //
 
           // Register service worker explicitly
           try {

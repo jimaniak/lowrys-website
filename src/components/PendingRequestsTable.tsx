@@ -53,7 +53,7 @@ export default function PendingRequestsTable() {
       let requestsData: Request[] = [];
       const now = Date.now();
       const twentyFourHours = 24 * 60 * 60 * 1000;
-      const batch = [];
+      const batch: Promise<any>[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         let status = data.status || 'pending';
@@ -66,11 +66,17 @@ export default function PendingRequestsTable() {
         } else if (ts instanceof Date) {
           tsMs = ts.getTime();
         }
+        // Debug: log each request's status and timestamp
+
         // If pending and older than 24 hours, expire it
         if (status === 'pending' && tsMs && (now - tsMs > twentyFourHours)) {
           status = 'expired';
           // Update Firestore in the background
-          batch.push(doc.ref.update({ status: 'expired', expiredAt: new Date() }));
+          batch.push(
+            updateDoc(doc.ref, { status: 'expired', expiredAt: new Date() })
+              .then(() => {})
+              .catch((err) => {/* Optionally handle error in production */})
+          );
         }
         requestsData.push({
           id: doc.id,
@@ -96,7 +102,7 @@ export default function PendingRequestsTable() {
       }
       setRequests(requestsData);
     } catch (err) {
-      console.error('Error fetching requests:', err);
+      // Optionally handle error in production
       setError('Failed to load requests. Please try again.');
     } finally {
       setLoading(false);
@@ -118,7 +124,7 @@ export default function PendingRequestsTable() {
         setError(`Failed to approve request: ${data.message}`);
       }
     } catch (err) {
-      console.error('Error approving request:', err);
+      // Optionally handle error in production
       setError('Failed to approve request. Please try again.');
     } finally {
       setProcessingId(null);
@@ -140,7 +146,7 @@ export default function PendingRequestsTable() {
         setError(`Failed to deny request: ${data.message}`);
       }
     } catch (err) {
-      console.error('Error denying request:', err);
+      // Optionally handle error in production
       setError('Failed to deny request. Please try again.');
     } finally {
       setProcessingId(null);
@@ -169,7 +175,7 @@ export default function PendingRequestsTable() {
       
       return 'Invalid date';
     } catch (err) {
-      console.error('Error formatting date:', err);
+      // Optionally handle error in production
       return 'Invalid date';
     }
   };
