@@ -101,11 +101,9 @@ export default function Contact() {
     setStatus('submitting');
     setApiError('');
     setFormSubmitted(false);
-    
-    // Debug log form data before submission
-    //
-    
+
     try {
+      let resourceRequestSuccess = true;
       // If resume was requested, send to API first
       if (values.requestResume) {
         try {
@@ -135,6 +133,7 @@ export default function Contact() {
           }
 
           if (!resumeResponse.ok) {
+            resourceRequestSuccess = false;
             // If the backend provided a structured error, show it nicely
             if (responseData && responseData.message) {
               let msg = responseData.message;
@@ -150,13 +149,13 @@ export default function Contact() {
             return;
           }
         } catch (err) {
+          resourceRequestSuccess = false;
           setApiError(`Resource request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return;
         }
       } else {
         // If not a resource request, still send to our API for regular message processing
-        //
         try {
           const messageResponse = await fetch('/api/request-resume-access', {
             method: 'POST',
@@ -171,59 +170,46 @@ export default function Contact() {
               requestResume: false // Explicitly set requestResume flag to false
             })
           });
-          
-          //
-          
+
           if (!messageResponse.ok) {
             const errorText = await messageResponse.text();
-            // Optionally handle error in production
             throw new Error(errorText || 'Failed to send message');
           }
-          
-          const responseData = await messageResponse.json();
-          //
-          
+          await messageResponse.json();
         } catch (err) {
-          // Optionally handle error in production
           setApiError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
           setStatus('error');
           return;
         }
       }
-      
-      // Then submit to Formspree (regardless of resource request)
-      //
-      const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          message: values.message,
-          requestResume: values.requestResume,
-          category: values.requestResume ? values.category : 'N/A',
-          company: values.requestResume ? values.company : 'N/A',
-          reason: values.requestResume ? values.reason : 'N/A'
-        })
-      });
-      
-      //
-      
-      if (!formspreeResponse.ok) {
-        throw new Error('Failed to submit form');
+
+      // Only submit to Formspree and reset form if resource request succeeded (or not a resource request)
+      if (resourceRequestSuccess) {
+        const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: values.name,
+            email: values.email,
+            message: values.message,
+            requestResume: values.requestResume,
+            category: values.requestResume ? values.category : 'N/A',
+            company: values.requestResume ? values.company : 'N/A',
+            reason: values.requestResume ? values.reason : 'N/A'
+          })
+        });
+
+        if (!formspreeResponse.ok) {
+          throw new Error('Failed to submit form');
+        }
+
+        setStatus('success');
+        setFormSubmitted(true);
+        resetForm();
       }
-      
-      // Set success status and formSubmitted flag
-      setStatus('success');
-      setFormSubmitted(true);
-      //
-      
-      // Reset form
-      resetForm();
     } catch (err) {
-      // Optionally handle error in production
       setApiError('An error occurred. Please try again.');
       setStatus('error');
     }
