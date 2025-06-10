@@ -1,6 +1,7 @@
 // src/app/api/deny-resume-request/route.js
 import { NextResponse } from 'next/server';
 import { admin } from '../../../lib/firebase-admin';
+import { sendDenialEmail } from '@/lib/resumeAccessUtils';
 
 export async function GET(request) {
   try {
@@ -15,23 +16,35 @@ export async function GET(request) {
       );
     }
     
-    // Update the request status in Firestore
-    await admin.firestore().collection('resumeRequests').doc(id).update({
-      status: 'denied',
-      deniedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-    
-    // Get the request details
+
+    // Get the request details first
     const requestDoc = await admin.firestore().collection('resumeRequests').doc(id).get();
-    
     if (!requestDoc.exists) {
       return NextResponse.json(
         { success: false, message: 'Request not found' },
         { status: 404 }
       );
     }
-    
     const requestData = requestDoc.data();
+
+    // Update the request status in Firestore
+    await admin.firestore().collection('resumeRequests').doc(id).update({
+      status: 'denied',
+      deniedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Send denial email to requester (no passcode)
+    try {
+      await sendDenialEmail({
+        name: requestData.name,
+        email: requestData.email,
+        category: requestData.category || 'resume',
+        reason: '' // Optionally add a reason field if available
+      });
+    } catch (emailErr) {
+      console.error('Error sending denial email:', emailErr);
+      // Continue even if email fails
+    }
     
     // Send a confirmation notification to the admin (without using 'actions' field)
     try {
@@ -83,7 +96,7 @@ export async function GET(request) {
     
     return NextResponse.json({ 
       success: true, 
-      message: 'Resume request denied successfully',
+      message: 'Resume request denied successfully. The requester has been notified.',
       requestId: id
     });
   } catch (error) {

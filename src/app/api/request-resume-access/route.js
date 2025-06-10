@@ -36,16 +36,16 @@ export async function POST(request) {
     if (requestResume) {
       //
       
-      // Check for existing active, unexpired requests in the same category
+      // Check for existing active, unexpired requests in the same category, or recent denial
       try {
         const now = new Date();
         const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         const resumeRequestsRef = db.collection('resumeRequests');
-        // Get all pending/approved requests for this email/category
+        // Get all pending/approved/denied requests for this email/category
         const existingRequestsSnap = await resumeRequestsRef
           .where('email', '==', email)
           .where('category', '==', category)
-          .where('status', 'in', ['pending', 'approved'])
+          .where('status', 'in', ['pending', 'approved', 'denied'])
           .get();
 
         let soonestDoc = null;
@@ -55,6 +55,7 @@ export async function POST(request) {
         let soonestPasscode = null;
         let soonestEmail = null;
         let soonestDocId = null;
+        let recentDenial = null;
 
         for (const doc of existingRequestsSnap.docs) {
           const data = doc.data();
@@ -93,7 +94,32 @@ export async function POST(request) {
                 soonestDocId = doc.id;
               }
             }
+          } else if (data.status === 'denied') {
+            // If deniedAt is within the last 24h, block new requests
+            let deniedAt = data.deniedAt;
+            let deniedDate = null;
+            if (deniedAt && typeof deniedAt.toDate === 'function') {
+              deniedDate = deniedAt.toDate();
+            } else if (typeof deniedAt === 'string') {
+              deniedDate = new Date(deniedAt);
+            } else if (deniedAt instanceof Date) {
+              deniedDate = deniedAt;
+            }
+            if (deniedDate && deniedDate > twentyFourHoursAgo) {
+              recentDenial = deniedDate;
+            }
           }
+        }
+
+        if (recentDenial) {
+          return NextResponse.json(
+            {
+              success: false,
+              message: `Your previous request was denied. You must wait 24 hours before submitting another request. (Next allowed: ${new Date(recentDenial.getTime() + 24 * 60 * 60 * 1000).toLocaleString()})`,
+              deniedUntil: new Date(recentDenial.getTime() + 24 * 60 * 60 * 1000)
+            },
+            { status: 400 }
+          );
         }
 
         if (soonest) {

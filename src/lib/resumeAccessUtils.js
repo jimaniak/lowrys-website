@@ -1,3 +1,28 @@
+// Send denial email to requester
+export async function sendDenialEmail({ name, email, category, reason }) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+
+  const resourceName = category ? (category.charAt(0).toUpperCase() + category.slice(1)) : 'Resource';
+  const mailOptions = {
+    from: `"${resourceName} Access System" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `${resourceName} Access Request Denied`,
+    text: `Dear ${name},\n\nYour request to access the ${resourceName.toLowerCase()} has been denied.${reason ? `\n\nReason: ${reason}` : ''}\n\nIf you have questions, please contact the site owner.`,
+    html: `<h2>${resourceName} Access Request Denied</h2><p>Dear ${name},</p><p>Your request to access the <strong>${resourceName.toLowerCase()}</strong> has been <span style='color:red;'>denied</span>.</p>${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}<p>If you have questions, please contact the site owner.</p>`
+  };
+  await transporter.sendMail(mailOptions);
+}
 // src/lib/resumeAccessUtils.js
 import { admin } from './firebase-admin';
 import nodemailer from 'nodemailer';
