@@ -123,14 +123,8 @@ export default function Contact() {
             })
           });
 
-          let responseData;
-          try {
-            responseData = await resumeResponse.json();
-          } catch (jsonErr) {
-            // fallback to text if not JSON
-            const errorText = await resumeResponse.text();
-            throw new Error(errorText || 'Failed to process resource request');
-          }
+          // Always parse as JSON, even for errors
+          let responseData = await resumeResponse.json();
 
           if (!resumeResponse.ok) {
             resourceRequestSuccess = false;

@@ -1,11 +1,8 @@
 lowrys-website/
 ├── public/
 │   ├── documents/
-│   │   └── jim-lowry-resume.pdf
-│   ├── protected-documents/          # NEW: Directory for access-controlled files by category
-│   │   ├── resume/                   # Resume-specific protected files
-│   │   ├── free_item/                # Free item downloads
-│   │   └── portfolio/                # Portfolio-specific protected files
+│   │   ├── jim-lowry-resume.pdf
+│   │   └── business-process-health-assessment.xlsx
 │   ├── favicon/
 │   │   ├── android-chrome-192x192.png
 │   │   ├── android-chrome-512x512.png
@@ -25,8 +22,6 @@ lowrys-website/
 │   │       └── web-development/
 │   │           └── airtisan-platform.png
 │   ├── firebase-messaging-sw.js      # FCM service worker for background notifications
-│   ├── icon-192x192.png              # Icon for FCM notifications
-│   ├── icon-512x512.png              # Icon for FCM notifications
 │   ├── file.svg
 │   ├── globe.svg
 │   ├── next.svg
@@ -35,69 +30,72 @@ lowrys-website/
 ├── src/
 │   ├── app/
 │   │   ├── about/
+│   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
-│   │   ├── admin/                    # Admin area for FCM notifications
-│   │   │   └── page.tsx              # Enhanced admin interface with pending requests table
+│   │   ├── admin/
+│   │   │   └── page.tsx
 │   │   ├── api/
-│   │   │   ├── approve-resume-request/    # API endpoint for approving resume requests with category support
+│   │   │   ├── approve-resume-request/
 │   │   │   │   └── route.js
-│   │   │   ├── deny-resume-request/       # API endpoint for denying resume requests
+│   │   │   ├── deny-resume-request/
 │   │   │   │   └── route.js
-│   │   │   ├── request-resume-access/     # Updated to handle both messages and resume requests with categories
-│   │   │   │   └── route.js               # Now includes duplicate request prevention by category
-│   │   │   └── validate-passcode/         # Updated to validate passcodes with category support
+│   │   │   ├── request-resume-access/
+│   │   │   │   └── route.js
+│   │   │   └── validate-passcode/
 │   │   │       └── route.js
 │   │   ├── contact/
-│   │   │   └── page.tsx               # Updated with category selection dropdown
+│   │   │   └── page.tsx
 │   │   ├── projects/
+│   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
 │   │   ├── resources/
-│   │   │   └── page.tsx (to be implemented)
+│   │   │   └── page.tsx
 │   │   ├── skills/
 │   │   │   └── page.tsx
 │   │   ├── globals.css
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── components/
-│   │   ├── AdminNotifications.tsx    # React component for FCM notifications
-│   │   ├── ContactFormMessage.tsx    # Component for displaying form submission messages
+│   │   ├── AdminNotifications.tsx
+│   │   ├── ContactFormMessage.tsx
 │   │   ├── Header.tsx
 │   │   ├── Layout.tsx
 │   │   ├── MobileNavigation.tsx
 │   │   ├── Navigation.tsx
-│   │   ├── PendingRequestsTable.tsx  # New component for displaying and managing pending requests with category support
-│   │   ├── ResumeAccess.tsx          # Updated to work with FCM instead of Twilio
-│   │   ├── ResumeAccessButton.tsx    # Button component for triggering resume access modal
-│   │   ├── ResumeAccessContext.tsx   # Context provider for resume access state
-│   │   ├── ResumeAccessModal.tsx     # Modal component for entering passcode with validation
+│   │   ├── PendingRequestsTable.tsx
+│   │   ├── ResumeAccess-TBDeleted.jsx
+│   │   ├── ResumeAccessButton.tsx
+│   │   ├── ResumeAccessContext.tsx
+│   │   ├── ResumeAccessModal.tsx
 │   │   └── SocialLinks.tsx
+│   ├── firebase/
+│   │   └── config.ts
 │   ├── hooks/
-│   │   └── useFormValidation.ts      # Custom hook for form validation
+│   │   └── useFormValidation.ts
 │   └── lib/
-│       ├── firebase-admin.js         # Server-side Firebase Admin SDK initialization
-│       ├── firebase-client.ts        # Client-side Firebase config for FCM with TypeScript
-│       └── resumeAccessUtils.js      # Updated to use FCM instead of Twilio with category support
+│       ├── firebase-admin.js
+│       ├── firebase-client.ts
+│       └── resumeAccessUtils.js
+├── functions/
+│   ├── index.js
+│   └── package.json
+├── resume-emails/
+│   ├── index.js
+│   └── package.json
 ├── docs/
-│   └── category_testing_guide.md     # Guide for testing the category-based access management system
-├── .env.local                        # Updated with FCM environment variables:
-│                                     # - NEXT_PUBLIC_FIREBASE_API_KEY
-│                                     # - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-│                                     # - NEXT_PUBLIC_FIREBASE_PROJECT_ID
-│                                     # - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-│                                     # - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-│                                     # - NEXT_PUBLIC_FIREBASE_APP_ID
-│                                     # - NEXT_PUBLIC_FIREBASE_VAPID_KEY
-│                                     # - FIREBASE_CLIENT_EMAIL
-│                                     # - FIREBASE_PRIVATE_KEY
-│                                     # - EMAIL_* configuration
-│                                     # - SITE_URL
+│   └── category_testing_guide.md
+├── .env.local
 ├── .eslintrc.json
 ├── .gitignore
 ├── eslint.config.mjs
-├── next.config.js
-├── next.config.ts
+├── next.config.mjs
 ├── next-env.d.ts
-├── package.json                      # Updated with FCM dependencies:
+├── package.json
+├── postcss.config.mjs
+├── project_structure.md
+├── README.md
+├── tailwind.config.js
+├── tsconfig.json
 │                                     # - firebase
 │                                     # - firebase-admin
 ├── postcss.config.mjs

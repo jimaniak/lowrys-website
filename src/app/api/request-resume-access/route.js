@@ -15,14 +15,14 @@ import { db } from '@/lib/firebase-admin';
 export async function POST(request) {
   try {
     const body = await request.json();
-    //
-    
-    const { name, email, company, message, requestResume, category = 'resume', reason } = body; // Added category with default
-    //
-    
+    // Always normalize email to lowercase for duplicate checks and storage
+    const { name, company, message, requestResume, category = 'resume', reason } = body;
+    const email = body.email ? body.email.toLowerCase() : '';
+    // DEBUG: Log start of duplicate check
+    console.log(`[DEBUG] Checking for active requests for email=${email}, category=${category}`);
+
     // Validate request
     if (!name || !email) {
-      //
       return NextResponse.json(
         { 
           success: false,
@@ -39,35 +39,76 @@ export async function POST(request) {
       // Check for existing active, unexpired requests in the same category
       try {
         const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         const resumeRequestsRef = db.collection('resumeRequests');
-        const existingRequests = await resumeRequestsRef
+        // Get all pending/approved requests for this email/category
+        const existingRequestsSnap = await resumeRequestsRef
           .where('email', '==', email)
           .where('category', '==', category)
           .where('status', 'in', ['pending', 'approved'])
-          .where('passcodeExpiresAt', '>', now)
           .get();
 
-        if (!existingRequests.empty) {
-          // Get the soonest expiring request
-          let soonestDoc = null;
-          let soonest = null;
-          existingRequests.forEach(doc => {
-            const data = doc.data();
-            if (!soonest || (data.passcodeExpiresAt && data.passcodeExpiresAt.toDate() < soonest.passcodeExpiresAt.toDate())) {
-              soonest = data;
-              soonestDoc = doc;
-            }
-          });
-          let expiresAt = soonest?.passcodeExpiresAt?.toDate();
-          let remainingMs = expiresAt ? expiresAt - now : null;
-          let remainingStr = remainingMs ? `${Math.floor(remainingMs/3600000)}h ${Math.floor((remainingMs%3600000)/60000)}m` : 'unknown';
+        let soonestDoc = null;
+        let soonest = null;
+        let soonestExpiresAt = null;
+        let soonestStatus = null;
+        let soonestPasscode = null;
+        let soonestEmail = null;
+        let soonestDocId = null;
 
-          // If status is 'approved', resend passcode email
-          if (soonest && soonest.status === 'approved') {
+        for (const doc of existingRequestsSnap.docs) {
+          const data = doc.data();
+          if (data.status === 'approved') {
+            // Only consider if passcodeExpiresAt is in the future
+            if (data.passcodeExpiresAt && data.passcodeExpiresAt.toDate() > now) {
+              if (!soonest || data.passcodeExpiresAt.toDate() < soonestExpiresAt) {
+                soonest = data;
+                soonestDoc = doc;
+                soonestExpiresAt = data.passcodeExpiresAt.toDate();
+                soonestStatus = 'approved';
+                soonestPasscode = data.passcode;
+                soonestEmail = data.email;
+                soonestDocId = doc.id;
+              }
+            }
+          } else if (data.status === 'pending') {
+            // Only consider if created/updated within last 24h
+            let ts = data.timestamp;
+            let tsDate = null;
+            if (ts && typeof ts.toDate === 'function') {
+              tsDate = ts.toDate();
+            } else if (typeof ts === 'string') {
+              tsDate = new Date(ts);
+            } else if (ts instanceof Date) {
+              tsDate = ts;
+            }
+            if (tsDate && tsDate > twentyFourHoursAgo) {
+              if (!soonest || tsDate < soonestExpiresAt) {
+                soonest = data;
+                soonestDoc = doc;
+                soonestExpiresAt = tsDate;
+                soonestStatus = 'pending';
+                soonestPasscode = data.passcode;
+                soonestEmail = data.email;
+                soonestDocId = doc.id;
+              }
+            }
+          }
+        }
+
+        if (soonest) {
+          let expiresAt = null;
+          let remainingMs = null;
+          let remainingStr = 'unknown';
+          if (soonestStatus === 'approved') {
+            expiresAt = soonestExpiresAt;
+            remainingMs = expiresAt - now;
+            remainingStr = remainingMs ? `${Math.floor(remainingMs/3600000)}h ${Math.floor((remainingMs%3600000)/60000)}m` : 'unknown';
+            // Resend passcode email
             try {
-              if (soonest.email && soonest.passcode && soonestDoc && soonestDoc.id) {
+              if (soonestEmail && soonestPasscode && soonestDocId) {
                 const { sendPasscodeEmail } = await import('@/lib/resumeAccessUtils');
-                await sendPasscodeEmail(soonest.email, soonest.passcode, soonestDoc.id);
+                await sendPasscodeEmail(soonestEmail, soonestPasscode, soonestDocId);
               }
             } catch (resendError) {
               // Optionally log resend error
@@ -82,8 +123,11 @@ export async function POST(request) {
               },
               { status: 400 }
             );
-          } else {
-            // If status is 'pending', inform user to wait for approval
+          } else if (soonestStatus === 'pending') {
+            // For pending, expires 24h after creation
+            expiresAt = new Date(soonestExpiresAt.getTime() + 24 * 60 * 60 * 1000);
+            remainingMs = expiresAt - now;
+            remainingStr = remainingMs ? `${Math.floor(remainingMs/3600000)}h ${Math.floor((remainingMs%3600000)/60000)}m` : 'unknown';
             return NextResponse.json(
               {
                 success: false,
@@ -95,6 +139,8 @@ export async function POST(request) {
               { status: 400 }
             );
           }
+        } else {
+          console.log('[DEBUG] No active requests found, proceeding to create new request.');
         }
       } catch (checkError) {
         // Optionally handle error in production
@@ -109,7 +155,7 @@ export async function POST(request) {
       try {
         const requestData = { 
           name, 
-          email, 
+          email, // already lowercased
           company, 
           message, // Store the message content
           reason, // Store the reason if provided
@@ -231,7 +277,6 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-}
 
 // Helper function to get a display name for a category
 function getCategoryDisplayName(category) {
@@ -241,5 +286,9 @@ function getCategoryDisplayName(category) {
     'portfolio': 'Portfolio'
   };
   
-  return displayNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
+    return displayNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
+}
+// FIX: Add missing closing brace for the file
+// End of file
+// removed stray closing brace
 }
