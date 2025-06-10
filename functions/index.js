@@ -1,3 +1,33 @@
+// Scheduled function to expire pending requests older than 24 hours
+const {onSchedule} = require("firebase-functions/v2/scheduler");
+
+exports.expireOldPendingRequests = onSchedule("every 1 hours", async (event) => {
+  const db = admin.firestore();
+  const now = Date.now();
+  const twentyFourHoursAgo = now - 24 * 60 * 60 * 1000;
+  const pendingRef = db.collection('resumeRequests').where('status', '==', 'pending');
+  const snapshot = await pendingRef.get();
+  let expiredCount = 0;
+  for (const doc of snapshot.docs) {
+    const data = doc.data();
+    let ts = data.timestamp;
+    if (ts && ts.toDate) {
+      ts = ts.toDate().getTime();
+    } else if (typeof ts === 'string') {
+      ts = new Date(ts).getTime();
+    } else if (ts instanceof Date) {
+      ts = ts.getTime();
+    } else {
+      continue; // skip if no valid timestamp
+    }
+    if (ts < twentyFourHoursAgo) {
+      await doc.ref.update({ status: 'expired', expiredAt: admin.firestore.FieldValue.serverTimestamp() });
+      expiredCount++;
+    }
+  }
+  logger.info(`Expired ${expiredCount} pending requests older than 24 hours.`);
+  return { expiredCount };
+});
 /**
  * Import function triggers from their respective submodules:
  *

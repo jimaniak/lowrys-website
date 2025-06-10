@@ -51,20 +51,42 @@ export default function PendingRequestsTable() {
       const q = query(collection(db, 'resumeRequests'), orderBy('timestamp', 'desc'));
       const querySnapshot = await getDocs(q);
       let requestsData: Request[] = [];
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+      const batch = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
+        let status = data.status || 'pending';
+        let ts = data.timestamp;
+        let tsMs = null;
+        if (ts && ts.toDate) {
+          tsMs = ts.toDate().getTime();
+        } else if (typeof ts === 'string') {
+          tsMs = new Date(ts).getTime();
+        } else if (ts instanceof Date) {
+          tsMs = ts.getTime();
+        }
+        // If pending and older than 24 hours, expire it
+        if (status === 'pending' && tsMs && (now - tsMs > twentyFourHours)) {
+          status = 'expired';
+          // Update Firestore in the background
+          batch.push(doc.ref.update({ status: 'expired', expiredAt: new Date() }));
+        }
         requestsData.push({
           id: doc.id,
           name: data.name || '',
           email: data.email || '',
           company: data.company || '',
           message: data.message || '',
-          status: data.status || 'pending',
-          category: data.category || 'resume', // Default to 'resume' for backward compatibility
+          status,
+          category: data.category || 'resume',
           timestamp: data.timestamp || data.createdAt || null
         });
       });
-
+      // Run all Firestore updates in parallel
+      if (batch.length > 0) {
+        await Promise.all(batch);
+      }
       // Filter by status and category on the client side
       if (statusFilter !== 'all') {
         requestsData = requestsData.filter(r => r.status === statusFilter);
@@ -72,7 +94,6 @@ export default function PendingRequestsTable() {
       if (categoryFilter !== 'all') {
         requestsData = requestsData.filter(r => (r.category === categoryFilter || (!r.category && categoryFilter === 'resume')));
       }
-
       setRequests(requestsData);
     } catch (err) {
       console.error('Error fetching requests:', err);
