@@ -43,40 +43,36 @@ export default function PendingRequestsTable() {
     { value: 'expired', label: 'Expired' }
   ];
 
-  // Function to fetch requests from Firestore
+  // Function to fetch requests from Firestore (client-side filtering)
   const fetchRequests = async () => {
     setLoading(true);
     setError(null);
     try {
-      let q = query(collection(db, 'resumeRequests'), orderBy('timestamp', 'desc'));
-      
-      // Apply status filter if not 'all'
-      if (statusFilter !== 'all') {
-        q = query(collection(db, 'resumeRequests'), 
-                 where('status', '==', statusFilter),
-                 orderBy('timestamp', 'desc'));
-      }
-      
+      const q = query(collection(db, 'resumeRequests'), orderBy('timestamp', 'desc'));
       const querySnapshot = await getDocs(q);
-      const requestsData: Request[] = [];
-      
+      let requestsData: Request[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        // Apply category filter client-side (since we can't combine multiple where clauses with orderBy)
-        if (categoryFilter === 'all' || data.category === categoryFilter || !data.category && categoryFilter === 'resume') {
-          requestsData.push({
-            id: doc.id,
-            name: data.name || '',
-            email: data.email || '',
-            company: data.company || '',
-            message: data.message || '',
-            status: data.status || 'pending',
-            category: data.category || 'resume', // Default to 'resume' for backward compatibility
-            timestamp: data.timestamp || data.createdAt || null
-          });
-        }
+        requestsData.push({
+          id: doc.id,
+          name: data.name || '',
+          email: data.email || '',
+          company: data.company || '',
+          message: data.message || '',
+          status: data.status || 'pending',
+          category: data.category || 'resume', // Default to 'resume' for backward compatibility
+          timestamp: data.timestamp || data.createdAt || null
+        });
       });
-      
+
+      // Filter by status and category on the client side
+      if (statusFilter !== 'all') {
+        requestsData = requestsData.filter(r => r.status === statusFilter);
+      }
+      if (categoryFilter !== 'all') {
+        requestsData = requestsData.filter(r => (r.category === categoryFilter || (!r.category && categoryFilter === 'resume')));
+      }
+
       setRequests(requestsData);
     } catch (err) {
       console.error('Error fetching requests:', err);
