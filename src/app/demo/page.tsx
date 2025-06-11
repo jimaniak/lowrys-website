@@ -206,17 +206,21 @@ export default function AnalyticsDemo() {
           <h2 className="text-2xl font-bold mb-2">Regional Trends Globe</h2>
           <p className="mb-2 text-gray-700">Regions are color-coded by disaster trend (2024 vs. 2010–2020 avg): <span style={{color:'#1976d2'}}>blue</span> = decrease, <span style={{color:'#aaa'}}>white</span> = same, <span style={{color:'#d32f2f'}}>red</span> = increase.</p>
           <div style={{ width: '100%', height: 400 }}>
-            <Globe
-              globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-              pointsData={globePoints}
-              pointLat="lat"
-              pointLng="lng"
-              pointColor="color"
-              pointAltitude="size"
-              pointLabel={(d: any) => `${d['region']}: ${d['pctChange'] > 0 ? '+' : ''}${d['pctChange'].toFixed(1)}%`}
-              width={600}
-              height={400}
-            />
+            {globePoints.length > 0 && !loading && !error ? (
+              <Globe
+                globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+                pointsData={globePoints}
+                pointLat="lat"
+                pointLng="lng"
+                pointColor="color"
+                pointAltitude="size"
+                pointLabel={(d: any) => `${d['region']}: ${d['pctChange'] > 0 ? '+' : ''}${d['pctChange'].toFixed(1)}%`}
+                width={600}
+                height={400}
+              />
+            ) : (
+              <div className="text-gray-500 text-center pt-20">No regional data to display.</div>
+            )}
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
