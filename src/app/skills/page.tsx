@@ -9,9 +9,9 @@ export default function Skills() {
   return (
     <>
       <Head>
-        <title>Data Analytics, Power BI & Power Platform Skills | Jim Lowry, B.S.</title>
-        <meta name="description" content="Jim Lowry's expertise in data analytics, Microsoft Power BI, Power Query/M, Power Platform, and business intelligence. Committed to continuous learning in SQL, Tableau, and Google Data Studio." />
-        <meta name="keywords" content="data analytics, Power BI, Power Query, Power Platform, business intelligence, automation, SQL, Tableau, Google Data Studio, continuous learning, Jim Lowry" />
+        <title>Analytics & Power BI Skills | Data Engineering, BI Consulting, Automation | Jim Lowry</title>
+        <meta name="description" content="Explore Jim Lowry's analytics, Power BI, and data engineering skills. Specializing in business intelligence, automation, and consulting for organizations seeking actionable insights and measurable value." />
+        <meta name="keywords" content="data analytics, business intelligence, BI, Power BI, Power Query, Power Platform, data engineering, analytics consulting, automation, SQL, Tableau, Google Data Studio, analytics skills, analytics professional, analytics consultant, analytics for business, analytics for organizations, analytics for consulting, analytics for decision making, analytics for risk management, analytics for public sector, analytics for enterprise, analytics for government, analytics for non-profits, Jim Lowry" />
         <link rel="canonical" href="https://www.lowrys.org/skills" />
         {/* Service Schema Markup */}
         <script type="application/ld+json">
@@ -21,7 +21,7 @@ export default function Skills() {
               "@type": "Person",
               "name": "Jim Lowry, B.S.",
               "url": "https://www.lowrys.org/",
-              "description": "Data analytics, Power BI, Power Query/M, Power Platform, business intelligence, automation, and continuous learning."
+              "description": "Analytics, Power BI, Power Query, Power Platform, business intelligence, automation, data engineering, and consulting."
             }
           `}
         </script>
@@ -30,9 +30,9 @@ export default function Skills() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Data Analytics & Power Platform Skills</h1>
+          <h1 className="text-4xl font-bold mb-4">Analytics, Power BI & Data Engineering Skills</h1>
           <p className="text-xl max-w-3xl">
-            Specialized in Microsoft Power BI, Power Query (M), and the Power Platform—turning data into actionable insights and automating business processes for measurable results.
+            Demonstrating expertise in analytics, business intelligence, Power BI, Power Query, and automation. Delivering actionable insights, robust data solutions, and measurable value for organizations and consulting clients.
           </p>
         </div>
       </section>

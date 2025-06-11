@@ -1,5 +1,8 @@
+
+
 // src/app/demo/page.tsx
-'use client';
+
+"use client";
 
 import { useEffect, useState, useMemo } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
@@ -402,9 +405,11 @@ export default function AnalyticsDemo() {
   return (
     <main className="min-h-screen bg-gray-50 py-6 sm:py-12">
       <div className="container mx-auto px-2 sm:px-4 max-w-3xl w-full">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-blue-700">Global Disaster Analytics Demo</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-blue-700">
+          Global Disaster Analytics Demo: Data-Driven Insights & BI Solutions
+        </h1>
         <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-700">
-          Explore global natural disaster trends by region and type, using real EM-DAT-style data. Compare recent years to historical averages and see how the world is changing.
+          Global disaster trends are brought to life through interactive analytics, advanced data visualizations, and business intelligence best practices. This platform is designed to support organizations, consultants, and decision-makers in analyzing risk, monitoring events, and driving strategic action with Power BI, data engineering, and automation. Robust, actionable insights and modern analytics solutions are delivered to meet the needs of professionals and enterprises seeking data-driven results.
         </p>
         <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500">
           <b>Data Source:</b> EM-DAT (The International Disaster Database), <a href="https://public.emdat.be/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">https://public.emdat.be/</a><br />

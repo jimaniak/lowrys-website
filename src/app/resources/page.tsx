@@ -13,11 +13,11 @@ import {
 const ResourcesMetadata = () => {
   return (
     <Head>
-      <title>Business Resources & Templates | Jim Lowry</title>
-      <meta name="description" content="Access free business templates, assessments, and tools created by Jim Lowry, Business Solutions Consultant. Download professional resources to improve your business operations." />
-      <meta name="keywords" content="business resources, process templates, business assessment tools, free business downloads, Jim Lowry" />
-      <meta property="og:title" content="Business Resources & Templates | Jim Lowry" />
-      <meta property="og:description" content="Access free business templates, assessments, and tools created by Jim Lowry, Business Solutions Consultant." />
+      <title>Business Resources & Analytics Templates | BI, Power BI, Data Engineering | Jim Lowry</title>
+      <meta name="description" content="Access professional business resources, analytics templates, and BI tools by Jim Lowry. Designed for organizations and consultants seeking data-driven solutions, automation, and measurable business value." />
+      <meta name="keywords" content="business resources, analytics templates, business intelligence, BI, Power BI, data engineering, process templates, assessment tools, automation, analytics consulting, analytics for business, analytics for organizations, analytics for consulting, analytics for decision making, analytics for risk management, analytics for public sector, analytics for enterprise, analytics for government, analytics for non-profits, Jim Lowry" />
+      <meta property="og:title" content="Business Resources & Analytics Templates | BI, Power BI, Data Engineering | Jim Lowry" />
+      <meta property="og:description" content="Professional business resources, analytics templates, and BI tools by Jim Lowry. Data-driven solutions and automation for measurable business value." />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://www.lowrys.org/resources" />
       <link rel="canonical" href="https://www.lowrys.org/resources" />
@@ -26,8 +26,8 @@ const ResourcesMetadata = () => {
           {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "headline": "Business Resources & Templates",
-            "description": "Access free business templates, assessments, and tools created by Jim Lowry, Business Solutions Consultant.",
+            "headline": "Business Resources & Analytics Templates",
+            "description": "Professional business resources, analytics templates, and BI tools by Jim Lowry. Data-driven solutions and automation for measurable business value.",
             "author": {
               "@type": "Person",
               "name": "Jim Lowry",
