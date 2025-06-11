@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Experienced Business Process Consultant | Jim Lowry, B.S.',
-  description: 'Versatile consultant with cross-domain expertise in financial analysis, process automation, and technical implementation. Solving complex business challenges with practical solutions.',
-  keywords: 'business process consultant, cross-domain expertise, technical implementation specialist, business solutions expert, process optimization consultant, business efficiency improvements',
+  title: 'About | Data Analytics & Power Platform | Jim Lowry, B.S.',
+  description: 'Learn about Jim Lowry, a specialist in data analytics, Microsoft Power BI, Power Query/M, Power Platform, and business intelligence. Committed to continuous learning and honest skills assessment.',
+  keywords: 'about Jim Lowry, data analytics, Power BI, Power Query, Power Platform, business intelligence, continuous learning, analytics career, SQL, Tableau, Google Data Studio',
   alternates: {
     canonical: 'https://www.lowrys.org/about'
   }

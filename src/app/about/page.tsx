@@ -14,7 +14,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">About Jim Lowry, B.S.</h1>
           <p className="text-xl max-w-3xl">
-            Learn how my business process optimization approach has helped organizations reduce operational costs, improve efficiency, and make better data-driven decisions.
+            Data Analytics & Power Platform Specialist | Turning Data Into Actionable Insights
           </p>
         </div>
       </section>
@@ -25,32 +25,19 @@ export default function About() {
           <div className="flex flex-col md:flex-row gap-12">
             {/* Left Column - Bio */}
             <div className="md:w-2/3">
-              <h2 className="text-3xl font-bold mb-6">My Business Solutions Approach</h2>
+              <h2 className="text-3xl font-bold mb-6">My Analytics & Business Solutions Approach</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  I&apos;m Jim Lowry, B.S., a business solutions consultant specializing in process automation, financial analysis systems, and technical implementations that solve critical business challenges. Throughout my career, I&apos;ve helped organizations transform manual processes into efficient automated workflows that deliver measurable ROI.
+                  I&apos;m Jim Lowry, B.S., a data analytics and business solutions consultant specializing in Microsoft Power Platform, Power BI, and Power Query (M). My passion is helping organizations transform raw data into actionable insights and automate processes for measurable business impact.
                 </p>
                 <p className="text-lg">
-                  With extensive experience in data analysis and digital solutions, I&apos;ve helped organizations optimize 
-                  their business performance and identify growth opportunities. My analytical mindset allows me to transform 
-                  complex data into actionable insights, regardless of the platform or technology involved.
+                  I focus on building interactive dashboards, automating workflows, and integrating data across systems—empowering teams to make smarter, faster decisions. My core strengths are in Power BI, Power Query/M, and the broader Power Platform suite, with a growing skillset in SQL, Tableau, and Google Data Studio.
                 </p>
                 <p className="text-lg">
-                  In the technical realm, I apply the same logical principles across various platforms and languages, 
-                  from spreadsheet applications to database systems, automation tools, and programming environments. 
-                  I understand that while syntax may differ, the underlying logic remains consistent, allowing me to 
-                  adapt quickly to new technologies and deliver effective solutions.
+                  I believe in honest self-assessment and continuous learning. While I have deep expertise in Power Platform and data analytics, I am actively expanding my toolkit to include more advanced data engineering and visualization tools. My learning journey is ongoing, and I’m committed to staying at the forefront of analytics best practices.
                 </p>
                 <p className="text-lg">
-                  What sets me apart is my comprehensive approach to problem-solving. I combine analytical thinking with 
-                  practical implementation, drawing on my diverse background to develop solutions that address both 
-                  technical requirements and business needs. This cross-domain perspective enables me to see connections 
-                  and opportunities that might be missed by those with more narrowly focused backgrounds.
-                </p>
-                <p className="text-lg">
-                  I&apos;m passionate about continuous learning and applying my diverse skill set to deliver comprehensive 
-                  solutions across multiple domains. My professional goal is to leverage my cross-domain expertise to create 
-                  meaningful impact through innovative and efficient technical solutions.
+                  My approach combines analytical thinking, technical implementation, and a drive for practical results. I thrive on solving complex business challenges and delivering solutions that bridge the gap between data, technology, and real-world business needs.
                 </p>
               </div>
 
@@ -60,30 +47,27 @@ export default function About() {
                   Bachelor of Science in Information Management, George Herbert Walker School of Business & Technology, Webster University
                 </p>
                 <p className="text-lg">
-                  My academic background provides a strong theoretical foundation that complements my practical experience in delivering business solutions that drive measurable results.
+                  My academic background provides a strong foundation in information systems, analytics, and business process optimization.
                 </p>
               </div>
 
-              <h2 className="text-3xl font-bold mt-12 mb-6">My Business Optimization Methodology</h2>
+              <h2 className="text-3xl font-bold mt-12 mb-6">Analytics Methodology & Learning Journey</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  My consulting approach follows a proven methodology:
+                  My analytics and business optimization methodology is rooted in:
                 </p>
                 <ol className="list-decimal pl-6 space-y-2">
-                  <li className="text-lg"><strong>Business Process Analysis:</strong> Identifying inefficiencies and bottlenecks in current workflows</li>
-                  <li className="text-lg"><strong>Solution Design:</strong> Creating custom automation and analytical solutions tailored to your specific business needs</li>
-                  <li className="text-lg"><strong>Implementation:</strong> Deploying solutions with minimal disruption to ongoing operations</li>
-                  <li className="text-lg"><strong>Measurement:</strong> Tracking key performance indicators to quantify efficiency gains and ROI</li>
-                  <li className="text-lg"><strong>Continuous Improvement:</strong> Refining solutions based on real-world performance data</li>
+                  <li className="text-lg"><strong>Data Discovery:</strong> Identifying key data sources and business questions</li>
+                  <li className="text-lg"><strong>Solution Design:</strong> Building custom analytics and automation solutions using Power BI, Power Query/M, and Power Platform</li>
+                  <li className="text-lg"><strong>Implementation:</strong> Delivering solutions that integrate seamlessly with business operations</li>
+                  <li className="text-lg"><strong>Measurement:</strong> Tracking KPIs and business outcomes to ensure real value</li>
+                  <li className="text-lg"><strong>Continuous Improvement:</strong> Iterating and learning from every project, always seeking new skills and better results</li>
                 </ol>
                 <p className="text-lg">
-                  This systematic approach ensures that every solution delivers tangible business value and measurable results.
+                  <strong>Current learning goals:</strong> Deepening my expertise in SQL, Tableau, and Google Data Studio to complement my Power Platform skills and deliver even more impactful analytics solutions.
                 </p>
                 <p className="text-lg">
-                  My diverse background allows me to communicate effectively with stakeholders at all levels, translating 
-                  complex technical concepts into business terms and vice versa. This ability to bridge different domains 
-                  makes me a valuable asset in cross-functional teams, where I can adapt to various technical environments 
-                  while maintaining focus on business objectives.
+                  I communicate effectively with both technical and business stakeholders, translating complex analytics into clear, actionable insights. My cross-domain perspective helps me see connections and opportunities that drive innovation.
                 </p>
               </div>
             </div>
@@ -95,16 +79,14 @@ export default function About() {
                 <div className="w-48 h-48 mx-auto mb-6 overflow-hidden rounded-full">
                   <Image 
                     src="/images/jim-lowry-profile.jpg"
-                    alt="Jim Lowry, Business Process Automation Consultant"
+                    alt="Jim Lowry, Data Analytics & Power Platform Specialist"
                     width={192}
                     height={192}
                     className="object-cover w-full h-full object-[center_top]"
                   />
                 </div>
-                
                 <h3 className="text-xl font-bold mb-4 text-center">Jim Lowry, B.S.</h3>
-                <p className="text-center mb-6">Business Solutions Consultant</p>
-              
+                <p className="text-center mb-6">Data Analytics & Power Platform Specialist</p>
                 <div className="space-y-4">
                   <a 
                     href="https://www.linkedin.com/in/jimsitsecurity" 
@@ -115,8 +97,6 @@ export default function About() {
                     <FaLinkedin size={24} />
                     <span>LinkedIn Profile</span>
                   </a>
-                  
-                  {/* Resume Access Button - Replaced ResumeAccess component */}
                   <ResumeAccessButton variant="primary" />
                 </div>
               </div>

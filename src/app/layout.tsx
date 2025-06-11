@@ -9,8 +9,9 @@ import { ResumeAccessProvider } from '@/components/ResumeAccessContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Jim Lowry | Professional Portfolio',
-  description: 'Professional portfolio showcasing my skills, projects, and experience.',
+  title: 'Jim Lowry | Data Analytics & Power Platform Specialist',
+  description: 'Portfolio of Jim Lowry, specializing in data analytics, Microsoft Power BI, Power Query/M, Power Platform, and business intelligence. Committed to continuous learning and delivering actionable insights.',
+  keywords: 'data analytics, Power BI, Power Query, Power Platform, business intelligence, automation, SQL, Tableau, Google Data Studio, continuous learning, Jim Lowry',
   icons: {
     icon: [
       { url: '/favicon/favicon.ico' },

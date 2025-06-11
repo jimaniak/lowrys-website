@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Business Solutions & Personal Projects | Jim Lowry, B.S.',
-  description: 'Explore business solutions that delivered measurable results alongside personal technical projects that demonstrate practical implementation skills and technical versatility.',
-  keywords: 'business solution case studies, process automation projects, financial dashboard implementation, technical implementation projects, home automation, networking projects',
+  title: 'Analytics & Power Platform Projects | Jim Lowry, B.S.',
+  description: 'Explore analytics, Power BI, Power Query/M, and Power Platform projects by Jim Lowry. See how data analytics and automation deliver measurable business impact and support continuous learning.',
+  keywords: 'analytics projects, Power BI, Power Query, Power Platform, business intelligence, automation, SQL, Tableau, Google Data Studio, Jim Lowry',
   alternates: {
     canonical: 'https://www.lowrys.org/projects'
   }
