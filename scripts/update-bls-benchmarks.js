@@ -5,33 +5,58 @@
 
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
-const dotenv = require('dotenv');
+// Use global fetch (Node.js 18+)
+const unzipper = require('unzipper');
+const xlsx = require('xlsx');
 
-// Load .env.local (if present)
-const envPath = path.join(__dirname, '../.env.local');
-if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
+// BLS OEWS National data (update year as needed)
+const BLS_OEWS_ZIP_URL = 'https://www.bls.gov/oes/special.requests/oesm23nat.zip';
+const XLSX_FILENAME = 'oesm23nat/national_M2023_dl.xlsx';
+
+async function downloadAndExtractCSV(url, filename) {
+  console.log('Downloading BLS OEWS ZIP:', url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to download BLS OEWS ZIP: ' + res.status);
+  const buffer = Buffer.from(await res.arrayBuffer());
+  // Extract CSV from ZIP
+  const directory = await unzipper.Open.buffer(buffer);
+  console.log('Files in ZIP:', directory.files.map(f => f.path));
+  const file = directory.files.find(f => f.path === XLSX_FILENAME);
+  if (!file) throw new Error('XLSX file not found in ZIP');
+  const xlsxBuffer = await file.buffer();
+  return xlsxBuffer;
 }
 
-const BLS_URL = process.env.BLS_URL;
-if (!BLS_URL) {
-  console.error('BLS_URL is not set in .env.local');
-  process.exit(1);
+function buildHierarchy(records) {
+  // Example: group by OCC_GROUP (Major Group), then by OCC_TITLE (Occupation)
+  // You can refine this logic to match your app's needs
+  const hierarchy = {};
+  for (const rec of records) {
+    const group = rec['OCC_GROUP'] || 'Other';
+    if (!hierarchy[group]) hierarchy[group] = { group, occupations: [] };
+    hierarchy[group].occupations.push({
+      code: rec['OCC_CODE'],
+      title: rec['OCC_TITLE'],
+      employment: rec['TOT_EMP'],
+      mean_wage: rec['MEAN_ANNUAL'],
+      mean_hourly: rec['MEAN_HOURLY'],
+      // Add more fields as needed
+    });
+  }
+  return Object.values(hierarchy);
 }
 
 async function updateBLS() {
   try {
-    console.log('Fetching latest BLS hierarchical data...');
-    const res = await fetch(BLS_URL);
-    if (!res.ok) throw new Error('Failed to fetch BLS data: ' + res.status);
-    const blsRaw = await res.json();
-
-    // Optionally, transform the data to your hierarchical format here
-    // For now, we assume the downloaded file is already in the correct format
-    // If you need to transform, replace the next line with your logic
-    const hierarchical = blsRaw;
-
+    // Download and extract XLSX
+    const xlsxBuffer = await downloadAndExtractCSV(BLS_OEWS_ZIP_URL, XLSX_FILENAME);
+    // Parse XLSX
+    const workbook = xlsx.read(xlsxBuffer, { type: 'buffer' });
+    // Use the first sheet
+    const sheetName = workbook.SheetNames[0];
+    const records = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
+    // Transform to hierarchy
+    const hierarchical = buildHierarchy(records);
     // Write to public/data/bls-benchmarks-hierarchical.json
     const outPath = path.join(__dirname, '../public/data/bls-benchmarks-hierarchical.json');
     fs.writeFileSync(outPath, JSON.stringify(hierarchical, null, 2));
