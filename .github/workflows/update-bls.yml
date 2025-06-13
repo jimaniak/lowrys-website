@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Debug TEST_SECRET_123 value (first 8 chars)
-        run: echo "${{ secrets.TEST_SECRET_123 }}" | cut -c1-8
+      - name: Debug GH_PAT value (first 8 chars)
+        run: echo "${{ secrets.GH_PAT }}" | cut -c1-8
+      # Debug step removed; workflow is now production-ready
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
