@@ -18,7 +18,7 @@ jobs:
         run: npm install
       - name: Run update script
         run: node scripts/update-bls-benchmarks.js
-      - name: Set up authenticated git
+      - name: Commit and push changes with PAT
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
@@ -28,17 +28,6 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git
           echo "After set-url, git remote -v:"
           git remote -v
-
-      - name: Debug git remote and user
-        run: |
-          git remote -v
-          git config --get user.name
-          git config --get user.email
-          echo "Current branch: $(git branch --show-current)"
-          echo "GitHub ref: ${{ github.ref }}"
-
-      - name: Commit and push changes
-        run: |
           git add public/data/bls-benchmarks-hierarchical.json
           git commit -m 'Update BLS benchmarks (automated)' || echo "No changes to commit"
           git push origin HEAD:${{ github.ref }}
