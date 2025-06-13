@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
+      - name: Debug GH_PAT value (first 8 chars)
+        run: echo "${{ secrets.GH_PAT }}" | cut -c1-8
   update-bls:
     runs-on: ubuntu-latest
     steps:
