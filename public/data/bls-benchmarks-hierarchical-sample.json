@@ -1,0 +1,72 @@
+{
+  "2024-05-01": {
+    "11": {
+      "name": "Management Occupations",
+      "minor_groups": {
+        "1110": {
+          "name": "Top Executives",
+          "broad_occupations": {
+            "111011": {
+              "name": "Chief Executives",
+              "detailed_occupations": {
+                "11101100": {
+                  "name": "Chief Executives",
+                  "regions": {
+                    "US": { "wage": { "mean_annual": 200000 }, "benefits": { "avg_annual": 62000 } },
+                    "CA": { "wage": { "mean_annual": 210000 }, "benefits": { "avg_annual": 65000 } }
+                  }
+                }
+              }
+            },
+            "111021": {
+              "name": "General and Operations Managers",
+              "detailed_occupations": {
+                "11102100": {
+                  "name": "General and Operations Managers",
+                  "regions": {
+                    "US": { "wage": { "mean_annual": 120000 }, "benefits": { "avg_annual": 37200 } },
+                    "CA": { "wage": { "mean_annual": 130000 }, "benefits": { "avg_annual": 40300 } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "15": {
+      "name": "Computer and Mathematical Occupations",
+      "minor_groups": {
+        "1510": {
+          "name": "Computer Occupations",
+          "broad_occupations": {
+            "151252": {
+              "name": "Software Developers",
+              "detailed_occupations": {
+                "15125200": {
+                  "name": "Software Developers",
+                  "regions": {
+                    "US": { "wage": { "mean_annual": 120000 }, "benefits": { "avg_annual": 37200 } },
+                    "CA": { "wage": { "mean_annual": 130000 }, "benefits": { "avg_annual": 40300 } }
+                  }
+                }
+              }
+            },
+            "151244": {
+              "name": "Network and Computer Systems Administrators",
+              "detailed_occupations": {
+                "15124400": {
+                  "name": "Network and Computer Systems Administrators",
+                  "regions": {
+                    "US": { "wage": { "mean_annual": 95000 }, "benefits": { "avg_annual": 29500 } },
+                    "CA": { "wage": { "mean_annual": 102000 }, "benefits": { "avg_annual": 31620 } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
