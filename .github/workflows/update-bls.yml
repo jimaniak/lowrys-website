@@ -1,0 +1,28 @@
+name: Update BLS Benchmarks
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  update-bls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Run update script
+        run: node scripts/update-bls-benchmarks.js
+      # Optionally, commit and push changes if you want to update the repo
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add public/data/bls-benchmarks-hierarchical.json
+          git commit -m 'Update BLS benchmarks (automated)' || echo "No changes to commit"
+          git push

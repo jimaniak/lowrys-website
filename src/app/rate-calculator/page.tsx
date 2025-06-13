@@ -47,7 +47,7 @@ export default function Page() {
 
   // Load hierarchical data
   useEffect(() => {
-    fetch("/data/bls-benchmarks-hierarchical-sample.json")
+    fetch("/data/bls-benchmarks-hierarchical.json")
       .then(res => res.json())
       .then(json => {
         setData(json);
