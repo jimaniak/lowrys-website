@@ -293,24 +293,24 @@ export default function Page() {
         <div className="mb-8 relative z-10">
           <div className="flex flex-wrap gap-4 mb-4">
             <div>
-              <label className="block text-green-900 font-semibold mb-1">Major Group</label>
-              <select className="border-2 border-amber-200 rounded-lg px-3 py-2" value={selectedMajor} onChange={e => setSelectedMajor(e.target.value)}>
+              <label className="block text-green-900 font-semibold mb-1 dark:text-green-300">Major Group</label>
+              <select className="border-2 border-amber-200 rounded-lg px-3 py-2 dark:bg-slate-800 dark:text-gray-100 dark:border-slate-600" value={selectedMajor} onChange={e => setSelectedMajor(e.target.value)}>
                 {majorGroups.map(mg => <option key={mg.code} value={mg.code}>{mg.name}</option>)}
               </select>
             </div>
             
             <div>
-              <label className="block text-green-900 font-semibold mb-1">Search Detailed Occupation</label>
+              <label className="block text-green-900 font-semibold mb-1 dark:text-green-300">Search Detailed Occupation</label>
               <input
                 type="text"
                 placeholder="Type to search all detailed occupations..."
-                className="border-2 border-amber-200 rounded-lg px-3 py-2 mb-2 w-full"
+                className="border-2 border-amber-200 rounded-lg px-3 py-2 mb-2 w-full dark:bg-slate-800 dark:text-gray-100 dark:border-slate-600"
                 value={detailedOccupationSearch}
                 onChange={e => setDetailedOccupationSearch(e.target.value)}
               />
-              <label className="block text-green-900 font-semibold mb-1">Detailed Occupation</label>
+              <label className="block text-green-900 font-semibold mb-1 dark:text-green-300">Detailed Occupation</label>
               <select
-                className="border-2 border-amber-200 rounded-lg px-3 py-2 w-full" // Added w-full for better layout
+                className="border-2 border-amber-200 rounded-lg px-3 py-2 w-full dark:bg-slate-800 dark:text-gray-100 dark:border-slate-600" // Added w-full for better layout
                 value={selectedDetailed}
                 onChange={e => setSelectedDetailed(e.target.value)}
                 disabled={filteredDetailedOccupations.length === 0}
@@ -324,8 +324,8 @@ export default function Page() {
             </div>
 
             <div>
-              <label className="block text-green-900 font-semibold mb-1">U.S. State</label>
-              <select className="border-2 border-amber-200 rounded-lg px-3 py-2" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)}>
+              <label className="block text-green-900 font-semibold mb-1 dark:text-green-300">U.S. State</label>
+              <select className="border-2 border-amber-200 rounded-lg px-3 py-2 dark:bg-slate-800 dark:text-gray-100 dark:border-slate-600" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)}>
                 {regions.map(r => <option key={r} value={r}>{US_STATE_NAMES[r] || r}</option>)}
               </select>
             </div>
