@@ -5,7 +5,7 @@
   // (must be after "use client")
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // US State codes to names (add more as needed)
 const US_STATE_NAMES: Record<string, string> = {
@@ -17,21 +17,19 @@ const US_STATE_NAMES: Record<string, string> = {
 
 export default function Page() {
   // Add employmentType state for toggle functionality
-  const [employmentType, setEmploymentType] = useState<'consulting' | 'employee'>('consulting');
+  const [employmentType, setEmploymentType] = useState<'consulting' | 'employee'>('employee');
   const [data, setData] = useState<any>(null);
   const [lastRefreshed, setLastRefreshed] = useState<string>("");
 
   // Hierarchical selection state
   const [majorGroups, setMajorGroups] = useState<any[]>([]);
   const [selectedMajor, setSelectedMajor] = useState<string>("");
-  const [minorGroups, setMinorGroups] = useState<any[]>([]);
-  const [selectedMinor, setSelectedMinor] = useState<string>("");
-  const [broadOccupations, setBroadOccupations] = useState<any[]>([]);
-  const [selectedBroad, setSelectedBroad] = useState<string>("");
   const [detailedOccupations, setDetailedOccupations] = useState<any[]>([]);
   const [selectedDetailed, setSelectedDetailed] = useState<string>("");
   const [regions, setRegions] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string>("US");
+  // Use a ref to store the merged detail map for the current major group
+  const mergedDetailMapRef = useRef(new Map());
 
   // Benchmark state
   const [blsWage, setBlsWage] = useState<number | null>(null);
@@ -59,88 +57,56 @@ export default function Page() {
       });
   }, []);
 
-  // Update minor groups when major changes
+  // Update detailed occupations when major group changes (MERGED REGIONS, useRef)
   useEffect(() => {
     if (!data || !selectedMajor) return;
     const refreshDate = Object.keys(data)[0];
-    const minors = Object.entries(data[refreshDate][selectedMajor]?.minor_groups || {}).map(([code, val]: any) => ({ code, name: val.name }));
-    let minorsWithAll = minors;
-    if (minors.length > 1) {
-      minorsWithAll = minors[0].code !== "ALL" ? [{ code: "ALL", name: "All" }, ...minors] : minors;
+    const majorObj = data[refreshDate][selectedMajor];
+    // Map: code -> { code, name, regions: { ...all regions merged... } }
+    const mergedDetailMap = new Map();
+    if (majorObj && majorObj.minor_groups) {
+      for (const minor of Object.values(majorObj.minor_groups)) {
+    for (const broad of Object.values((minor as any).broad_occupations)) {
+      for (const [dCode, dVal] of Object.entries((broad as any).detailed_occupations)) {
+        const safeDVal = dVal as any;
+        if (!mergedDetailMap.has(dCode)) {
+          mergedDetailMap.set(dCode, { code: dCode, name: safeDVal.name, regions: { ...safeDVal.regions } });
+        } else {
+          // Merge regions
+          const existing = mergedDetailMap.get(dCode);
+          for (const [regionKey, regionVal] of Object.entries((safeDVal).regions)) {
+            existing.regions[regionKey] = regionVal;
+          }
+        }
+      }
     }
-    setMinorGroups(minorsWithAll);
-    setSelectedMinor(minorsWithAll[0]?.code || "");
-    setBroadOccupations([]);
-    setSelectedBroad("");
-    setDetailedOccupations([]);
-    setSelectedDetailed("");
+      }
+    }
+    mergedDetailMapRef.current = mergedDetailMap;
+    // Prepare deduped list for dropdown, filtering out roll-up/aggregate rows (where code === major group code)
+    // and also filtering out detailed occupations that only have the US region (no state-level data)
+    const details = Array.from(mergedDetailMap.values())
+      .filter(({ code, regions }) => code !== selectedMajor && Object.keys(regions).some(r => r !== 'US'))
+      .map(({ code, name }) => ({ code, name }));
+    details.sort((a, b) => a.name.localeCompare(b.name));
+    setDetailedOccupations(details);
+    setSelectedDetailed(details[0]?.code || "");
     setRegions([]);
     setSelectedRegion("US");
   }, [data, selectedMajor]);
 
-  // Update broad occupations when minor changes
+  // Update regions and benchmarks when detailed occupation changes (use merged map from useRef)
   useEffect(() => {
-    if (!data || !selectedMajor || !selectedMinor) return;
-    if (selectedMinor === "ALL") {
-      setBroadOccupations([]);
-      setSelectedBroad("");
-      setDetailedOccupations([]);
-      setSelectedDetailed("");
-      setRegions([]);
-      setSelectedRegion("US");
-      return;
-    }
-    const refreshDate = Object.keys(data)[0];
-    const broads = Object.entries(data[refreshDate][selectedMajor]?.minor_groups?.[selectedMinor]?.broad_occupations || {}).map(([code, val]: any) => ({ code, name: val.name }));
-    let broadsWithAll = broads;
-    if (broads.length > 1) {
-      broadsWithAll = broads[0].code !== "ALL" ? [{ code: "ALL", name: "All" }, ...broads] : broads;
-    }
-    setBroadOccupations(broadsWithAll);
-    setSelectedBroad(broadsWithAll[0]?.code || "");
-    setDetailedOccupations([]);
-    setSelectedDetailed("");
-    setRegions([]);
-    setSelectedRegion("US");
-  }, [data, selectedMajor, selectedMinor]);
-
-  // Update detailed occupations when broad changes
-  useEffect(() => {
-    if (!data || !selectedMajor || !selectedMinor || !selectedBroad) return;
-    if (selectedBroad === "ALL") {
-      setDetailedOccupations([]);
-      setSelectedDetailed("");
-      setRegions([]);
-      setSelectedRegion("US");
-      return;
-    }
-    const refreshDate = Object.keys(data)[0];
-    const details = Object.entries(
-      data[refreshDate][selectedMajor]?.minor_groups?.[selectedMinor]?.broad_occupations?.[selectedBroad]?.detailed_occupations || {}
-    ).map(([code, val]: any) => ({ code, name: val.name }));
-    let detailsWithAll = details;
-    if (details.length > 1) {
-      detailsWithAll = details[0].code !== "ALL" ? [{ code: "ALL", name: "All" }, ...details] : details;
-    }
-    setDetailedOccupations(detailsWithAll);
-    setSelectedDetailed(detailsWithAll[0]?.code || "");
-    setRegions([]);
-    setSelectedRegion("US");
-  }, [data, selectedMajor, selectedMinor, selectedBroad]);
-
-  // Update regions and benchmarks when detailed occupation changes
-  useEffect(() => {
-    if (!data || !selectedMajor || !selectedMinor || !selectedBroad || !selectedDetailed) return;
-    if (selectedDetailed === "ALL") {
+    if (!data || !selectedMajor || !selectedDetailed) return;
+    const mergedDetailMap = mergedDetailMapRef.current;
+    if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) {
       setRegions([]);
       setSelectedRegion("US");
       setBlsWage(null);
       setBlsBenefit(null);
       return;
     }
-    const refreshDate = Object.keys(data)[0];
-    const detailObj =
-      data[refreshDate][selectedMajor]?.minor_groups?.[selectedMinor]?.broad_occupations?.[selectedBroad]?.detailed_occupations?.[selectedDetailed];
+    const detailObj = mergedDetailMap.get(selectedDetailed);
     if (!detailObj || !detailObj.regions) {
       setRegions([]);
       setSelectedRegion("US");
@@ -156,20 +122,21 @@ export default function Page() {
     setBlsBenefit(detailObj.regions[regionKeys[0]].benefits.avg_annual);
     setIncome(detailObj.regions[regionKeys[0]].wage.mean_annual);
     setBenefits(detailObj.regions[regionKeys[0]].benefits.avg_annual);
-  }, [data, selectedMajor, selectedMinor, selectedBroad, selectedDetailed]);
+  }, [data, selectedMajor, selectedDetailed]);
 
-  // Update wage/benefit when region changes
+  // Update wage/benefit when region changes (use merged map from useRef)
   useEffect(() => {
-    if (!data || !selectedMajor || !selectedMinor || !selectedBroad || !selectedDetailed || !selectedRegion) return;
-    const refreshDate = Object.keys(data)[0];
-    const detailObj =
-      data[refreshDate][selectedMajor].minor_groups[selectedMinor].broad_occupations[selectedBroad].detailed_occupations[selectedDetailed];
+    if (!data || !selectedMajor || !selectedDetailed || !selectedRegion) return;
+    const mergedDetailMap = mergedDetailMapRef.current;
+    if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) return;
+    const detailObj = mergedDetailMap.get(selectedDetailed);
+    if (!detailObj || !detailObj.regions) return;
     const regionObj = detailObj.regions[selectedRegion];
     setBlsWage(regionObj.wage.mean_annual);
     setBlsBenefit(regionObj.benefits.avg_annual);
     setIncome(regionObj.wage.mean_annual);
     setBenefits(regionObj.benefits.avg_annual);
-  }, [selectedRegion]);
+  }, [selectedRegion, data, selectedMajor, selectedDetailed]);
 
   // Calculation
   const totalExpenses = includeBenefits ? expenses + benefits : expenses;
@@ -193,22 +160,22 @@ export default function Page() {
         </div>
         {/* --- Employment Type Toggle --- */}
         <div className="mb-6 flex justify-center">
-          <div className="inline-flex rounded-xl bg-green-100 border border-green-300 shadow-sm overflow-hidden">
-            <button
-              className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'consulting' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
-              onClick={() => setEmploymentType('consulting')}
-              type="button"
-            >
-              Consulting / Self-Employed
-            </button>
-            <button
-              className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'employee' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
-              onClick={() => setEmploymentType('employee')}
-              type="button"
-            >
-              Traditional Employment
-            </button>
-          </div>
+        <div className="inline-flex rounded-xl bg-green-100 border border-green-300 shadow-sm overflow-hidden">
+          <button
+            className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'employee' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
+            onClick={() => setEmploymentType('employee')}
+            type="button"
+          >
+            Traditional Employment
+          </button>
+          <button
+            className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'consulting' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
+            onClick={() => setEmploymentType('consulting')}
+            type="button"
+          >
+            Consulting / Self-Employed
+          </button>
+        </div>
         </div>
 
         {/* --- Cascading Dropdowns --- */}
@@ -220,36 +187,7 @@ export default function Page() {
                 {majorGroups.map(mg => <option key={mg.code} value={mg.code}>{mg.name}</option>)}
               </select>
             </div>
-            <div>
-              <label className="block text-green-900 font-semibold mb-1">Minor Group</label>
-              <select
-                className="border-2 border-amber-200 rounded-lg px-3 py-2"
-                value={selectedMinor}
-                onChange={e => setSelectedMinor(e.target.value)}
-                disabled={minorGroups.length === 0}
-              >
-                {minorGroups.length === 0 ? (
-                  <option value="">No options</option>
-                ) : (
-                  minorGroups.map(mg => <option key={mg.code} value={mg.code}>{mg.name}</option>)
-                )}
-              </select>
-            </div>
-            <div>
-              <label className="block text-green-900 font-semibold mb-1">Broad Occupation</label>
-              <select
-                className="border-2 border-amber-200 rounded-lg px-3 py-2"
-                value={selectedBroad}
-                onChange={e => setSelectedBroad(e.target.value)}
-                disabled={broadOccupations.length === 0}
-              >
-                {broadOccupations.length === 0 ? (
-                  <option value="">No options</option>
-                ) : (
-                  broadOccupations.map(bo => <option key={bo.code} value={bo.code}>{bo.name}</option>)
-                )}
-              </select>
-            </div>
+            {/* Minor Group and Broad Occupation dropdowns removed for simplicity */}
             <div>
               <label className="block text-green-900 font-semibold mb-1">Detailed Occupation</label>
               <select
