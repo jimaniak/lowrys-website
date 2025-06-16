@@ -34,14 +34,8 @@ function buildHierarchy(records) {
   for (const rec of records) {
     const group = rec['OCC_GROUP'] || 'Other';
     if (!hierarchy[group]) hierarchy[group] = { group, occupations: [] };
-    hierarchy[group].occupations.push({
-      code: rec['OCC_CODE'],
-      title: rec['OCC_TITLE'],
-      employment: rec['TOT_EMP'],
-      mean_wage: rec['MEAN_ANNUAL'],
-      mean_hourly: rec['MEAN_HOURLY'],
-      // Add more fields as needed
-    });
+    // Include all fields from the record for each occupation
+    hierarchy[group].occupations.push({ ...rec });
   }
   return Object.values(hierarchy);
 }
