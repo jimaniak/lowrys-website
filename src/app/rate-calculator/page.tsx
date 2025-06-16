@@ -257,7 +257,7 @@ export default function Page() {
             </svg>
           </span>
           <div>
-            <h1 className="text-3xl font-extrabold text-green-900 tracking-tight">Consultant Rate Calculator</h1>
+            <h1 className="text-3xl font-extrabold text-green-900 tracking-tight">Rate Calculator</h1>
             <p className="text-base text-amber-700 font-medium mt-1">Financial clarity for independent professionals</p>
           </div>
         </div>
