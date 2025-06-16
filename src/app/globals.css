@@ -10,4 +10,9 @@ body {
   body {
     @apply bg-gray-900 text-gray-100;
   }
+
+  /* Diagnostic style for selected button text in dark mode */
+  .bg-green-300 {
+    color: purple !important; /* Attempt to force text on bg-green-300 to be purple in dark mode */
+  }
 }
