@@ -408,10 +408,10 @@ export default function AnalyticsDemo() {
         <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-blue-700">
           Global Disaster Analytics Demo: Data-Driven Insights & BI Solutions
         </h1>
-        <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-700">
+        <p className="mb-4 sm:mb-6 text-base sm:text-lg text-gray-700 dark:text-gray-100">
           Global disaster trends are brought to life through interactive analytics, advanced data visualizations, and business intelligence best practices. This platform is designed to support organizations, consultants, and decision-makers in analyzing risk, monitoring events, and driving strategic action with Power BI, data engineering, and automation. Robust, actionable insights and modern analytics solutions are delivered to meet the needs of professionals and enterprises seeking data-driven results.
         </p>
-        <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500">
+        <div className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500 dark:text-gray-300">
           <b>Data Source:</b> EM-DAT (The International Disaster Database), <a href="https://public.emdat.be/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">https://public.emdat.be/</a><br />
           <span>
             Data is provided as-is and may reflect reporting standards, definitions, and priorities of the source institution. For more information, see the EM-DAT website.
@@ -428,7 +428,7 @@ export default function AnalyticsDemo() {
                     <span>{c.country}</span>
                     <span className="ml-2 font-mono">
                       {c.pctChange > 0 ? '+' : ''}{c.pctChange.toFixed(1)}% &nbsp;
-                      <span className="text-gray-500">({c.y2024} in 2024, avg {c.histAvg.toFixed(1)})</span>
+                      <span className="text-gray-500 dark:text-gray-300">({c.y2024} in 2024, avg {c.histAvg.toFixed(1)})</span>
                     </span>
                   </li>
                 ))}
@@ -442,7 +442,7 @@ export default function AnalyticsDemo() {
                     <span>{c.country}</span>
                     <span className="ml-2 font-mono">
                       {c.pctChange > 0 ? '+' : ''}{c.pctChange.toFixed(1)}% &nbsp;
-                      <span className="text-gray-500">({c.y2024} in 2024, avg {c.histAvg.toFixed(1)})</span>
+                      <span className="text-gray-500 dark:text-gray-300">({c.y2024} in 2024, avg {c.histAvg.toFixed(1)})</span>
                     </span>
                   </li>
                 ))}
@@ -510,7 +510,7 @@ export default function AnalyticsDemo() {
         )}
         <div className="bg-white p-3 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6 w-full">
           <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Regional Trends Globe</h2>
-          <p className="mb-1 sm:mb-2 text-gray-700 text-sm sm:text-base">
+          <p className="mb-1 sm:mb-2 text-gray-700 dark:text-gray-100 text-sm sm:text-base">
             Regions are <b>overlaid</b> by disaster trend (2024 vs. 2010–2020 avg): <span style={{color:'#1976d2'}}>blue</span> = decrease, <span style={{color:'#aaa'}}>white</span> = same, <span style={{color:'#d32f2f'}}>red</span> = increase.
           </p>
           <div className="w-full" style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -551,7 +551,7 @@ Color: ${feat.properties?.color}`
               ) : geoJsonError ? (
                 <div className="text-red-600 text-center pt-20">{geoJsonError}</div>
               ) : (
-                <div className="text-gray-500 text-center pt-20">No regional overlays to display.</div>
+                <div className="text-gray-500 dark:text-gray-300 text-center pt-20">No regional overlays to display.</div>
               )}
             </div>
             {/* Legend for color mapping */}

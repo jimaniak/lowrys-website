@@ -165,7 +165,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
       >
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
           aria-label="Close modal"
         >
           <FaTimes size={20} />
@@ -192,7 +192,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
             </a>
             <button
               onClick={onClose}
-              className="block w-full text-gray-600 hover:text-gray-800 px-4 py-2 rounded border border-gray-300 transition mt-2"
+              className="block w-full text-gray-600 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 px-4 py-2 rounded border border-gray-300 transition mt-2"
             >
               Close
             </button>
@@ -205,7 +205,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
               <FaCheck size={24} className="mr-2" />
               <p className="text-lg font-medium">Download initiated!</p>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-200 mb-4">
               Your download has started. If it doesn't begin automatically, 
               <a 
                 href="/documents/jim-lowry-resume.pdf" 
@@ -228,13 +228,13 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
         
         {(status === 'idle' || status === 'loading' || status === 'error') && (
           <>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-200 mb-4">
               Enter your access code to view and download Jim Lowry's resume.
             </p>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="passcode" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="passcode" className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
                   Access Code
                 </label>
                 <div className="relative">
@@ -283,13 +283,13 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-gray-600 hover:text-gray-800 px-4 py-2 rounded border border-gray-300 transition"
+                  className="text-gray-600 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 px-4 py-2 rounded border border-gray-300 transition"
                 >
                   Cancel
                 </button>
               </div>
               
-              <p className="text-xs text-gray-500 text-center mt-4">
+              <p className="text-xs text-gray-500 dark:text-gray-300 text-center mt-4">
                 Don't have an access code? Use the contact form to request one.
               </p>
             </form>

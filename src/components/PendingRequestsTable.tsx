@@ -194,7 +194,7 @@ export default function PendingRequestsTable() {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Access Requests</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 md:mb-0">Access Requests</h2>
         
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full md:w-auto">
           {/* Category Filter */}
@@ -202,7 +202,7 @@ export default function PendingRequestsTable() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="appearance-none bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+              className="appearance-none bg-gray-100 border border-gray-300 text-gray-700 dark:text-gray-100 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
             >
               {categories.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -210,8 +210,8 @@ export default function PendingRequestsTable() {
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <FaFilter className="text-gray-400" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-100">
+              <FaFilter className="text-gray-400 dark:text-gray-300" />
             </div>
           </div>
           
@@ -220,7 +220,7 @@ export default function PendingRequestsTable() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="appearance-none bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+              className="appearance-none bg-gray-100 border border-gray-300 text-gray-700 dark:text-gray-100 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
             >
               {statuses.map((status) => (
                 <option key={status.value} value={status.value}>
@@ -228,8 +228,8 @@ export default function PendingRequestsTable() {
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <FaFilter className="text-gray-400" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-100">
+              <FaFilter className="text-gray-400 dark:text-gray-300" />
             </div>
           </div>
           
@@ -261,7 +261,7 @@ export default function PendingRequestsTable() {
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead>
-            <tr className="bg-gray-200 text-gray-700">
+            <tr className="bg-gray-200 text-gray-700 dark:text-gray-100">
               <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 px-4 text-left">Email</th>
               <th className="py-3 px-4 text-left">Company</th>
@@ -271,7 +271,7 @@ export default function PendingRequestsTable() {
               <th className="py-3 px-4 text-left">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-gray-600">
+          <tbody className="text-gray-600 dark:text-gray-200">
             {loading ? (
               <tr>
                 <td colSpan={7} className="py-4 px-4 text-center">
@@ -301,7 +301,7 @@ export default function PendingRequestsTable() {
                       request.status === 'denied' ? 'bg-red-100 text-red-800' :
                       request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                       request.status === 'used' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-800'
+                      'bg-gray-100 text-gray-800 dark:text-gray-100'
                     }`}>
                       {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                     </span>
