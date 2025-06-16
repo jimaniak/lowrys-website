@@ -267,7 +267,7 @@ export default function Page() {
           <button
             className={`px-5 py-2 font-semibold transition-colors ${
               employmentType === 'employee'
-                ? 'bg-green-300 text-green-900 dark:!text-red-500' // Selected: light green bg, TEST WITH RED TEXT for dark mode
+                ? 'bg-green-300 text-green-900 dark:!text-green-800' // Selected: light green bg, dark green text for dark mode (important)
                 : 'text-green-700 hover:bg-green-200 dark:text-green-300 dark:hover:bg-slate-600' // Not selected
             }`}
             onClick={() => setEmploymentType('employee')}
@@ -278,7 +278,7 @@ export default function Page() {
           <button
             className={`px-5 py-2 font-semibold transition-colors ${
               employmentType === 'consulting'
-                ? 'bg-green-300 text-green-900 dark:!text-red-500' // Selected: light green bg, TEST WITH RED TEXT for dark mode
+                ? 'bg-green-300 text-green-900 dark:!text-green-800' // Selected: light green bg, dark green text for dark mode (important)
                 : 'text-green-700 hover:bg-green-200 dark:text-green-300 dark:hover:bg-slate-600' // Not selected
             }`}
             onClick={() => setEmploymentType('consulting')}
