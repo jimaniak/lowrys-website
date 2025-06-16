@@ -263,16 +263,24 @@ export default function Page() {
         </div>
         {/* --- Employment Type Toggle --- */}
         <div className="mb-6 flex justify-center">
-        <div className="inline-flex rounded-xl bg-green-100 border border-green-300 shadow-sm overflow-hidden">
+        <div className="inline-flex rounded-xl bg-green-100 border border-green-300 shadow-sm overflow-hidden dark:bg-slate-700 dark:border-slate-600">
           <button
-            className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'employee' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
+            className={`px-5 py-2 font-semibold transition-colors ${
+              employmentType === 'employee'
+                ? 'bg-green-300 text-green-900 dark:text-slate-900' // Selected: light green bg, dark text for both modes
+                : 'text-green-700 hover:bg-green-200 dark:text-green-300 dark:hover:bg-slate-600' // Not selected
+            }`}
             onClick={() => setEmploymentType('employee')}
             type="button"
           >
             Traditional Employment
           </button>
           <button
-            className={`px-5 py-2 font-semibold transition-colors ${employmentType === 'consulting' ? 'bg-green-300 text-green-900' : 'text-green-700 hover:bg-green-200'}`}
+            className={`px-5 py-2 font-semibold transition-colors ${
+              employmentType === 'consulting'
+                ? 'bg-green-300 text-green-900 dark:text-slate-900' // Selected: light green bg, dark text for both modes
+                : 'text-green-700 hover:bg-green-200 dark:text-green-300 dark:hover:bg-slate-600' // Not selected
+            }`}
             onClick={() => setEmploymentType('consulting')}
             type="button"
           >
