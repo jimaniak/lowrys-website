@@ -1,4 +1,3 @@
-
 "use client";
 
 // Employment type toggle
@@ -10,7 +9,7 @@ import { useState, useEffect, useRef } from "react";
 // US State codes to names (add more as needed)
 const US_STATE_NAMES: Record<string, string> = {
   US: "All (United States)",
-  CA: "California",
+  // CA: "California", // Commented out to display 'CA' like other unlisted state codes
   // ...add all states as before
 };
 
@@ -23,9 +22,10 @@ export default function Page() {
 
   // Hierarchical selection state
   const [majorGroups, setMajorGroups] = useState<any[]>([]);
-  const [selectedMajor, setSelectedMajor] = useState<string>("");
+  const [selectedMajor, setSelectedMajor] = useState<string>("ALL"); // Default to ALL
   const [detailedOccupations, setDetailedOccupations] = useState<any[]>([]);
   const [selectedDetailed, setSelectedDetailed] = useState<string>("");
+  const [detailedOccupationSearch, setDetailedOccupationSearch] = useState<string>(""); // New state for search text
   const [regions, setRegions] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string>("US");
   // Use a ref to store the merged detail map for the current major group
@@ -42,18 +42,30 @@ export default function Page() {
   const [taxRate, setTaxRate] = useState<number>(25);
   const [includeBenefits, setIncludeBenefits] = useState(false);
   const [benefits, setBenefits] = useState<number>(0);
-
-  // Load hierarchical data
+  // Load hierarchical data with projections
   useEffect(() => {
-    fetch("/data/bls-benchmarks-hierarchical.json")
+    // Try to load the merged data first, fall back to original if not available
+    fetch("/data/bls-benchmarks-hierarchical-with-projections.json")
+      .then(res => {
+        if (!res.ok) {
+          // Fall back to original file
+          return      fetch("/data/bls-benchmarks-hierarchical-with-projections.json");
+        }
+        return res;
+      })
       .then(res => res.json())
       .then(json => {
         setData(json);
         const refreshDate = Object.keys(json)[0];
         setLastRefreshed(refreshDate);
-        const majors = Object.entries(json[refreshDate]).map(([code, val]: any) => ({ code, name: val.name }));
-        setMajorGroups(majors);
-        setSelectedMajor(majors[0]?.code || "");
+        let majors = Object.entries(json[refreshDate]).map(([code, val]: any) => ({ code, name: val.name }));
+        majors.sort((a, b) => a.name.localeCompare(b.name)); // Sort major groups by name
+        // Add "All Major Groups" option to the beginning
+        setMajorGroups([{ code: "ALL", name: "All Major Groups" }, ...majors]);
+        // setSelectedMajor is already defaulted to "ALL"
+      })
+      .catch(err => {
+        console.error('Error loading BLS data:', err);
       });
   }, []);
 
@@ -70,7 +82,13 @@ export default function Page() {
       for (const [dCode, dVal] of Object.entries((broad as any).detailed_occupations)) {
         const safeDVal = dVal as any;
         if (!mergedDetailMap.has(dCode)) {
-          mergedDetailMap.set(dCode, { code: dCode, name: safeDVal.name, regions: { ...safeDVal.regions } });
+          mergedDetailMap.set(dCode, {
+            code: dCode,
+            name: safeDVal.name,
+            regions: { ...safeDVal.regions },
+            projections: safeDVal.projections, // Ensure projections are carried over
+            occupationData: safeDVal.occupationData // Ensure occupationData is carried over
+          });
         } else {
           // Merge regions
           const existing = mergedDetailMap.get(dCode);
@@ -95,9 +113,86 @@ export default function Page() {
     setSelectedRegion("US");
   }, [data, selectedMajor]);
 
+  // Update detailed occupations when major group or data changes
+  useEffect(() => {
+    if (!data) return;
+    const refreshDate = Object.keys(data)[0];
+    const allDetailedOccupations = new Map();
+
+    const processMajorGroup = (majorCode: string) => {
+      const majorObj = data[refreshDate][majorCode];
+      if (majorObj && majorObj.minor_groups) {
+        for (const minor of Object.values(majorObj.minor_groups)) {
+          for (const broad of Object.values((minor as any).broad_occupations)) {
+            for (const [dCode, dVal] of Object.entries((broad as any).detailed_occupations)) {
+              const safeDVal = dVal as any;
+              if (!allDetailedOccupations.has(dCode)) {
+                allDetailedOccupations.set(dCode, {
+                  code: dCode,
+                  name: safeDVal.name,
+                  regions: { ...safeDVal.regions },
+                  projections: safeDVal.projections,
+                  occupationData: safeDVal.occupationData,
+                  majorGroupCode: majorCode // Keep track of the original major group for later use if needed
+                });
+              } else {
+                // If dCode is already there, merge regions (though less likely if processing all groups)
+                const existing = allDetailedOccupations.get(dCode);
+                for (const [regionKey, regionVal] of Object.entries((safeDVal).regions)) {
+                  existing.regions[regionKey] = regionVal;
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    if (selectedMajor === "ALL") {
+      // Iterate over all major groups in the data (excluding the "ALL" we added to majorGroups state)
+      majorGroups.filter(mg => mg.code !== "ALL").forEach(mg => {
+        processMajorGroup(mg.code);
+      });
+    } else if (data[refreshDate][selectedMajor]) {
+      // Process only the selected major group
+      processMajorGroup(selectedMajor);
+    }
+
+    mergedDetailMapRef.current = allDetailedOccupations;
+
+    const detailsArray = Array.from(allDetailedOccupations.values())
+      .filter(({ code, regions }) => {
+        // When "ALL" major groups, we don't filter by code === selectedMajor
+        // We might still want to filter out occupations that only have US region if that's desired
+        return Object.keys(regions).some(r => r !== 'US');
+      })
+      .map(({ code, name }) => ({ code, name }));
+
+    detailsArray.sort((a, b) => a.name.localeCompare(b.name));
+    setDetailedOccupations(detailsArray);
+    setDetailedOccupationSearch(""); // Reset search on major group change
+    // Don't auto-select first detailed occupation here, let the search filter handle it
+    // setSelectedDetailed(detailsArray[0]?.code || ""); 
+    setRegions([]);
+    setSelectedRegion("US");
+
+  }, [data, selectedMajor, majorGroups]); // Added majorGroups to dependency array
+
+  // Filter detailed occupations based on search text
+  const filteredDetailedOccupations = detailedOccupations.filter(occupation =>
+    occupation.name.toLowerCase().includes(detailedOccupationSearch.toLowerCase())
+  );
+
+  // Update selectedDetailed when filteredDetailedOccupations changes
+  useEffect(() => {
+    if (filteredDetailedOccupations.length > 0 && !filteredDetailedOccupations.some(do_ => do_.code === selectedDetailed)) {
+      setSelectedDetailed(filteredDetailedOccupations[0].code);
+    }
+  }, [filteredDetailedOccupations]);
+
   // Update regions and benchmarks when detailed occupation changes (use merged map from useRef)
   useEffect(() => {
-    if (!data || !selectedMajor || !selectedDetailed) return;
+    if (!data || !selectedDetailed) return; // Removed selectedMajor dependency here as mergedDetailMapRef should have all occupations if ALL is selected
     const mergedDetailMap = mergedDetailMapRef.current;
     if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) {
       setRegions([]);
@@ -112,9 +207,17 @@ export default function Page() {
       setSelectedRegion("US");
       setBlsWage(null);
       setBlsBenefit(null);
+      // If detailedObj exists but regions don't, it might be an issue with data structure or initial load
+      // console.log("Detail object found, but no regions:", detailObj);
       return;
     }
     const regionKeys = Object.keys(detailObj.regions);
+    // Sort regionKeys by their display names via US_STATE_NAMES, putting 'US' first
+    regionKeys.sort((a, b) => {
+      if (a === 'US') return -1;
+      if (b === 'US') return 1;
+      return (US_STATE_NAMES[a] || a).localeCompare(US_STATE_NAMES[b] || b);
+    });
     setRegions(regionKeys);
     setSelectedRegion(regionKeys[0]);
     // Set wage/benefit for default region
@@ -122,11 +225,11 @@ export default function Page() {
     setBlsBenefit(detailObj.regions[regionKeys[0]].benefits.avg_annual);
     setIncome(detailObj.regions[regionKeys[0]].wage.mean_annual);
     setBenefits(detailObj.regions[regionKeys[0]].benefits.avg_annual);
-  }, [data, selectedMajor, selectedDetailed]);
+  }, [data, selectedDetailed]); // Removed selectedMajor from dependency array
 
   // Update wage/benefit when region changes (use merged map from useRef)
   useEffect(() => {
-    if (!data || !selectedMajor || !selectedDetailed || !selectedRegion) return;
+    if (!data || !selectedDetailed || !selectedRegion) return; // Removed selectedMajor dependency
     const mergedDetailMap = mergedDetailMapRef.current;
     if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) return;
     const detailObj = mergedDetailMap.get(selectedDetailed);
@@ -136,7 +239,7 @@ export default function Page() {
     setBlsBenefit(regionObj.benefits.avg_annual);
     setIncome(regionObj.wage.mean_annual);
     setBenefits(regionObj.benefits.avg_annual);
-  }, [selectedRegion, data, selectedMajor, selectedDetailed]);
+  }, [selectedRegion, data, selectedDetailed]); // Removed selectedMajor from dependency array
 
   // Calculation
   const totalExpenses = includeBenefits ? expenses + benefits : expenses;
@@ -187,22 +290,31 @@ export default function Page() {
                 {majorGroups.map(mg => <option key={mg.code} value={mg.code}>{mg.name}</option>)}
               </select>
             </div>
-            {/* Minor Group and Broad Occupation dropdowns removed for simplicity */}
+            
             <div>
+              <label className="block text-green-900 font-semibold mb-1">Search Detailed Occupation</label>
+              <input
+                type="text"
+                placeholder="Type to search all detailed occupations..."
+                className="border-2 border-amber-200 rounded-lg px-3 py-2 mb-2 w-full"
+                value={detailedOccupationSearch}
+                onChange={e => setDetailedOccupationSearch(e.target.value)}
+              />
               <label className="block text-green-900 font-semibold mb-1">Detailed Occupation</label>
               <select
-                className="border-2 border-amber-200 rounded-lg px-3 py-2"
+                className="border-2 border-amber-200 rounded-lg px-3 py-2 w-full" // Added w-full for better layout
                 value={selectedDetailed}
                 onChange={e => setSelectedDetailed(e.target.value)}
-                disabled={detailedOccupations.length === 0}
+                disabled={filteredDetailedOccupations.length === 0}
               >
-                {detailedOccupations.length === 0 ? (
-                  <option value="">No options</option>
+                {filteredDetailedOccupations.length === 0 ? (
+                  <option value="">{detailedOccupationSearch ? 'No matching occupations' : (detailedOccupations.length === 0 ? 'Select Major Group or Search' : 'No occupations loaded')}</option>
                 ) : (
-                  detailedOccupations.map(do_ => <option key={do_.code} value={do_.code}>{do_.name}</option>)
+                  filteredDetailedOccupations.map((do_: { code: string; name: string }) => <option key={do_.code} value={do_.code}>{do_.name}</option>)
                 )}
               </select>
             </div>
+
             <div>
               <label className="block text-green-900 font-semibold mb-1">U.S. State</label>
               <select className="border-2 border-amber-200 rounded-lg px-3 py-2" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)}>
@@ -210,9 +322,10 @@ export default function Page() {
               </select>
             </div>
           </div>
+
         {/* Benchmark display as before */}
         {blsWage && blsBenefit && (
-          <div className="bg-gradient-to-r from-amber-100 to-green-50 border border-amber-300 rounded-xl p-4 flex flex-col gap-1 shadow-inner mb-6">
+          <div className="bg-gradient-to-r from-amber-100 to-green-50 border border-amber-300 rounded-xl p-4 flex flex-col gap-1 shadow-inner mb-4">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-amber-700 font-bold">BLS Benchmark:</span>
               <span className="text-green-900 font-semibold">
@@ -231,7 +344,114 @@ export default function Page() {
             <div className="text-xs text-green-700 mt-1">Wages and benefits are U.S. national averages for consulting services. Adjust for your region and specialty as needed.</div>
             <div className="text-xs text-amber-700 mt-1 italic">Benchmarks last refreshed: {lastRefreshed} (static, updated periodically)</div>
           </div>
-        )}
+        )}        {/* --- BLS Outlook/Projections Information Window (Enhanced) --- */}
+        {(() => {
+          // Get comprehensive occupation data for the selected detailed occupation
+          const mergedDetailMap = mergedDetailMapRef.current;
+          const detailObj = mergedDetailMap && mergedDetailMap.get(selectedDetailed);
+          const projections = detailObj && detailObj.projections;
+          const occupationData = detailObj && detailObj.occupationData;
+          
+          // Check for flags from different tables
+          const isInTable13 = occupationData && occupationData.sheets && occupationData.sheets['Table 1.3']; // Fastest growing
+          const isInTable14 = occupationData && occupationData.sheets && occupationData.sheets['Table 1.4']; // Most job growth
+          const isInTable15 = occupationData && occupationData.sheets && occupationData.sheets['Table 1.5']; // Fastest declining
+          const isInTable16 = occupationData && occupationData.sheets && occupationData.sheets['Table 1.6']; // Largest declines
+          
+          return (
+            <div className="bg-gradient-to-r from-green-50 to-amber-100 border border-green-300 rounded-xl p-4 flex flex-col gap-1 shadow-inner mb-6" aria-live="polite">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-green-700 font-bold">Job Outlook (BLS 2023–33):</span>
+                <span className="text-green-900 font-semibold">{detailedOccupations.find(d => d.code === selectedDetailed)?.name}</span>
+                
+                {/* Status Badges */}
+                {isInTable13 && (
+                  <span className="px-2 py-1 rounded bg-green-200 text-green-900 font-bold text-xs border border-green-400 animate-pulse" title="BLS: Among the fastest growing occupations">
+                    ⬆️ FASTEST GROWING
+                  </span>
+                )}
+                {isInTable14 && (
+                  <span className="px-2 py-1 rounded bg-blue-200 text-blue-900 font-bold text-xs border border-blue-400" title="BLS: Among occupations with the most job growth">
+                    � MOST JOB GROWTH
+                  </span>
+                )}
+                {isInTable15 && (
+                  <span className="px-2 py-1 rounded bg-red-200 text-red-900 font-bold text-xs border border-red-400 animate-pulse" title="BLS: Among the fastest declining occupations">
+                    ⬇️ FASTEST DECLINING
+                  </span>
+                )}
+                {isInTable16 && (
+                  <span className="px-2 py-1 rounded bg-orange-200 text-orange-900 font-bold text-xs border border-orange-400" title="BLS: Among occupations with the largest job declines">
+                    📉 LARGEST DECLINES
+                  </span>
+                )}
+              </div>
+              
+              {projections ? (
+                <>
+                  {/* Primary Employment & Growth Data */}
+                  <div className="text-sm text-green-900 flex flex-wrap gap-4 mb-2">
+                    {projections.projected_2023 && (
+                      <span><b>2023 Jobs:</b> {parseFloat(projections.projected_2023).toLocaleString()}K</span>
+                    )}
+                    {projections.projected_2033 && (
+                      <span><b>2033 Jobs:</b> {parseFloat(projections.projected_2033).toLocaleString()}K</span>
+                    )}
+                    {projections.projected_percent && (
+                      <span><b>Growth:</b> {projections.projected_percent}%</span>
+                    )}
+                    {projections.projected_change && (
+                      <span><b>Change:</b> +{parseFloat(projections.projected_change).toLocaleString()}K</span>
+                    )}
+                  </div>
+                  
+                  {/* Job Openings Data */}
+                  <div className="text-sm text-green-900 flex flex-wrap gap-4 mb-2">
+                    {projections.projected_openings && (
+                      <span><b>Annual Openings:</b> {parseFloat(projections.projected_openings).toLocaleString()}K</span>
+                    )}
+                    {projections.median_wage && (
+                      <span><b>Median Wage:</b> ${parseInt(projections.median_wage).toLocaleString()}</span>
+                    )}
+                  </div>
+                  
+                  {/* Education & Requirements */}
+                  <div className="text-sm text-green-900 flex flex-wrap gap-4 mb-2">
+                    {projections.typical_education && (
+                      <span><b>Education:</b> {projections.typical_education}</span>
+                    )}
+                    {projections.work_experience && projections.work_experience !== 'None' && (
+                      <span><b>Experience:</b> {projections.work_experience}</span>
+                    )}
+                    {projections.on_job_training && projections.on_job_training !== 'None' && (
+                      <span><b>Training:</b> {projections.on_job_training}</span>
+                    )}
+                  </div>
+                  
+                  {/* Additional Insights */}
+                  {projections.factors && (
+                    <div className="text-xs text-green-800 mt-2 p-2 bg-green-50 rounded border-l-4 border-green-400">
+                      <b>Market Factors:</b> {projections.factors}
+                    </div>
+                  )}
+                  
+                  <div className="text-xs text-green-700 mt-1">Source: BLS Employment Projections, Tables 1.2–1.12 (2023–2033)</div>
+                </>
+              ) : (
+                <div className="text-xs text-amber-700 mt-2">
+                  {occupationData ? 
+                    'Limited projections data available for this occupation.' : 
+                    'No projections data found for this occupation.'
+                  }
+                  {occupationData && (
+                    <div className="mt-2">
+                      <b>Available data from:</b> {Object.keys(occupationData.sheets || {}).join(', ')}
+                    </div>
+                  )}
+                </div>              )}
+            </div>
+          );
+        })()}
 
         {/* --- User Input Fields --- */}
         {employmentType === 'consulting' && (

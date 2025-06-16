@@ -151,6 +151,94 @@ async function updateBLS() {
     const allRecords = [...natRecords, ...stateRecords];
     // Transform to hierarchy
     const hierarchical = buildHierarchy(allRecords);
+
+    // --- Merge BLS Projections/Outlook Data ---
+    const projectionsPath = path.join(__dirname, '../public/data/bls-projections.xlsx');
+    if (fs.existsSync(projectionsPath)) {
+      const projWorkbook = xlsx.readFile(projectionsPath);
+      // --- Table 1.2: Main projections ---
+      let table12Sheet = projWorkbook.SheetNames.find(s => s.includes('1.2'));
+      if (!table12Sheet) table12Sheet = projWorkbook.SheetNames.find(s => s.toLowerCase().includes('occupation'));
+      if (!table12Sheet) table12Sheet = projWorkbook.SheetNames[0];
+      const projRecords = xlsx.utils.sheet_to_json(projWorkbook.Sheets[table12Sheet], { defval: '' });
+      // Build a map: SOC code -> projections info
+      const projMap = new Map();
+      function normalizeSoc(soc) {
+        return (typeof soc === 'string' ? soc.trim().replace(/\u2013|\u2014|–|—/g, '-') : '').replace(/\s+/g, '');
+      }
+      for (const rec of projRecords) {
+        // Try to find the SOC code column (may be "SOC Code" or similar)
+        let soc = rec['SOC Code'] || rec['SOC'] || rec['Occupation Code'] || rec['OCC_CODE'] || rec['OCC CODE'] || rec['Code'] || '';
+        soc = normalizeSoc(soc);
+        if (!soc || !/\d{2}-\d{4}/.test(soc)) continue;
+        // Example fields: Projected employment change, percent change, job openings, etc.
+        projMap.set(soc, {
+          projected_2032: rec['2032'],
+          projected_2022: rec['2022'],
+          projected_change: rec['Change, 2022-32'],
+          projected_percent: rec['Percent change, 2022-32'],
+          projected_openings: rec['Annual average openings, 2022-32'],
+          typical_education: rec['Typical education needed for entry'] || rec['Typical education needed'],
+          summary: rec['Occupation'] || rec['Occupation Title'] || rec['Title']
+        });
+      }
+
+
+      // --- Table 1.3: Fastest growing ---
+      let table13Sheet = projWorkbook.SheetNames.find(s => s.includes('1.3'));
+      let fastestGrowingSOC = new Set();
+      if (table13Sheet) {
+        const table13 = xlsx.utils.sheet_to_json(projWorkbook.Sheets[table13Sheet], { defval: '' });
+        for (const rec of table13) {
+          let soc = rec['SOC Code'] || rec['SOC'] || rec['Occupation Code'] || rec['OCC_CODE'] || rec['OCC CODE'] || rec['Code'] || '';
+          soc = normalizeSoc(soc);
+          if (!soc || !/\d{2}-\d{4}/.test(soc)) continue;
+          fastestGrowingSOC.add(soc);
+        }
+      }
+
+      // --- Table 1.5: Fastest declining ---
+      let table15Sheet = projWorkbook.SheetNames.find(s => s.includes('1.5'));
+      let fastestDecliningSOC = new Set();
+      if (table15Sheet) {
+        const table15 = xlsx.utils.sheet_to_json(projWorkbook.Sheets[table15Sheet], { defval: '' });
+        for (const rec of table15) {
+          let soc = rec['SOC Code'] || rec['SOC'] || rec['Occupation Code'] || rec['OCC_CODE'] || rec['OCC CODE'] || rec['Code'] || '';
+          soc = normalizeSoc(soc);
+          if (!soc || !/\d{2}-\d{4}/.test(soc)) continue;
+          fastestDecliningSOC.add(soc);
+        }
+      }
+
+      // Merge into hierarchy (add to each detailed occupation)
+      function mergeProjections(obj) {
+        for (const major of Object.values(obj)) {
+          for (const minor of Object.values(major.minor_groups)) {
+            for (const broad of Object.values((minor).broad_occupations)) {
+              for (const [dCode, dVal] of Object.entries((broad).detailed_occupations)) {
+                const normCode = normalizeSoc(dCode);
+                if (projMap.has(normCode)) {
+                  dVal.projections = projMap.get(normCode);
+                }
+                // Add highlight flags
+                if (fastestGrowingSOC.has(normCode)) {
+                  dVal.fastestGrowing = true;
+                }
+                if (fastestDecliningSOC.has(normCode)) {
+                  dVal.fastestDeclining = true;
+                }
+                // Remove mostOpenings flag logic (Table 1.4 would be needed for that)
+              }
+            }
+          }
+        }
+      }
+      mergeProjections(hierarchical);
+      console.log('Merged BLS projections/outlook data and highlights into hierarchy.');
+    } else {
+      console.warn('No projections file found at', projectionsPath);
+    }
+
     // Wrap in date-keyed object
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     const output = { [today]: hierarchical };
