@@ -18,8 +18,7 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo/Name with Icon */}
-        <Link href="/" className="text-2xl font-bold flex items-center">
+        {/* Logo/Name with Icon */}        <Link href="/" className="text-2xl font-bold flex items-center">
           <Image 
             src="/favicon/favicon-32x32.png" 
             alt="JL Logo" 
@@ -27,7 +26,7 @@ const Header = () => {
             height={32} 
             className="mr-2" 
           />
-          Professional Services
+          Analytics, Science & Automation
         </Link>
 
         {/* Desktop Navigation */}
