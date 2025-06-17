@@ -27,7 +27,7 @@ const Header = () => {
             height={32} 
             className="mr-2" 
           />
-          Jim Lowry
+          Professional Services
         </Link>
 
         {/* Desktop Navigation */}
