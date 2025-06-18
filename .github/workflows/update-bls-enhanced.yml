@@ -1,0 +1,74 @@
+name: Update BLS Data (Enhanced with Turso)
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
+  workflow_dispatch:
+    inputs:      update_turso:
+        description: 'Update Turso database'
+        required: false
+        default: true
+        type: boolean
+      update_files:
+        description: 'Update static files (GitHub)'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  update-bls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install
+      
+      # Update static files (original behavior)
+      - name: Run update BLS benchmarks script (static files)
+        if: ${{ github.event.inputs.update_files != 'false' }}
+        run: node scripts/update-bls-benchmarks.js
+        
+      - name: Run process occupation data script
+        if: ${{ github.event.inputs.update_files != 'false' }}
+        run: node scripts/process-occupation-data-raw.js
+      
+      # Update Turso database (new behavior)
+      - name: Update Turso database
+        if: ${{ github.event.inputs.update_turso != 'false' }}
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: node scripts/update-bls-to-turso.js
+      
+      # Create PR only if static files were updated
+      - name: Create Pull Request for BLS data update
+        if: ${{ github.event.inputs.update_files != 'false' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Update BLS benchmarks and projections (automated)'
+          title: 'Automated BLS benchmarks and projections update'
+          body: |
+            This PR was created automatically by the update-bls workflow to update BLS wage/benefit and job projection data.
+            
+            **Changes:**
+            - 📊 Updated BLS benchmarks and projections data
+            - 🗄️ Updated Turso database (if enabled)
+            - 📁 Updated static JSON files (if enabled)
+            
+            **Verification:**
+            - [ ] Check that Rate Calculator works with new data
+            - [ ] Verify Turso database has fresh data
+            - [ ] Test any other analytics tools
+          branch: bls-data/update-${{ github.run_id }}
+          base: main
+          add-paths: |
+            public/data/bls-benchmarks-hierarchical.json
+            public/data/bls-benchmarks-hierarchical-with-projections.json
+            public/data/bls-benchmarks-flat.csv
