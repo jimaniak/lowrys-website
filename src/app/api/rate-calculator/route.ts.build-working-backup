@@ -6,13 +6,47 @@ export async function GET(request: NextRequest) {
   const action = searchParams.get('action');
 
   try {
-    switch (action) {
-      case 'major-groups':
+    switch (action) {      case 'major-groups':
         const majorGroupsResult = await db.execute('SELECT * FROM major_groups ORDER BY name');
-        return NextResponse.json({ majorGroups: majorGroupsResult.rows });      case 'detailed-occupations':
-        const majorGroup = searchParams.get('majorGroup');        // Filter out Summary occupations and NULL occupation_type records
-        let occupationsQuery = 'SELECT * FROM occupations WHERE occupation_type IS NOT NULL AND occupation_type != ?';
-        let occupationsArgs: any[] = ['Summary'];
+        return NextResponse.json({ majorGroups: majorGroupsResult.rows });      case 'hierarchy':
+        // Get all major groups with their occupations count
+        const majorGroupsWithCounts = await db.execute(`
+          SELECT 
+            mg.code,
+            mg.name,
+            COUNT(o.code) as occupation_count
+          FROM major_groups mg
+          LEFT JOIN occupations o ON mg.code = o.major_group_code
+          GROUP BY mg.code, mg.name
+          ORDER BY mg.name
+        `);
+        
+        return NextResponse.json({ 
+          majorGroups: majorGroupsWithCounts.rows.map((row: any) => ({
+            code: row.code,
+            name: row.name,
+            count: row.occupation_count
+          }))
+        });
+
+      case 'occupations-by-major':
+        const majorCode = searchParams.get('majorCode');
+        if (!majorCode) {
+          return NextResponse.json({ error: 'Major code required' }, { status: 400 });
+        }
+        
+        const occupationsForMajor = await db.execute({
+          sql: 'SELECT code, name FROM occupations WHERE major_group_code = ? ORDER BY name',
+          args: [majorCode]
+        });        
+        return NextResponse.json({ 
+          occupations: occupationsForMajor.rows
+        });
+
+      case 'detailed-occupations':
+        const majorGroup = searchParams.get('majorGroup');        // Only include Line item occupations (actual jobs, not Summary categories)
+        let occupationsQuery = 'SELECT * FROM occupations WHERE occupation_type = ?';
+        let occupationsArgs: any[] = ['Line item'];
           if (majorGroup && majorGroup !== 'ALL') {
           occupationsQuery += ' AND major_group_code = ?';
           occupationsArgs.push(majorGroup);
@@ -193,18 +227,16 @@ export async function GET(request: NextRequest) {
         const hierarchyOccupation = searchParams.get('occupation');
         if (!hierarchyOccupation) {
           return NextResponse.json({ error: 'Occupation parameter required' }, { status: 400 });
-        }
-
-        // Get the full hierarchical path for an occupation
-        const occupationResult = await db.execute({
+        }        // Get the full hierarchical path for an occupation
+        const hierarchyResult = await db.execute({
           sql: 'SELECT * FROM occupations WHERE code = ?',
           args: [hierarchyOccupation]
         });
 
-        if (occupationResult.rows.length === 0) {
+        if (hierarchyResult.rows.length === 0) {
           return NextResponse.json({ hierarchy: null });
-        }        const occupationData = occupationResult.rows[0];
-        const hierarchy: {
+        }        const occupationData = hierarchyResult.rows[0];
+        const occupationHierarchy: {
           detailed: { code: any; name: any; type: any };
           major?: { code: any; name: any };
           minor?: { code: any; name: any };
@@ -222,9 +254,8 @@ export async function GET(request: NextRequest) {
           const majorResult = await db.execute({
             sql: 'SELECT code, name FROM occupations WHERE code = ?',
             args: [occupationData.major_group_code]
-          });
-          if (majorResult.rows.length > 0) {
-            hierarchy.major = {
+          });          if (majorResult.rows.length > 0) {
+            occupationHierarchy.major = {
               code: majorResult.rows[0].code,
               name: majorResult.rows[0].name
             };
@@ -236,9 +267,8 @@ export async function GET(request: NextRequest) {
             const minorResult = await db.execute({
               sql: 'SELECT code, name FROM occupations WHERE code = ?',
               args: [minorGroupCode]
-            });
-            if (minorResult.rows.length > 0) {
-              hierarchy.minor = {
+            });            if (minorResult.rows.length > 0) {
+              occupationHierarchy.minor = {
                 code: minorResult.rows[0].code,
                 name: minorResult.rows[0].name
               };
@@ -251,17 +281,232 @@ export async function GET(request: NextRequest) {
             const broadResult = await db.execute({
               sql: 'SELECT code, name FROM occupations WHERE code = ?',
               args: [broadOccupationCode]
-            });
-            if (broadResult.rows.length > 0) {
-              hierarchy.broad = {
+            });            if (broadResult.rows.length > 0) {
+              occupationHierarchy.broad = {
                 code: broadResult.rows[0].code,
                 name: broadResult.rows[0].name
               };
             }
           }
+        }        return NextResponse.json({ hierarchy: occupationHierarchy });      case 'hierarchy-3-level':
+        try {
+          // Get all occupations with parent relationships for 3-level hierarchy
+          // Using code structure instead of unreliable occupation_type field
+          const hierarchyData = await db.execute(`
+            SELECT 
+              code,
+              name,
+              parent_code,
+              occupation_type,
+              employment_2023,
+              employment_2033,
+              employment_change_percent,
+              median_annual_wage_2024 as median_wage
+            FROM occupations 
+            WHERE code IS NOT NULL
+            ORDER BY code
+          `);
+
+          // Build 3-level recursive hierarchy (Major → Minor → Detailed)
+          const buildHierarchy = (parentCode: string | null = null): any[] => {
+            return hierarchyData.rows
+              .filter((row: any) => row.parent_code === parentCode)
+              .map((row: any) => ({
+                code: row.code,
+                name: row.name,
+                occupation_type: row.occupation_type,
+                employment_2023: row.employment_2023,
+                employment_2033: row.employment_2033,
+                employment_change_percent: row.employment_change_percent,
+                median_wage: row.median_wage,
+                children: buildHierarchy(row.code)
+              }));
+          };
+
+          const hierarchy = buildHierarchy();
+
+          return NextResponse.json({ 
+            success: true, 
+            data: hierarchy,
+            levels: ['Major Groups', 'Minor Groups', 'Detailed Occupations']
+          });
+        } catch (error) {
+          console.error('Error fetching 3-level hierarchy:', error);
+          return NextResponse.json({ 
+            success: false, 
+            error: 'Failed to fetch hierarchy data' 
+          }, { status: 500 });
         }
 
-        return NextResponse.json({ hierarchy });
+      case 'search-occupations':
+        const searchTerm = searchParams.get('search');
+        const limit = searchParams.get('limit') || '50';
+        
+        if (!searchTerm || searchTerm.length < 2) {
+          return NextResponse.json({ occupations: [] });
+        }        // Search occupations by name, only including Line item occupations (not Summary categories)
+        const searchResult = await db.execute({
+          sql: `SELECT 
+                  o.code, 
+                  o.name, 
+                  o.parent_code,
+                  o.occupation_type
+                FROM occupations o
+                WHERE o.occupation_type = 'Line item'
+                AND LOWER(o.name) LIKE LOWER(?)
+                ORDER BY 
+                  CASE 
+                    WHEN LOWER(o.name) LIKE LOWER(?) THEN 1 
+                    ELSE 2 
+                  END,
+                  o.name
+                LIMIT ?`,
+          args: [`%${searchTerm}%`, `${searchTerm}%`, parseInt(limit)]
+        });
+        
+        return NextResponse.json({ 
+          occupations: searchResult.rows,
+          searchTerm: searchTerm
+        });
+
+      case 'list-tables':
+        const tablesResult = await db.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+        return NextResponse.json({ tables: tablesResult.rows });
+
+      case 'hierarchy-major':
+        // Get all major categories (excluding TOP)
+        const majorResult = await db.execute(`
+          SELECT code, name, parent_code 
+          FROM occupations 
+          WHERE category = 'MAJOR' 
+          ORDER BY name
+        `);
+        return NextResponse.json({ categories: majorResult.rows });
+
+      case 'hierarchy-minor':
+        const majorParent = searchParams.get('parent');
+        if (!majorParent) {
+          return NextResponse.json({ error: 'Parent major code required' }, { status: 400 });
+        }
+        
+        // Get minor and broad categories for the selected major (they are siblings)
+        const minorResult = await db.execute({
+          sql: `SELECT code, name, parent_code, category 
+                FROM occupations 
+                WHERE (category = 'MINOR' OR category = 'BROAD') 
+                AND parent_code = ? 
+                ORDER BY name`,
+          args: [majorParent]
+        });
+        return NextResponse.json({ categories: minorResult.rows });
+
+      case 'hierarchy-detailed':
+        const minorParent = searchParams.get('parent');
+        if (!minorParent) {
+          return NextResponse.json({ error: 'Parent minor/broad code required' }, { status: 400 });
+        }
+        
+        // Get detailed categories for the selected minor/broad
+        const detailedResult = await db.execute({
+          sql: `SELECT code, name, parent_code 
+                FROM occupations 
+                WHERE category = 'DETAILED' 
+                AND parent_code = ? 
+                ORDER BY name`,
+          args: [minorParent]
+        });
+        return NextResponse.json({ categories: detailedResult.rows });
+
+      case 'hierarchy-occupations':
+        const detailedParent = searchParams.get('parent');
+        if (!detailedParent) {
+          return NextResponse.json({ error: 'Parent detailed code required' }, { status: 400 });
+        }
+          // Get actual occupations (Line items) for the selected detailed category
+        const detailedOccupationResult = await db.execute({
+          sql: `SELECT code, name, parent_code 
+                FROM occupations 
+                WHERE occupation_type = 'Line item' 
+                AND parent_code = ? 
+                ORDER BY name`,
+          args: [detailedParent]
+        });
+        return NextResponse.json({ occupations: detailedOccupationResult.rows });      case 'get-major-categories':
+        // Get major categories from the hierarchy
+        // First, add the "All" option, then get actual major categories
+        const allOption = { code: "00-0000", name: "All Occupations" };
+        
+        try {
+          // Major categories typically end with "-0000" and are not "00-0000"
+          const majorCategoriesResult = await db.execute(`
+            SELECT DISTINCT code, name 
+            FROM occupations 
+            WHERE code LIKE '%-0000' 
+            AND code != '00-0000'
+            AND occupation_type = 'Summary'
+            ORDER BY code
+          `);
+          
+          console.log('Major categories query result:', majorCategoriesResult.rows);
+          
+          const categories = [allOption, ...majorCategoriesResult.rows];
+          
+          return NextResponse.json({ 
+            categories: categories 
+          });
+        } catch (error) {
+          // If the query fails, at least return the "All" option
+          console.error('Error fetching major categories:', error);
+          return NextResponse.json({ 
+            categories: [allOption] 
+          });
+        }      case 'get-minor-categories':
+        const majorCodeForMinors = searchParams.get('majorCode');
+        
+        if (!majorCodeForMinors) {
+          return NextResponse.json({ error: 'Major code required' }, { status: 400 });
+        }
+        
+        try {
+          // For "All Occupations" (00-0000), return all major categories as if they were minors
+          if (majorCodeForMinors === '00-0000') {
+            const allMajorsResult = await db.execute(`
+              SELECT DISTINCT code, name 
+              FROM occupations 
+              WHERE code LIKE '%-0000' 
+              AND code != '00-0000'
+              AND occupation_type = 'Summary'
+              ORDER BY code
+            `);
+            
+            return NextResponse.json({ 
+              categories: allMajorsResult.rows 
+            });
+          }
+            // Get minor categories for the selected major group
+          // Minor categories have the same first two digits as major but end in different patterns
+          const majorPrefix = majorCodeForMinors.substring(0, 2);          const minorCategoriesResult = await db.execute({
+            sql: `SELECT DISTINCT code, name 
+                  FROM occupations 
+                  WHERE code LIKE ? 
+                  AND code != ?
+                  AND occupation_type = 'Summary'
+                  AND code NOT LIKE '%-0000'
+                  ORDER BY code`,
+            args: [`${majorPrefix}-%`, majorCodeForMinors]
+          });
+          
+          console.log('Minor categories query result for', majorCodeForMinors, ':', minorCategoriesResult.rows);
+          
+          return NextResponse.json({ 
+            categories: minorCategoriesResult.rows 
+          });
+        } catch (error) {
+          console.error('Error fetching minor categories:', error);
+          return NextResponse.json({ 
+            categories: [] 
+          });
+        }
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

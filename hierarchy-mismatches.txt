@@ -1,0 +1,1650 @@
+Occupation code 00-0000 from CSV not found in the database.
+
+Mismatch for code: 11-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 13-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 15-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 17-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 19-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 21-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 23-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 25-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 27-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 29-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 31-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 33-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 35-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 37-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 39-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 41-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 43-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 45-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 47-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 49-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 51-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 53-0000
+  - parent_code: DB='', User='00-0000'
+
+Mismatch for code: 15-1200
+  - parent_code: DB='15-1000', User='15-0000'
+
+Mismatch for code: 31-1100
+  - parent_code: DB='31-1000', User='31-0000'
+
+Mismatch for code: 51-5100
+  - parent_code: DB='51-5000', User='51-0000'
+Occupation code 45-3000 from CSV not found in the database.
+
+Mismatch for code: 15-1210
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 15-1230
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 15-1240
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 15-1250
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 31-1130
+  - parent_code: DB='31-1000', User='31-1100'
+
+Mismatch for code: 11-2021
+  - parent_code: DB='11-2000', User='11-2020'
+
+Mismatch for code: 11-2022
+  - parent_code: DB='11-2000', User='11-2020'
+
+Mismatch for code: 11-2032
+  - parent_code: DB='11-2000', User='11-2030'
+
+Mismatch for code: 11-2033
+  - parent_code: DB='11-2000', User='11-2030'
+
+Mismatch for code: 11-3012
+  - parent_code: DB='11-3000', User='11-3010'
+
+Mismatch for code: 11-3013
+  - parent_code: DB='11-3000', User='11-3010'
+
+Mismatch for code: 11-9031
+  - parent_code: DB='11-9000', User='11-9030'
+
+Mismatch for code: 11-9032
+  - parent_code: DB='11-9000', User='11-9030'
+
+Mismatch for code: 11-9033
+  - parent_code: DB='11-9000', User='11-9030'
+
+Mismatch for code: 11-9039
+  - parent_code: DB='11-9000', User='11-9030'
+
+Mismatch for code: 11-9071
+  - parent_code: DB='11-9000', User='11-9070'
+
+Mismatch for code: 11-9072
+  - parent_code: DB='11-9000', User='11-9070'
+
+Mismatch for code: 11-9171
+  - parent_code: DB='11-9000', User='11-9170'
+
+Mismatch for code: 11-9179
+  - parent_code: DB='11-9000', User='11-9170'
+
+Mismatch for code: 13-1031
+  - parent_code: DB='13-1000', User='13-1030'
+
+Mismatch for code: 13-1032
+  - parent_code: DB='13-1000', User='13-1030'
+
+Mismatch for code: 13-1071
+  - parent_code: DB='13-1000', User='13-1070'
+
+Mismatch for code: 13-1074
+  - parent_code: DB='13-1000', User='13-1070'
+
+Mismatch for code: 13-1075
+  - parent_code: DB='13-1000', User='13-1070'
+
+Mismatch for code: 13-1081
+  - parent_code: DB='13-1000', User='13-1080'
+
+Mismatch for code: 13-1082
+  - parent_code: DB='13-1000', User='13-1080'
+
+Mismatch for code: 13-2051
+  - parent_code: DB='13-2000', User='13-2050'
+
+Mismatch for code: 13-2052
+  - parent_code: DB='13-2000', User='13-2050'
+
+Mismatch for code: 13-2053
+  - parent_code: DB='13-2000', User='13-2050'
+
+Mismatch for code: 13-2054
+  - parent_code: DB='13-2000', User='13-2050'
+
+Mismatch for code: 13-2071
+  - parent_code: DB='13-2000', User='13-2070'
+
+Mismatch for code: 13-2072
+  - parent_code: DB='13-2000', User='13-2070'
+
+Mismatch for code: 13-2081
+  - parent_code: DB='13-2000', User='13-2080'
+
+Mismatch for code: 13-2082
+  - parent_code: DB='13-2000', User='13-2080'
+
+Mismatch for code: 15-1211
+  - parent_code: DB='15-1000', User='15-1210'
+
+Mismatch for code: 15-1212
+  - parent_code: DB='15-1000', User='15-1210'
+
+Mismatch for code: 15-1221
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 15-1231
+  - parent_code: DB='15-1000', User='15-1230'
+
+Mismatch for code: 15-1232
+  - parent_code: DB='15-1000', User='15-1230'
+
+Mismatch for code: 15-1241
+  - parent_code: DB='15-1000', User='15-1240'
+
+Mismatch for code: 15-1242
+  - parent_code: DB='15-1000', User='15-1240'
+
+Mismatch for code: 15-1243
+  - parent_code: DB='15-1000', User='15-1240'
+
+Mismatch for code: 15-1244
+  - parent_code: DB='15-1000', User='15-1240'
+
+Mismatch for code: 15-1251
+  - parent_code: DB='15-1000', User='15-1250'
+
+Mismatch for code: 15-1252
+  - parent_code: DB='15-1000', User='15-1250'
+
+Mismatch for code: 15-1253
+  - parent_code: DB='15-1000', User='15-1250'
+
+Mismatch for code: 15-1254
+  - parent_code: DB='15-1000', User='15-1250'
+
+Mismatch for code: 15-1255
+  - parent_code: DB='15-1000', User='15-1250'
+
+Mismatch for code: 15-1299
+  - parent_code: DB='15-1000', User='15-1200'
+
+Mismatch for code: 17-1011
+  - parent_code: DB='17-1000', User='17-1010'
+
+Mismatch for code: 17-1012
+  - parent_code: DB='17-1000', User='17-1010'
+
+Mismatch for code: 17-1021
+  - parent_code: DB='17-1000', User='17-1020'
+
+Mismatch for code: 17-1022
+  - parent_code: DB='17-1000', User='17-1020'
+
+Mismatch for code: 17-2071
+  - parent_code: DB='17-2000', User='17-2070'
+
+Mismatch for code: 17-2072
+  - parent_code: DB='17-2000', User='17-2070'
+
+Mismatch for code: 17-2111
+  - parent_code: DB='17-2000', User='17-2110'
+
+Mismatch for code: 17-2112
+  - parent_code: DB='17-2000', User='17-2110'
+
+Mismatch for code: 17-3011
+  - parent_code: DB='17-3000', User='17-3010'
+
+Mismatch for code: 17-3012
+  - parent_code: DB='17-3000', User='17-3010'
+
+Mismatch for code: 17-3013
+  - parent_code: DB='17-3000', User='17-3010'
+
+Mismatch for code: 17-3019
+  - parent_code: DB='17-3000', User='17-3010'
+
+Mismatch for code: 17-3021
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3022
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3023
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3024
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3025
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3026
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3027
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3028
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 17-3029
+  - parent_code: DB='17-3000', User='17-3020'
+
+Mismatch for code: 19-1011
+  - parent_code: DB='19-1000', User='19-1010'
+
+Mismatch for code: 19-1012
+  - parent_code: DB='19-1000', User='19-1010'
+
+Mismatch for code: 19-1013
+  - parent_code: DB='19-1000', User='19-1010'
+
+Mismatch for code: 19-1021
+  - parent_code: DB='19-1000', User='19-1020'
+
+Mismatch for code: 19-1022
+  - parent_code: DB='19-1000', User='19-1020'
+
+Mismatch for code: 19-1023
+  - parent_code: DB='19-1000', User='19-1020'
+
+Mismatch for code: 19-1029
+  - parent_code: DB='19-1000', User='19-1020'
+
+Mismatch for code: 19-1031
+  - parent_code: DB='19-1000', User='19-1030'
+
+Mismatch for code: 19-1032
+  - parent_code: DB='19-1000', User='19-1030'
+
+Mismatch for code: 19-1041
+  - parent_code: DB='19-1000', User='19-1040'
+
+Mismatch for code: 19-1042
+  - parent_code: DB='19-1000', User='19-1040'
+
+Mismatch for code: 19-2011
+  - parent_code: DB='19-2000', User='19-2010'
+
+Mismatch for code: 19-2012
+  - parent_code: DB='19-2000', User='19-2010'
+
+Mismatch for code: 19-2031
+  - parent_code: DB='19-2000', User='19-2030'
+
+Mismatch for code: 19-2032
+  - parent_code: DB='19-2000', User='19-2030'
+
+Mismatch for code: 19-2041
+  - parent_code: DB='19-2000', User='19-2040'
+
+Mismatch for code: 19-2042
+  - parent_code: DB='19-2000', User='19-2040'
+
+Mismatch for code: 19-2043
+  - parent_code: DB='19-2000', User='19-2040'
+
+Mismatch for code: 19-3032
+  - parent_code: DB='19-3000', User='19-3030'
+
+Mismatch for code: 19-3033
+  - parent_code: DB='19-3000', User='19-3030'
+
+Mismatch for code: 19-3034
+  - parent_code: DB='19-3000', User='19-3030'
+
+Mismatch for code: 19-3039
+  - parent_code: DB='19-3000', User='19-3030'
+
+Mismatch for code: 19-3091
+  - parent_code: DB='19-3000', User='19-3090'
+
+Mismatch for code: 19-3092
+  - parent_code: DB='19-3000', User='19-3090'
+
+Mismatch for code: 19-3093
+  - parent_code: DB='19-3000', User='19-3090'
+
+Mismatch for code: 19-3094
+  - parent_code: DB='19-3000', User='19-3090'
+
+Mismatch for code: 19-3099
+  - parent_code: DB='19-3000', User='19-3090'
+
+Mismatch for code: 19-4012
+  - parent_code: DB='19-4000', User='19-4010'
+
+Mismatch for code: 19-4013
+  - parent_code: DB='19-4000', User='19-4010'
+
+Mismatch for code: 19-4042
+  - parent_code: DB='19-4000', User='19-4040'
+
+Mismatch for code: 19-4043
+  - parent_code: DB='19-4000', User='19-4040'
+
+Mismatch for code: 19-4044
+  - parent_code: DB='19-4000', User='19-4040'
+
+Mismatch for code: 19-4092
+  - parent_code: DB='19-4000', User='19-4090'
+
+Mismatch for code: 19-4099
+  - parent_code: DB='19-4000', User='19-4090'
+
+Mismatch for code: 21-1012
+  - parent_code: DB='21-1000', User='21-1010'
+
+Mismatch for code: 21-1013
+  - parent_code: DB='21-1000', User='21-1010'
+
+Mismatch for code: 21-1015
+  - parent_code: DB='21-1000', User='21-1010'
+
+Mismatch for code: 21-1018
+  - parent_code: DB='21-1000', User='21-1010'
+
+Mismatch for code: 21-1019
+  - parent_code: DB='21-1000', User='21-1010'
+
+Mismatch for code: 21-1021
+  - parent_code: DB='21-1000', User='21-1020'
+
+Mismatch for code: 21-1022
+  - parent_code: DB='21-1000', User='21-1020'
+
+Mismatch for code: 21-1023
+  - parent_code: DB='21-1000', User='21-1020'
+
+Mismatch for code: 21-1029
+  - parent_code: DB='21-1000', User='21-1020'
+
+Mismatch for code: 21-1091
+  - parent_code: DB='21-1000', User='21-1090'
+
+Mismatch for code: 21-1092
+  - parent_code: DB='21-1000', User='21-1090'
+
+Mismatch for code: 21-1093
+  - parent_code: DB='21-1000', User='21-1090'
+
+Mismatch for code: 21-1094
+  - parent_code: DB='21-1000', User='21-1090'
+
+Mismatch for code: 21-1099
+  - parent_code: DB='21-1000', User='21-1090'
+
+Mismatch for code: 23-1011
+  - parent_code: DB='23-1000', User='23-1010'
+
+Mismatch for code: 23-1012
+  - parent_code: DB='23-1000', User='23-1010'
+
+Mismatch for code: 23-1021
+  - parent_code: DB='23-1000', User='23-1020'
+
+Mismatch for code: 23-1022
+  - parent_code: DB='23-1000', User='23-1020'
+
+Mismatch for code: 23-1023
+  - parent_code: DB='23-1000', User='23-1020'
+
+Mismatch for code: 23-2093
+  - parent_code: DB='23-2000', User='23-2090'
+
+Mismatch for code: 23-2099
+  - parent_code: DB='23-2000', User='23-2090'
+
+Mismatch for code: 25-1021
+  - parent_code: DB='25-1000', User='25-1020'
+
+Mismatch for code: 25-1022
+  - parent_code: DB='25-1000', User='25-1020'
+
+Mismatch for code: 25-1031
+  - parent_code: DB='25-1000', User='25-1030'
+
+Mismatch for code: 25-1032
+  - parent_code: DB='25-1000', User='25-1030'
+
+Mismatch for code: 25-1041
+  - parent_code: DB='25-1000', User='25-1040'
+
+Mismatch for code: 25-1042
+  - parent_code: DB='25-1000', User='25-1040'
+
+Mismatch for code: 25-1043
+  - parent_code: DB='25-1000', User='25-1040'
+
+Mismatch for code: 25-1051
+  - parent_code: DB='25-1000', User='25-1050'
+
+Mismatch for code: 25-1052
+  - parent_code: DB='25-1000', User='25-1050'
+
+Mismatch for code: 25-1053
+  - parent_code: DB='25-1000', User='25-1050'
+
+Mismatch for code: 25-1054
+  - parent_code: DB='25-1000', User='25-1050'
+
+Mismatch for code: 25-1061
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1062
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1063
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1064
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1065
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1066
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1067
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1069
+  - parent_code: DB='25-1000', User='25-1060'
+
+Mismatch for code: 25-1071
+  - parent_code: DB='25-1000', User='25-1070'
+
+Mismatch for code: 25-1072
+  - parent_code: DB='25-1000', User='25-1070'
+
+Mismatch for code: 25-1081
+  - parent_code: DB='25-1000', User='25-1080'
+
+Mismatch for code: 25-1082
+  - parent_code: DB='25-1000', User='25-1080'
+
+Mismatch for code: 25-1111
+  - parent_code: DB='25-1000', User='25-1110'
+
+Mismatch for code: 25-1112
+  - parent_code: DB='25-1000', User='25-1110'
+
+Mismatch for code: 25-1113
+  - parent_code: DB='25-1000', User='25-1110'
+
+Mismatch for code: 25-1121
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1122
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1123
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1124
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1125
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1126
+  - parent_code: DB='25-1000', User='25-1120'
+
+Mismatch for code: 25-1192
+  - parent_code: DB='25-1000', User='25-1190'
+
+Mismatch for code: 25-1193
+  - parent_code: DB='25-1000', User='25-1190'
+
+Mismatch for code: 25-1194
+  - parent_code: DB='25-1000', User='25-1190'
+
+Mismatch for code: 25-1199
+  - parent_code: DB='25-1000', User='25-1190'
+
+Mismatch for code: 25-2011
+  - parent_code: DB='25-2000', User='25-2010'
+
+Mismatch for code: 25-2012
+  - parent_code: DB='25-2000', User='25-2010'
+
+Mismatch for code: 25-2021
+  - parent_code: DB='25-2000', User='25-2020'
+
+Mismatch for code: 25-2022
+  - parent_code: DB='25-2000', User='25-2020'
+
+Mismatch for code: 25-2023
+  - parent_code: DB='25-2000', User='25-2020'
+
+Mismatch for code: 25-2031
+  - parent_code: DB='25-2000', User='25-2030'
+
+Mismatch for code: 25-2032
+  - parent_code: DB='25-2000', User='25-2030'
+
+Mismatch for code: 25-2051
+  - parent_code: DB='25-2000', User='25-2050'
+
+Mismatch for code: 25-2052
+  - parent_code: DB='25-2000', User='25-2050'
+
+Mismatch for code: 25-2057
+  - parent_code: DB='25-2000', User='25-2050'
+
+Mismatch for code: 25-2058
+  - parent_code: DB='25-2000', User='25-2050'
+
+Mismatch for code: 25-2059
+  - parent_code: DB='25-2000', User='25-2050'
+
+Mismatch for code: 25-4011
+  - parent_code: DB='25-4000', User='25-4010'
+
+Mismatch for code: 25-4012
+  - parent_code: DB='25-4000', User='25-4010'
+
+Mismatch for code: 25-4013
+  - parent_code: DB='25-4000', User='25-4010'
+
+Mismatch for code: 25-9044
+  - parent_code: DB='25-9000', User='25-9040'
+
+Mismatch for code: 25-9045
+  - parent_code: DB='25-9000', User='25-9040'
+
+Mismatch for code: 27-1011
+  - parent_code: DB='27-1000', User='27-1010'
+
+Mismatch for code: 27-1012
+  - parent_code: DB='27-1000', User='27-1010'
+
+Mismatch for code: 27-1013
+  - parent_code: DB='27-1000', User='27-1010'
+
+Mismatch for code: 27-1014
+  - parent_code: DB='27-1000', User='27-1010'
+
+Mismatch for code: 27-1019
+  - parent_code: DB='27-1000', User='27-1010'
+
+Mismatch for code: 27-1021
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1022
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1023
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1024
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1025
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1026
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1027
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-1029
+  - parent_code: DB='27-1000', User='27-1020'
+
+Mismatch for code: 27-2011
+  - parent_code: DB='27-2000', User='27-2010'
+
+Mismatch for code: 27-2012
+  - parent_code: DB='27-2000', User='27-2010'
+
+Mismatch for code: 27-2021
+  - parent_code: DB='27-2000', User='27-2020'
+
+Mismatch for code: 27-2022
+  - parent_code: DB='27-2000', User='27-2020'
+
+Mismatch for code: 27-2023
+  - parent_code: DB='27-2000', User='27-2020'
+
+Mismatch for code: 27-2031
+  - parent_code: DB='27-2000', User='27-2030'
+
+Mismatch for code: 27-2032
+  - parent_code: DB='27-2000', User='27-2030'
+
+Mismatch for code: 27-2041
+  - parent_code: DB='27-2000', User='27-2040'
+
+Mismatch for code: 27-2042
+  - parent_code: DB='27-2000', User='27-2040'
+
+Mismatch for code: 27-2091
+  - parent_code: DB='27-2000', User='27-2090'
+
+Mismatch for code: 27-2099
+  - parent_code: DB='27-2000', User='27-2090'
+
+Mismatch for code: 27-3041
+  - parent_code: DB='27-3000', User='27-3040'
+
+Mismatch for code: 27-3042
+  - parent_code: DB='27-3000', User='27-3040'
+
+Mismatch for code: 27-3043
+  - parent_code: DB='27-3000', User='27-3040'
+
+Mismatch for code: 27-3091
+  - parent_code: DB='27-3000', User='27-3090'
+
+Mismatch for code: 27-3092
+  - parent_code: DB='27-3000', User='27-3090'
+
+Mismatch for code: 27-3099
+  - parent_code: DB='27-3000', User='27-3090'
+
+Mismatch for code: 27-4011
+  - parent_code: DB='27-4000', User='27-4010'
+
+Mismatch for code: 27-4012
+  - parent_code: DB='27-4000', User='27-4010'
+
+Mismatch for code: 27-4014
+  - parent_code: DB='27-4000', User='27-4010'
+
+Mismatch for code: 27-4015
+  - parent_code: DB='27-4000', User='27-4010'
+
+Mismatch for code: 27-4031
+  - parent_code: DB='27-4000', User='27-4030'
+
+Mismatch for code: 27-4032
+  - parent_code: DB='27-4000', User='27-4030'
+
+Mismatch for code: 29-1021
+  - parent_code: DB='29-1000', User='29-1020'
+
+Mismatch for code: 29-1022
+  - parent_code: DB='29-1000', User='29-1020'
+
+Mismatch for code: 29-1023
+  - parent_code: DB='29-1000', User='29-1020'
+
+Mismatch for code: 29-1024
+  - parent_code: DB='29-1000', User='29-1020'
+
+Mismatch for code: 29-1029
+  - parent_code: DB='29-1000', User='29-1020'
+
+Mismatch for code: 29-1122
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1123
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1124
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1125
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1126
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1127
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1128
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1129
+  - parent_code: DB='29-1000', User='29-1120'
+
+Mismatch for code: 29-1211
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1212
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1213
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1214
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1215
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1216
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1217
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1218
+  - parent_code: DB='29-1000', User='29-1210'
+
+Mismatch for code: 29-1241
+  - parent_code: DB='29-1000', User='29-1240'
+
+Mismatch for code: 29-1242
+  - parent_code: DB='29-1000', User='29-1240'
+
+Mismatch for code: 29-1243
+  - parent_code: DB='29-1000', User='29-1240'
+
+Mismatch for code: 29-1249
+  - parent_code: DB='29-1000', User='29-1240'
+
+Mismatch for code: 29-1291
+  - parent_code: DB='29-1000', User='29-1290'
+
+Mismatch for code: 29-1292
+  - parent_code: DB='29-1000', User='29-1290'
+
+Mismatch for code: 29-1299
+  - parent_code: DB='29-1000', User='29-1290'
+
+Mismatch for code: 29-2031
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2032
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2033
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2034
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2035
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2036
+  - parent_code: DB='29-2000', User='29-2030'
+
+Mismatch for code: 29-2042
+  - parent_code: DB='29-2000', User='29-2040'
+
+Mismatch for code: 29-2043
+  - parent_code: DB='29-2000', User='29-2040'
+
+Mismatch for code: 29-2051
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2052
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2053
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2055
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2056
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2057
+  - parent_code: DB='29-2000', User='29-2050'
+
+Mismatch for code: 29-2091
+  - parent_code: DB='29-2000', User='29-2090'
+
+Mismatch for code: 29-2092
+  - parent_code: DB='29-2000', User='29-2090'
+
+Mismatch for code: 29-2099
+  - parent_code: DB='29-2000', User='29-2090'
+
+Mismatch for code: 29-9091
+  - parent_code: DB='29-9000', User='29-9090'
+
+Mismatch for code: 29-9092
+  - parent_code: DB='29-9000', User='29-9090'
+
+Mismatch for code: 29-9093
+  - parent_code: DB='29-9000', User='29-9090'
+
+Mismatch for code: 29-9099
+  - parent_code: DB='29-9000', User='29-9090'
+
+Mismatch for code: 31-1120
+  - parent_code: DB='31-1000', User='31-1100'
+
+Mismatch for code: 31-1131
+  - parent_code: DB='31-1000', User='31-1130'
+
+Mismatch for code: 31-1132
+  - parent_code: DB='31-1000', User='31-1130'
+
+Mismatch for code: 31-1133
+  - parent_code: DB='31-1000', User='31-1130'
+
+Mismatch for code: 31-2011
+  - parent_code: DB='31-2000', User='31-2010'
+
+Mismatch for code: 31-2012
+  - parent_code: DB='31-2000', User='31-2010'
+
+Mismatch for code: 31-2021
+  - parent_code: DB='31-2000', User='31-2020'
+
+Mismatch for code: 31-2022
+  - parent_code: DB='31-2000', User='31-2020'
+
+Mismatch for code: 31-9091
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9092
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9093
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9094
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9095
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9096
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9097
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 31-9099
+  - parent_code: DB='31-9000', User='31-9090'
+
+Mismatch for code: 33-1011
+  - parent_code: DB='33-1000', User='33-1010'
+
+Mismatch for code: 33-1012
+  - parent_code: DB='33-1000', User='33-1010'
+
+Mismatch for code: 33-1091
+  - parent_code: DB='33-1000', User='33-1090'
+
+Mismatch for code: 33-1099
+  - parent_code: DB='33-1000', User='33-1090'
+
+Mismatch for code: 33-2021
+  - parent_code: DB='33-2000', User='33-2020'
+
+Mismatch for code: 33-2022
+  - parent_code: DB='33-2000', User='33-2020'
+
+Mismatch for code: 33-3011
+  - parent_code: DB='33-3000', User='33-3010'
+
+Mismatch for code: 33-3012
+  - parent_code: DB='33-3000', User='33-3010'
+
+Mismatch for code: 33-3051
+  - parent_code: DB='33-3000', User='33-3050'
+
+Mismatch for code: 33-3052
+  - parent_code: DB='33-3000', User='33-3050'
+
+Mismatch for code: 33-9031
+  - parent_code: DB='33-9000', User='33-9030'
+
+Mismatch for code: 33-9032
+  - parent_code: DB='33-9000', User='33-9030'
+
+Mismatch for code: 33-9091
+  - parent_code: DB='33-9000', User='33-9090'
+
+Mismatch for code: 33-9092
+  - parent_code: DB='33-9000', User='33-9090'
+
+Mismatch for code: 33-9093
+  - parent_code: DB='33-9000', User='33-9090'
+
+Mismatch for code: 33-9094
+  - parent_code: DB='33-9000', User='33-9090'
+
+Mismatch for code: 33-9099
+  - parent_code: DB='33-9000', User='33-9090'
+
+Mismatch for code: 35-2011
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 35-2012
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 35-2013
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 35-2014
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 35-2015
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 35-2019
+  - parent_code: DB='35-2000', User='35-2010'
+
+Mismatch for code: 37-2011
+  - parent_code: DB='37-2000', User='37-2010'
+
+Mismatch for code: 37-2012
+  - parent_code: DB='37-2000', User='37-2010'
+
+Mismatch for code: 37-2019
+  - parent_code: DB='37-2000', User='37-2010'
+
+Mismatch for code: 39-1013
+  - parent_code: DB='39-1000', User='39-1010'
+
+Mismatch for code: 39-1014
+  - parent_code: DB='39-1000', User='39-1010'
+
+Mismatch for code: 39-3011
+  - parent_code: DB='39-3000', User='39-3010'
+
+Mismatch for code: 39-3012
+  - parent_code: DB='39-3000', User='39-3010'
+
+Mismatch for code: 39-3019
+  - parent_code: DB='39-3000', User='39-3010'
+
+Mismatch for code: 39-3091
+  - parent_code: DB='39-3000', User='39-3090'
+
+Mismatch for code: 39-3092
+  - parent_code: DB='39-3000', User='39-3090'
+
+Mismatch for code: 39-3093
+  - parent_code: DB='39-3000', User='39-3090'
+
+Mismatch for code: 39-3099
+  - parent_code: DB='39-3000', User='39-3090'
+
+Mismatch for code: 39-4011
+  - parent_code: DB='39-4000', User='39-4010'
+
+Mismatch for code: 39-4012
+  - parent_code: DB='39-4000', User='39-4010'
+
+Mismatch for code: 39-5011
+  - parent_code: DB='39-5000', User='39-5010'
+
+Mismatch for code: 39-5012
+  - parent_code: DB='39-5000', User='39-5010'
+
+Mismatch for code: 39-5091
+  - parent_code: DB='39-5000', User='39-5090'
+
+Mismatch for code: 39-5092
+  - parent_code: DB='39-5000', User='39-5090'
+
+Mismatch for code: 39-5093
+  - parent_code: DB='39-5000', User='39-5090'
+
+Mismatch for code: 39-5094
+  - parent_code: DB='39-5000', User='39-5090'
+
+Mismatch for code: 39-9031
+  - parent_code: DB='39-9000', User='39-9030'
+
+Mismatch for code: 39-9032
+  - parent_code: DB='39-9000', User='39-9030'
+
+Mismatch for code: 41-2011
+  - parent_code: DB='41-2000', User='41-2010'
+
+Mismatch for code: 41-2012
+  - parent_code: DB='41-2000', User='41-2010'
+
+Mismatch for code: 41-2021
+  - parent_code: DB='41-2000', User='41-2020'
+
+Mismatch for code: 41-2022
+  - parent_code: DB='41-2000', User='41-2020'
+
+Mismatch for code: 41-9011
+  - parent_code: DB='41-9000', User='41-9010'
+
+Mismatch for code: 41-9012
+  - parent_code: DB='41-9000', User='41-9010'
+
+Mismatch for code: 41-9021
+  - parent_code: DB='41-9000', User='41-9020'
+
+Mismatch for code: 41-9022
+  - parent_code: DB='41-9000', User='41-9020'
+
+Mismatch for code: 41-9091
+  - parent_code: DB='41-9000', User='41-9090'
+
+Mismatch for code: 41-9099
+  - parent_code: DB='41-9000', User='41-9090'
+
+Mismatch for code: 43-5031
+  - parent_code: DB='43-5000', User='43-5030'
+
+Mismatch for code: 43-5032
+  - parent_code: DB='43-5000', User='43-5030'
+
+Mismatch for code: 43-5051
+  - parent_code: DB='43-5000', User='43-5050'
+
+Mismatch for code: 43-5052
+  - parent_code: DB='43-5000', User='43-5050'
+
+Mismatch for code: 43-5053
+  - parent_code: DB='43-5000', User='43-5050'
+
+Mismatch for code: 43-9021
+  - parent_code: DB='43-9000', User='43-9020'
+
+Mismatch for code: 43-9022
+  - parent_code: DB='43-9000', User='43-9020'
+
+Mismatch for code: 45-2091
+  - parent_code: DB='45-2000', User='45-2090'
+
+Mismatch for code: 45-2092
+  - parent_code: DB='45-2000', User='45-2090'
+
+Mismatch for code: 45-2093
+  - parent_code: DB='45-2000', User='45-2090'
+
+Mismatch for code: 45-2099
+  - parent_code: DB='45-2000', User='45-2090'
+Occupation code 45-3031 from CSV not found in the database.
+
+Mismatch for code: 45-4021
+  - parent_code: DB='45-4000', User='45-4020'
+
+Mismatch for code: 45-4022
+  - parent_code: DB='45-4000', User='45-4020'
+
+Mismatch for code: 45-4023
+  - parent_code: DB='45-4000', User='45-4020'
+
+Mismatch for code: 45-4029
+  - parent_code: DB='45-4000', User='45-4020'
+
+Mismatch for code: 47-2021
+  - parent_code: DB='47-2000', User='47-2020'
+
+Mismatch for code: 47-2022
+  - parent_code: DB='47-2000', User='47-2020'
+
+Mismatch for code: 47-2041
+  - parent_code: DB='47-2000', User='47-2040'
+
+Mismatch for code: 47-2042
+  - parent_code: DB='47-2000', User='47-2040'
+
+Mismatch for code: 47-2043
+  - parent_code: DB='47-2000', User='47-2040'
+
+Mismatch for code: 47-2044
+  - parent_code: DB='47-2000', User='47-2040'
+
+Mismatch for code: 47-2051
+  - parent_code: DB='47-2000', User='47-2050'
+
+Mismatch for code: 47-2053
+  - parent_code: DB='47-2000', User='47-2050'
+
+Mismatch for code: 47-2071
+  - parent_code: DB='47-2000', User='47-2070'
+
+Mismatch for code: 47-2072
+  - parent_code: DB='47-2000', User='47-2070'
+
+Mismatch for code: 47-2073
+  - parent_code: DB='47-2000', User='47-2070'
+
+Mismatch for code: 47-2081
+  - parent_code: DB='47-2000', User='47-2080'
+
+Mismatch for code: 47-2082
+  - parent_code: DB='47-2000', User='47-2080'
+
+Mismatch for code: 47-2131
+  - parent_code: DB='47-2000', User='47-2130'
+
+Mismatch for code: 47-2132
+  - parent_code: DB='47-2000', User='47-2130'
+
+Mismatch for code: 47-2141
+  - parent_code: DB='47-2000', User='47-2140'
+
+Mismatch for code: 47-2142
+  - parent_code: DB='47-2000', User='47-2140'
+
+Mismatch for code: 47-2151
+  - parent_code: DB='47-2000', User='47-2150'
+
+Mismatch for code: 47-2152
+  - parent_code: DB='47-2000', User='47-2150'
+
+Mismatch for code: 47-5011
+  - parent_code: DB='47-5000', User='47-5010'
+
+Mismatch for code: 47-5012
+  - parent_code: DB='47-5000', User='47-5010'
+
+Mismatch for code: 47-5013
+  - parent_code: DB='47-5000', User='47-5010'
+
+Mismatch for code: 47-5022
+  - parent_code: DB='47-5000', User='47-5020'
+
+Mismatch for code: 47-5023
+  - parent_code: DB='47-5000', User='47-5020'
+
+Mismatch for code: 47-5041
+  - parent_code: DB='47-5000', User='47-5040'
+
+Mismatch for code: 47-5043
+  - parent_code: DB='47-5000', User='47-5040'
+
+Mismatch for code: 47-5044
+  - parent_code: DB='47-5000', User='47-5040'
+
+Mismatch for code: 47-5049
+  - parent_code: DB='47-5000', User='47-5040'
+
+Mismatch for code: 49-2021
+  - parent_code: DB='49-2000', User='49-2020'
+
+Mismatch for code: 49-2022
+  - parent_code: DB='49-2000', User='49-2020'
+
+Mismatch for code: 49-2091
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2092
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2093
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2094
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2095
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2096
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2097
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-2098
+  - parent_code: DB='49-2000', User='49-2090'
+
+Mismatch for code: 49-3021
+  - parent_code: DB='49-3000', User='49-3020'
+
+Mismatch for code: 49-3022
+  - parent_code: DB='49-3000', User='49-3020'
+
+Mismatch for code: 49-3023
+  - parent_code: DB='49-3000', User='49-3020'
+
+Mismatch for code: 49-3041
+  - parent_code: DB='49-3000', User='49-3040'
+
+Mismatch for code: 49-3042
+  - parent_code: DB='49-3000', User='49-3040'
+
+Mismatch for code: 49-3043
+  - parent_code: DB='49-3000', User='49-3040'
+
+Mismatch for code: 49-3051
+  - parent_code: DB='49-3000', User='49-3050'
+
+Mismatch for code: 49-3052
+  - parent_code: DB='49-3000', User='49-3050'
+
+Mismatch for code: 49-3053
+  - parent_code: DB='49-3000', User='49-3050'
+
+Mismatch for code: 49-3091
+  - parent_code: DB='49-3000', User='49-3090'
+
+Mismatch for code: 49-3092
+  - parent_code: DB='49-3000', User='49-3090'
+
+Mismatch for code: 49-3093
+  - parent_code: DB='49-3000', User='49-3090'
+
+Mismatch for code: 49-9011
+  - parent_code: DB='49-9000', User='49-9010'
+
+Mismatch for code: 49-9012
+  - parent_code: DB='49-9000', User='49-9010'
+
+Mismatch for code: 49-9041
+  - parent_code: DB='49-9000', User='49-9040'
+
+Mismatch for code: 49-9043
+  - parent_code: DB='49-9000', User='49-9040'
+
+Mismatch for code: 49-9044
+  - parent_code: DB='49-9000', User='49-9040'
+
+Mismatch for code: 49-9045
+  - parent_code: DB='49-9000', User='49-9040'
+
+Mismatch for code: 49-9051
+  - parent_code: DB='49-9000', User='49-9050'
+
+Mismatch for code: 49-9052
+  - parent_code: DB='49-9000', User='49-9050'
+
+Mismatch for code: 49-9061
+  - parent_code: DB='49-9000', User='49-9060'
+
+Mismatch for code: 49-9062
+  - parent_code: DB='49-9000', User='49-9060'
+
+Mismatch for code: 49-9063
+  - parent_code: DB='49-9000', User='49-9060'
+
+Mismatch for code: 49-9064
+  - parent_code: DB='49-9000', User='49-9060'
+
+Mismatch for code: 49-9069
+  - parent_code: DB='49-9000', User='49-9060'
+
+Mismatch for code: 49-9091
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9092
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9094
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9095
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9096
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9097
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9098
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 49-9099
+  - parent_code: DB='49-9000', User='49-9090'
+
+Mismatch for code: 51-2021
+  - parent_code: DB='51-2000', User='51-2020'
+
+Mismatch for code: 51-2028
+  - parent_code: DB='51-2000', User='51-2020'
+
+Mismatch for code: 51-3021
+  - parent_code: DB='51-3000', User='51-3020'
+
+Mismatch for code: 51-3022
+  - parent_code: DB='51-3000', User='51-3020'
+
+Mismatch for code: 51-3023
+  - parent_code: DB='51-3000', User='51-3020'
+
+Mismatch for code: 51-3091
+  - parent_code: DB='51-3000', User='51-3090'
+
+Mismatch for code: 51-3092
+  - parent_code: DB='51-3000', User='51-3090'
+
+Mismatch for code: 51-3093
+  - parent_code: DB='51-3000', User='51-3090'
+
+Mismatch for code: 51-3099
+  - parent_code: DB='51-3000', User='51-3090'
+
+Mismatch for code: 51-4021
+  - parent_code: DB='51-4000', User='51-4020'
+
+Mismatch for code: 51-4022
+  - parent_code: DB='51-4000', User='51-4020'
+
+Mismatch for code: 51-4023
+  - parent_code: DB='51-4000', User='51-4020'
+
+Mismatch for code: 51-4031
+  - parent_code: DB='51-4000', User='51-4030'
+
+Mismatch for code: 51-4032
+  - parent_code: DB='51-4000', User='51-4030'
+
+Mismatch for code: 51-4033
+  - parent_code: DB='51-4000', User='51-4030'
+
+Mismatch for code: 51-4034
+  - parent_code: DB='51-4000', User='51-4030'
+
+Mismatch for code: 51-4035
+  - parent_code: DB='51-4000', User='51-4030'
+
+Mismatch for code: 51-4051
+  - parent_code: DB='51-4000', User='51-4050'
+
+Mismatch for code: 51-4052
+  - parent_code: DB='51-4000', User='51-4050'
+
+Mismatch for code: 51-4061
+  - parent_code: DB='51-4000', User='51-4060'
+
+Mismatch for code: 51-4062
+  - parent_code: DB='51-4000', User='51-4060'
+
+Mismatch for code: 51-4071
+  - parent_code: DB='51-4000', User='51-4070'
+
+Mismatch for code: 51-4072
+  - parent_code: DB='51-4000', User='51-4070'
+
+Mismatch for code: 51-4121
+  - parent_code: DB='51-4000', User='51-4120'
+
+Mismatch for code: 51-4122
+  - parent_code: DB='51-4000', User='51-4120'
+
+Mismatch for code: 51-4191
+  - parent_code: DB='51-4000', User='51-4190'
+
+Mismatch for code: 51-4192
+  - parent_code: DB='51-4000', User='51-4190'
+
+Mismatch for code: 51-4193
+  - parent_code: DB='51-4000', User='51-4190'
+
+Mismatch for code: 51-4194
+  - parent_code: DB='51-4000', User='51-4190'
+
+Mismatch for code: 51-4199
+  - parent_code: DB='51-4000', User='51-4190'
+
+Mismatch for code: 51-5111
+  - parent_code: DB='51-5000', User='51-5100'
+
+Mismatch for code: 51-5112
+  - parent_code: DB='51-5000', User='51-5100'
+
+Mismatch for code: 51-5113
+  - parent_code: DB='51-5000', User='51-5100'
+
+Mismatch for code: 51-6041
+  - parent_code: DB='51-6000', User='51-6040'
+
+Mismatch for code: 51-6042
+  - parent_code: DB='51-6000', User='51-6040'
+
+Mismatch for code: 51-6051
+  - parent_code: DB='51-6000', User='51-6050'
+
+Mismatch for code: 51-6052
+  - parent_code: DB='51-6000', User='51-6050'
+
+Mismatch for code: 51-6061
+  - parent_code: DB='51-6000', User='51-6060'
+
+Mismatch for code: 51-6062
+  - parent_code: DB='51-6000', User='51-6060'
+
+Mismatch for code: 51-6063
+  - parent_code: DB='51-6000', User='51-6060'
+
+Mismatch for code: 51-6064
+  - parent_code: DB='51-6000', User='51-6060'
+
+Mismatch for code: 51-6091
+  - parent_code: DB='51-6000', User='51-6090'
+
+Mismatch for code: 51-6092
+  - parent_code: DB='51-6000', User='51-6090'
+
+Mismatch for code: 51-6093
+  - parent_code: DB='51-6000', User='51-6090'
+
+Mismatch for code: 51-6099
+  - parent_code: DB='51-6000', User='51-6090'
+
+Mismatch for code: 51-7031
+  - parent_code: DB='51-7000', User='51-7030'
+
+Mismatch for code: 51-7032
+  - parent_code: DB='51-7000', User='51-7030'
+
+Mismatch for code: 51-7041
+  - parent_code: DB='51-7000', User='51-7040'
+
+Mismatch for code: 51-7042
+  - parent_code: DB='51-7000', User='51-7040'
+
+Mismatch for code: 51-8011
+  - parent_code: DB='51-8000', User='51-8010'
+
+Mismatch for code: 51-8012
+  - parent_code: DB='51-8000', User='51-8010'
+
+Mismatch for code: 51-8013
+  - parent_code: DB='51-8000', User='51-8010'
+
+Mismatch for code: 51-8091
+  - parent_code: DB='51-8000', User='51-8090'
+
+Mismatch for code: 51-8092
+  - parent_code: DB='51-8000', User='51-8090'
+
+Mismatch for code: 51-8093
+  - parent_code: DB='51-8000', User='51-8090'
+
+Mismatch for code: 51-8099
+  - parent_code: DB='51-8000', User='51-8090'
+
+Mismatch for code: 51-9011
+  - parent_code: DB='51-9000', User='51-9010'
+
+Mismatch for code: 51-9012
+  - parent_code: DB='51-9000', User='51-9010'
+
+Mismatch for code: 51-9021
+  - parent_code: DB='51-9000', User='51-9020'
+
+Mismatch for code: 51-9022
+  - parent_code: DB='51-9000', User='51-9020'
+
+Mismatch for code: 51-9023
+  - parent_code: DB='51-9000', User='51-9020'
+
+Mismatch for code: 51-9031
+  - parent_code: DB='51-9000', User='51-9030'
+
+Mismatch for code: 51-9032
+  - parent_code: DB='51-9000', User='51-9030'
+
+Mismatch for code: 51-9081
+  - parent_code: DB='51-9000', User='51-9080'
+
+Mismatch for code: 51-9082
+  - parent_code: DB='51-9000', User='51-9080'
+
+Mismatch for code: 51-9083
+  - parent_code: DB='51-9000', User='51-9080'
+
+Mismatch for code: 51-9123
+  - parent_code: DB='51-9000', User='51-9120'
+
+Mismatch for code: 51-9124
+  - parent_code: DB='51-9000', User='51-9120'
+
+Mismatch for code: 51-9161
+  - parent_code: DB='51-9000', User='51-9160'
+
+Mismatch for code: 51-9162
+  - parent_code: DB='51-9000', User='51-9160'
+
+Mismatch for code: 51-9191
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9192
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9193
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9194
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9195
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9196
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9197
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9198
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 51-9199
+  - parent_code: DB='51-9000', User='51-9190'
+
+Mismatch for code: 53-2011
+  - parent_code: DB='53-2000', User='53-2010'
+
+Mismatch for code: 53-2012
+  - parent_code: DB='53-2000', User='53-2010'
+
+Mismatch for code: 53-2021
+  - parent_code: DB='53-2000', User='53-2020'
+
+Mismatch for code: 53-2022
+  - parent_code: DB='53-2000', User='53-2020'
+
+Mismatch for code: 53-3031
+  - parent_code: DB='53-3000', User='53-3030'
+
+Mismatch for code: 53-3032
+  - parent_code: DB='53-3000', User='53-3030'
+
+Mismatch for code: 53-3033
+  - parent_code: DB='53-3000', User='53-3030'
+
+Mismatch for code: 53-3051
+  - parent_code: DB='53-3000', User='53-3050'
+
+Mismatch for code: 53-3052
+  - parent_code: DB='53-3000', User='53-3050'
+
+Mismatch for code: 53-3053
+  - parent_code: DB='53-3000', User='53-3050'
+
+Mismatch for code: 53-3054
+  - parent_code: DB='53-3000', User='53-3050'
+
+Mismatch for code: 53-4011
+  - parent_code: DB='53-4000', User='53-4010'
+
+Mismatch for code: 53-4013
+  - parent_code: DB='53-4000', User='53-4010'
+
+Mismatch for code: 53-5021
+  - parent_code: DB='53-5000', User='53-5020'
+
+Mismatch for code: 53-5022
+  - parent_code: DB='53-5000', User='53-5020'
+
+Mismatch for code: 53-6031
+  - parent_code: DB='53-6000', User='53-6030'
+
+Mismatch for code: 53-6032
+  - parent_code: DB='53-6000', User='53-6030'
+
+Mismatch for code: 53-7061
+  - parent_code: DB='53-7000', User='53-7060'
+
+Mismatch for code: 53-7062
+  - parent_code: DB='53-7000', User='53-7060'
+
+Mismatch for code: 53-7063
+  - parent_code: DB='53-7000', User='53-7060'
+
+Mismatch for code: 53-7064
+  - parent_code: DB='53-7000', User='53-7060'
+
+Mismatch for code: 53-7065
+  - parent_code: DB='53-7000', User='53-7060'
+
+Mismatch for code: 53-7071
+  - parent_code: DB='53-7000', User='53-7070'
+
+Mismatch for code: 53-7072
+  - parent_code: DB='53-7000', User='53-7070'
+
+Mismatch for code: 53-7073
+  - parent_code: DB='53-7000', User='53-7070'

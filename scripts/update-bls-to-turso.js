@@ -36,6 +36,8 @@ const BLS_OEWS_NAT_ZIP_URL = 'https://www.bls.gov/oes/special.requests/oesm23nat
 const BLS_OEWS_STATE_ZIP_URL = 'https://www.bls.gov/oes/special.requests/oesm23st.zip';
 const XLSX_NAT_FILENAME = 'oesm23nat/national_M2023_dl.xlsx';
 const XLSX_STATE_FILENAME = 'oesm23st/state_M2023_dl.xlsx';
+const OCCUPATION_XLSX_URL = process.env.BLS_OCCUPATION_XLSX_URL;
+const OCCUPATION_XLSX_PATH = path.join(__dirname, '../public/data/occupation.xlsx');
 
 async function downloadAndExtractXLSX(url, filename) {
   console.log('Downloading BLS OEWS ZIP:', url);
@@ -142,6 +144,120 @@ async function processProjections() {
   }
 }
 
+async function downloadOccupationXLSX() {
+  if (!OCCUPATION_XLSX_URL) throw new Error('BLS_OCCUPATION_XLSX_URL not set in .env.local');
+  console.log('Downloading occupation.xlsx from', OCCUPATION_XLSX_URL);
+  const res = await fetch(OCCUPATION_XLSX_URL);
+  if (!res.ok) throw new Error('Failed to download occupation.xlsx: ' + res.status);
+  const buffer = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(OCCUPATION_XLSX_PATH, buffer);
+  console.log('Saved occupation.xlsx to', OCCUPATION_XLSX_PATH);
+}
+
+function classifyAndAssignParents(occupationRows) {
+  // Helper maps for each category
+  const topList = [];
+  const majorList = [];
+  const broadList = [];
+  const minorList = [];
+  const detailedList = [];
+  const lineItemList = [];
+  const reviewList = [];
+  const codeToRow = {};
+
+  // Classify each row
+  for (const row of occupationRows) {
+    const code = row.code;
+    const type = row.occupation_type || '';
+    codeToRow[code] = row;
+    if (code === '00-0000') {
+      topList.push(row);
+      row.category = 'Top';
+      row.parent_code = null;
+    } else if (type === 'Summary') {
+      if (/^\d{2}-0000$/.test(code)) {
+        majorList.push(row);
+        row.category = 'Major';
+        row.parent_code = '00-0000';
+      } else if (/^\d{2}-\d{2}00$/.test(code)) {
+        broadList.push(row);
+        row.category = 'Broad';
+        row.parent_code = code.slice(0,3) + '0000';
+      } else if (/^\d{2}-\d000$/.test(code)) {
+        minorList.push(row);
+        row.category = 'Minor';
+        row.parent_code = code.slice(0,3) + '0000';
+      } else if (/^\d{2}-\d{4}$/.test(code)) {
+        detailedList.push(row);
+        row.category = 'Detailed';
+        // Try to find matching Broad code
+        const broadCode = code.slice(0,5) + '00';
+        if (codeToRow[broadCode]) {
+          row.parent_code = broadCode;
+        } else {
+          row.parent_code = code.slice(0,4) + '000';
+        }
+      } else {
+        reviewList.push(row);
+        row.category = 'Review';
+      }
+    } else {
+      lineItemList.push(row);
+      row.category = 'Line item';
+      // Assign parent by matching to Detailed, Minor, Broad in order
+      const detailedCode = code.slice(0,6);
+      const minorCode = code.slice(0,4);
+      const broadCode = code.slice(0,5);
+      if (codeToRow[detailedCode]) {
+        row.parent_code = detailedCode;
+      } else if (codeToRow[minorCode]) {
+        row.parent_code = minorCode;
+      } else if (codeToRow[broadCode]) {
+        row.parent_code = broadCode;
+      } else {
+        row.parent_code = null;
+        reviewList.push(row);
+      }
+    }
+  }
+  return { topList, majorList, broadList, minorList, detailedList, lineItemList, reviewList };
+}
+
+async function processAndUpdateHierarchy() {
+  // Read occupation.xlsx
+  const workbook = xlsx.readFile(OCCUPATION_XLSX_PATH);
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' });
+  // Normalize column names
+  const occupationRows = rows.map(row => ({
+    code: row['OCC_CODE'] || row['Occupation Code'] || row['Code'] || '',
+    name: row['OCC_TITLE'] || row['Occupation Title'] || row['Title'] || '',
+    occupation_type: row['OCC_TYPE'] || row['Occupation Type'] || row['Type'] || '',
+    ...row
+  })).filter(r => r.code && r.code.length >= 7);
+
+  const { topList, majorList, broadList, minorList, detailedList, lineItemList, reviewList } = classifyAndAssignParents(occupationRows);
+
+  // Update DB
+  let updated = 0;
+  for (const row of occupationRows) {
+    try {
+      await db.execute(
+        'UPDATE occupations SET parent_code = ?, occupation_type = ? WHERE code = ?',
+        [row.parent_code, row.occupation_type, row.code]
+      );
+      updated++;
+    } catch (err) {
+      console.error('Error updating', row.code, err.message);
+    }
+  }
+  if (reviewList.length > 0) {
+    fs.writeFileSync('hierarchy-review-cases.json', JSON.stringify(reviewList, null, 2));
+    console.log(`Review cases written to hierarchy-review-cases.json (${reviewList.length} cases)`);
+  }
+  console.log(`Hierarchy update complete. ${updated} records updated.`);
+}
+
 async function updateBLSToTurso() {
   try {
     console.log('Starting BLS data update to Turso...');
@@ -244,4 +360,13 @@ async function updateBLSToTurso() {
 }
 
 // Run the update
-updateBLSToTurso();
+(async () => {
+  try {
+    await downloadOccupationXLSX();
+    await processAndUpdateHierarchy();
+    await updateBLSToTurso();
+  } catch (err) {
+    console.error('Automation failed:', err);
+    process.exit(1);
+  }
+})();

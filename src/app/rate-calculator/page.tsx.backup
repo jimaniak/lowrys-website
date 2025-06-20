@@ -185,15 +185,19 @@ export default function EnhancedRateCalculator() {
   const [income, setIncome] = useState<number>(0);
   const [expenses, setExpenses] = useState<number>(12000);
   const [billableDays, setBillableDays] = useState<number>(180);
-  const [taxRate, setTaxRate] = useState<number>(25);
-  const [includeBenefits, setIncludeBenefits] = useState(false);
+  const [taxRate, setTaxRate] = useState<number>(25);  const [includeBenefits, setIncludeBenefits] = useState(false);
   const [benefits, setBenefits] = useState<number>(0);
+  
+  // Modal states
+  const [showOccupationModal, setShowOccupationModal] = useState<boolean>(false);
+  const [showJobOutlookModal, setShowJobOutlookModal] = useState<boolean>(false);
+  const [showWageDataModal, setShowWageDataModal] = useState<boolean>(false);
   // Load major groups on mount
   useEffect(() => {
     const loadMajorGroups = async () => {
       try {
         setError(null);
-        const response = await fetch('/api/rate-calculator-enhanced?action=major-groups');
+        const response = await fetch('/api/rate-calculator?action=major-groups');
         if (!response.ok) {
           throw new Error(`Failed to load major groups: ${response.statusText}`);
         }
@@ -213,7 +217,7 @@ export default function EnhancedRateCalculator() {
     const loadOccupations = async () => {
       try {
         setLoading(true);
-        let url = '/api/rate-calculator-enhanced?action=detailed-occupations';
+        let url = '/api/rate-calculator?action=detailed-occupations';
         if (selectedMajor && selectedMajor !== "ALL") {
           url += `&majorGroup=${selectedMajor}`;
         }
@@ -290,7 +294,7 @@ export default function EnhancedRateCalculator() {
       if (!selectedDetailed) return;
       
       try {
-        const response = await fetch(`/api/rate-calculator-enhanced?action=regions&occupation=${selectedDetailed}`);
+        const response = await fetch(`/api/rate-calculator?action=regions&occupation=${selectedDetailed}`);
         const data = await response.json();
         setRegions(data.regions);
           // Set default region - prioritize US if available, otherwise use first region
@@ -314,7 +318,7 @@ export default function EnhancedRateCalculator() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/rate-calculator-enhanced?action=wage-data&occupation=${selectedDetailed}&region=${selectedRegion}`);
+        const response = await fetch(`/api/rate-calculator?action=wage-data&occupation=${selectedDetailed}&region=${selectedRegion}`);
         if (!response.ok) {
           throw new Error(`Failed to load wage data: ${response.statusText}`);
         }
@@ -329,7 +333,7 @@ export default function EnhancedRateCalculator() {
         }
         
         // Also load projections data
-        const projResponse = await fetch(`/api/rate-calculator-enhanced?action=projections&occupation=${selectedDetailed}`);
+        const projResponse = await fetch(`/api/rate-calculator?action=projections&occupation=${selectedDetailed}`);
         if (projResponse.ok) {
           const projData = await projResponse.json();
           setProjectionData(projData.projections || null);
@@ -338,7 +342,7 @@ export default function EnhancedRateCalculator() {
         }
         
         // Load hierarchy data
-        const hierarchyResponse = await fetch(`/api/rate-calculator-enhanced?action=hierarchy&occupation=${selectedDetailed}`);
+        const hierarchyResponse = await fetch(`/api/rate-calculator?action=hierarchy&occupation=${selectedDetailed}`);
         if (hierarchyResponse.ok) {
           const hierarchyData = await hierarchyResponse.json();
           setHierarchy(hierarchyData.hierarchy || null);
@@ -356,14 +360,17 @@ export default function EnhancedRateCalculator() {
     };
     
     loadWageData();
-  }, [selectedDetailed, selectedRegion]);
-  // Calculations
+  }, [selectedDetailed, selectedRegion]);  // Calculations
   const totalExpenses = includeBenefits ? expenses + benefits : expenses;
   const grossNeeded = (income + totalExpenses) / (1 - taxRate / 100);
   const dailyRate = billableDays > 0 ? grossNeeded / billableDays : 0;
-  const blsDaily = wageData && wageData.wage.mean_annual && billableDays > 0 ? wageData.wage.mean_annual / billableDays : null;  // Utility functions
+  const blsDaily = wageData && wageData.wage.mean_annual && billableDays > 0 ? wageData.wage.mean_annual / billableDays : null;
+  
+  // Calculate actual net take-home (what you'll actually pocket)
+  const actualNetTakeHome = income; // This is what the user will actually take home after all expenses and taxes
+
+  // Utility functions
   const copyToClipboard = async (text: string) => {
-    console.log('Copy button clicked!', text.length, 'characters');
     try {
       // Try modern clipboard API first
       await navigator.clipboard.writeText(text);
@@ -388,14 +395,15 @@ export default function EnhancedRateCalculator() {
         } else {
           // Final fallback - show the text in a dialog
           prompt('Copy this text manually (Ctrl+C):', text);
-        }
-      } catch (fallbackErr) {
+        }      } catch (fallbackErr) {
         console.error('Fallback copy failed: ', fallbackErr);
         // Final fallback - show the text in a dialog
         prompt('Copy this text manually (Ctrl+C):', text);
       }
     }
-  };const generateShareableResults = () => {
+  };
+
+  const generateShareableResults = () => {
     const occupationName = wageData?.occupationName || 'Unknown';
     const regionName = wageData?.regionName || 'Unknown';
     const selectedOcc = allOccupations.find((occ: any) => occ.code === selectedDetailed);
@@ -459,29 +467,30 @@ Source: Bureau of Labor Statistics Employment Projections`;
 
   // Preset templates for quick setup
   const applyPreset = (presetType: 'conservative' | 'moderate' | 'aggressive') => {
-    const baseIncome = wageData?.wage.mean_annual || 100000;
+    // BLS data is gross total compensation - estimate net take-home as ~60-70% after taxes, benefits, etc.
+    const blsGrossCompensation = wageData?.wage.mean_annual || 100000;
+    const estimatedEmployeeNetTakeHome = Math.round(blsGrossCompensation * 0.65); // Conservative net estimate
     
     switch (presetType) {
       case 'conservative':
-        setIncome(baseIncome * 0.9);
+        setIncome(Math.round(estimatedEmployeeNetTakeHome * 0.85)); // Target 85% of estimated employee net
         setExpenses(8000);
-        setBillableDays(200);
+        setBillableDays(220); // More working days for stability
         setTaxRate(22);
         setIncludeBenefits(true);
         setBenefits(wageData?.benefits.avg_annual || 15000);
         break;
       case 'moderate':
-        setIncome(baseIncome);
+        setIncome(estimatedEmployeeNetTakeHome); // Match estimated employee net take-home
         setExpenses(12000);
-        setBillableDays(180);
+        setBillableDays(200); // Standard consulting schedule
         setTaxRate(25);
         setIncludeBenefits(true);
         setBenefits(wageData?.benefits.avg_annual || 18000);
         break;
-      case 'aggressive':
-        setIncome(baseIncome * 1.2);
+      case 'aggressive':        setIncome(Math.round(estimatedEmployeeNetTakeHome * 1.15)); // Target 115% of estimated employee net
         setExpenses(15000);
-        setBillableDays(160);
+        setBillableDays(160); // Fewer days, higher rates
         setTaxRate(28);
         setIncludeBenefits(true);
         setBenefits(wageData?.benefits.avg_annual || 20000);
@@ -491,9 +500,8 @@ Source: Bureau of Labor Statistics Employment Projections`;
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-white flex items-center justify-center py-8 px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-200 p-6 lg:p-10 relative overflow-hidden transition-all duration-500 hover:shadow-2xl">
-        
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 opacity-5">
+          {/* Animated Background Elements */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full animate-pulse"></div>
           <div className="absolute bottom-10 right-10 w-24 h-24 bg-slate-400 rounded-full animate-bounce"></div>
         </div>
@@ -538,109 +546,110 @@ Source: Bureau of Labor Statistics Employment Projections`;
             <p className="text-blue-800 font-semibold">Loading data...</p>
           </div>
         )}        {/* Employment Type Toggle */}
-        <div className="mb-6 flex justify-center relative z-50">
-          <div className="inline-flex rounded-xl bg-slate-100 border border-slate-300 shadow-sm overflow-hidden relative z-50">
-            <button
-              className={`px-5 py-2 font-semibold transition-colors ${
+        <div className="mb-6 flex justify-center relative z-20">
+          <div className="inline-flex rounded-xl bg-slate-100 border border-slate-300 shadow-sm overflow-hidden">            <button
+              className={`px-5 py-2 font-semibold transition-colors cursor-pointer ${
                 employmentType === 'employee'
                   ? 'bg-blue-500 text-white'
                   : 'text-slate-600 hover:bg-slate-200'
               }`}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Setting employment type to employee');
-                setEmploymentType('employee');
-              }}
+              onClick={() => setEmploymentType('employee')}
               type="button"
-              style={{ pointerEvents: 'all', position: 'relative', zIndex: 999 }}
+              style={{ pointerEvents: 'auto' }}
             >
               Traditional Employment
             </button>
             <button
-              className={`px-5 py-2 font-semibold transition-colors ${
+              className={`px-5 py-2 font-semibold transition-colors cursor-pointer ${
                 employmentType === 'consulting'
                   ? 'bg-blue-500 text-white'
                   : 'text-slate-600 hover:bg-slate-200'
               }`}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Setting employment type to consulting');
-                setEmploymentType('consulting');
-              }}
+              onClick={() => setEmploymentType('consulting')}
               type="button"
-              style={{ pointerEvents: 'all', position: 'relative', zIndex: 999 }}
+              style={{ pointerEvents: 'auto' }}
             >
               Consulting / Self-Employed
             </button>
           </div>
-        </div>{/* Selection Controls */}
+        </div>        {/* Step 0: Choose Your Occupation */}
         <div className="mb-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            
-            {/* Major Group Selection */}
-            <div className="md:col-span-1">
-              <label className="block text-slate-700 font-semibold mb-2">Major Group</label>
-              <select 
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200" 
-                value={selectedMajor} 
-                onChange={e => setSelectedMajor(e.target.value)}
-              >
-                {majorGroups.map((mg: any) => (
-                  <option key={mg.code} value={mg.code}>{mg.name}</option>
-                ))}
-              </select>
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-300 rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+              <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">0</span>
+              Choose Your Occupation & Location
+            </h2>
+            <div className="text-sm text-slate-600 mb-4">
+              First, select your occupation and location to get relevant BLS benchmark data.
             </div>
             
-            {/* Occupation Search and Selection */}
-            <div className="md:col-span-1">
-              <label className="block text-slate-700 font-semibold mb-2">Search Occupation</label>
-              <input
-                type="text"
-                placeholder="Type to search..."
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-                value={detailedOccupationSearch}
-                onChange={e => setDetailedOccupationSearch(e.target.value)}
-              />              <select
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-                value={selectedDetailed}
-                onChange={e => {
-                  setSelectedDetailed(e.target.value);
-                  setDetailedOccupationSearch(""); // Clear search when occupation is selected
-                }}
-                disabled={filteredOccupations.length === 0 || loading}
-              >
-                {loading ? (
-                  <option value="">Loading occupations...</option>
-                ) : filteredOccupations.length === 0 ? (
-                  <option value="">No matching occupations</option>
-                ) : (
-                  filteredOccupations.map((occ: any) => (
-                    <option key={occ.code} value={occ.code}>{occ.name}</option>
-                  ))
-                )}
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Major Group Selection */}
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">Major Group</label>
+                <select 
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200" 
+                  value={selectedMajor} 
+                  onChange={e => setSelectedMajor(e.target.value)}
+                >
+                  {majorGroups.map((mg: any) => (
+                    <option key={mg.code} value={mg.code}>{mg.name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Occupation Search and Selection */}
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">Search & Select Occupation</label>
+                <input
+                  type="text"
+                  placeholder="Type to search occupations..."
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                  value={detailedOccupationSearch}
+                  onChange={e => setDetailedOccupationSearch(e.target.value)}
+                />
+                <select
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                  value={selectedDetailed}
+                  onChange={e => {
+                    setSelectedDetailed(e.target.value);
+                    setDetailedOccupationSearch(""); // Clear search when occupation is selected
+                  }}
+                  disabled={filteredOccupations.length === 0 || loading}
+                >
+                  {loading ? (
+                    <option value="">Loading occupations...</option>
+                  ) : filteredOccupations.length === 0 ? (
+                    <option value="">No matching occupations</option>
+                  ) : (
+                    filteredOccupations.map((occ: any) => (
+                      <option key={occ.code} value={occ.code}>{occ.name}</option>
+                    ))
+                  )}
+                </select>
+              </div>
+              
+              {/* Region Selection */}
+              <div>
+                <label className="block text-slate-700 font-semibold mb-2">U.S. State</label>
+                <select 
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200" 
+                  value={selectedRegion} 
+                  onChange={e => setSelectedRegion(e.target.value)}
+                  disabled={regions.length === 0}
+                >                  {regions.map((r: any) => (
+                    <option key={r.code} value={r.code}>
+                      {US_STATE_NAMES[r.code] || r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            
-            {/* Region Selection */}
-            <div className="md:col-span-1">
-              <label className="block text-slate-700 font-semibold mb-2">U.S. State</label>
-              <select 
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200" 
-                value={selectedRegion} 
-                onChange={e => setSelectedRegion(e.target.value)}
-                disabled={regions.length === 0}
-              >
-                {regions.map((r: any) => (
-                  <option key={r.code} value={r.code}>
-                    {US_STATE_NAMES[r.code] || r.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>          {/* Current Selections Summary */}
-          {wageData && (
+          </div>
+        </div>
+
+        {/* Current Selections Summary */}
+        {wageData && (
             <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-300 rounded-xl p-4 mb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-indigo-700 font-bold text-sm">📋 Current Selections:</span>
@@ -865,43 +874,62 @@ Source: Bureau of Labor Statistics Employment Projections`;
           )}
         </div>        {/* Input Fields */}
         {employmentType === 'consulting' && (
-          <div className="mb-8 relative z-10">
-            <div className="flex justify-between items-center mb-4">
+          <div className="mb-8 relative z-10">            <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-slate-700">Your Details</h3>
               {wageData && (
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => applyPreset('conservative')}
-                    className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-                    title="Conservative: Lower risk, more days"
-                  >
-                    🛡️ Safe
-                  </button>
-                  <button
-                    onClick={() => applyPreset('moderate')}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
-                    title="Moderate: Balanced approach"
-                  >
-                    ⚖️ Balanced
-                  </button>
-                  <button
-                    onClick={() => applyPreset('aggressive')}
-                    className="px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors"
-                    title="Aggressive: Higher rates, fewer days"
-                  >
-                    🚀 Premium
-                  </button>
+                <div className="flex flex-col items-end">
+                  <div className="text-xs text-slate-600 mb-1 font-medium">Quick Setup Templates:</div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => applyPreset('conservative')}
+                      className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors font-medium"
+                      title="Conservative Strategy: Lower risk, stable income (220+ billable days, modest rates)"
+                    >
+                      🛡️ Conservative
+                    </button>
+                    <button
+                      onClick={() => applyPreset('moderate')}
+                      className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors font-medium"
+                      title="Balanced Strategy: Market rates with standard business model (200 billable days)"
+                    >
+                      ⚖️ Market Rate
+                    </button>
+                    <button
+                      onClick={() => applyPreset('aggressive')}
+                      className="px-3 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors font-medium"
+                      title="Premium Strategy: High-value positioning (160 billable days, premium rates)"
+                    >
+                      🚀 Premium
+                    </button>
+                  </div>                  <div className="text-xs text-slate-500 mt-1 text-right">Click to auto-fill fields with proven strategies</div>
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Template Explanation */}
+            {wageData && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">                <div className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-0.5">💡</span>
+                  <div className="text-sm text-blue-800">
+                    <div className="mb-2">
+                      <strong>Templates estimate your net take-home goals:</strong> Based on BLS gross compensation 
+                      (${wageData.wage.mean_annual?.toLocaleString()}), templates estimate what you'd take home as an employee (~65%) 
+                      and set your net target accordingly.
+                    </div>
+                    <strong>New to consulting?</strong> Use the templates above to get started with proven pricing strategies:
+                    <div className="mt-1 text-xs space-y-1">
+                      <div><strong>Conservative:</strong> 85% of estimated employee net, more working days (lower risk)</div>
+                      <div><strong>Market Rate:</strong> Match estimated employee net take-home (industry standard)</div>
+                      <div><strong>Premium:</strong> 115% of estimated employee net, fewer days (high-value positioning)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">              
+              {/* Step 1: Income Goal */}
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
-                  Annual Income Target ($)                  {wageData && wageData.wage.mean_annual && (
-                    <span className="ml-2 text-xs text-blue-600">
-                      (BLS avg: ${wageData.wage.mean_annual.toLocaleString()})
-                    </span>
-                  )}
+                  <span className="text-blue-600 text-sm">1.</span> Annual Net Income Target ($)
                 </label>
                 <input
                   type="number"
@@ -910,24 +938,16 @@ Source: Bureau of Labor Statistics Employment Projections`;
                   min={0}
                   onChange={e => setIncome(Number(e.target.value))}
                 />
-              </div>
-              
-              <div>
-                <label className="block text-slate-700 font-semibold mb-1">Annual Business Expenses ($)</label>
-                <input
-                  type="number"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-                  value={expenses}
-                  min={0}
-                  onChange={e => setExpenses(Number(e.target.value))}
-                />
-                <div className="text-xs text-blue-600 mt-1">
-                  Estimate all recurring business costs
+                <div className="text-xs text-slate-600 mt-1">
+                  What you want to actually take home after all business costs and taxes
                 </div>
               </div>
               
+              {/* Step 2: Work Schedule */}
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Billable Days per Year</label>
+                <label className="block text-slate-700 font-semibold mb-1">
+                  <span className="text-blue-600 text-sm">2.</span> Billable Days per Year
+                </label>
                 <input
                   type="number"
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
@@ -937,12 +957,32 @@ Source: Bureau of Labor Statistics Employment Projections`;
                   onChange={e => setBillableDays(Number(e.target.value))}
                 />
                 <div className="text-xs text-blue-600 mt-1">
-                  Typical: 180-220 days
+                  How many days will you actually bill clients? (Typical: 180-220)
                 </div>
               </div>
               
+              {/* Step 3: Business Costs */}
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Tax Rate (%)</label>
+                <label className="block text-slate-700 font-semibold mb-1">
+                  <span className="text-blue-600 text-sm">3.</span> Annual Business Expenses ($)
+                </label>
+                <input
+                  type="number"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                  value={expenses}
+                  min={0}
+                  onChange={e => setExpenses(Number(e.target.value))}
+                />
+                <div className="text-xs text-blue-600 mt-1">
+                  Office, equipment, software, marketing, etc.
+                </div>
+              </div>
+              
+              {/* Step 4: Tax Planning */}
+              <div>
+                <label className="block text-slate-700 font-semibold mb-1">
+                  <span className="text-blue-600 text-sm">4.</span> Tax Rate (%)
+                </label>
                 <input
                   type="number"
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
@@ -952,30 +992,34 @@ Source: Bureau of Labor Statistics Employment Projections`;
                   onChange={e => setTaxRate(Number(e.target.value))}
                 />
                 <div className="text-xs text-blue-600 mt-1">
-                  Combined federal, state, local
+                  Combined federal, state, local, self-employment taxes
                 </div>
               </div>
               
+              {/* Step 5: Benefits (spans full width) */}
               <div className="md:col-span-2">
                 <div className="flex items-center gap-2 mb-3">
+                  <span className="text-blue-600 text-sm font-semibold">5.</span>
                   <input
                     type="checkbox"
                     id="includeBenefits"
                     checked={includeBenefits}
                     onChange={e => setIncludeBenefits(e.target.checked)}
                     className="accent-blue-500"
-                  />
-                  <label htmlFor="includeBenefits" className="text-slate-700 font-semibold">
-                    Include Benefits (health, retirement, etc.)
+                  />                  <label htmlFor="includeBenefits" className="text-slate-700 font-semibold">
+                    Add Self-Funded Benefits (health, retirement, etc.)
                   </label>
+                </div>
+                <div className="text-xs text-slate-500 mb-3 pl-6">
+                  As a consultant, you'll need to pay for your own benefits that an employer would typically provide
                 </div>
                 
                 {includeBenefits && (
-                  <div>
-                    <label className="block text-slate-700 font-semibold mb-1">
-                      Annual Benefits Cost ($)                      {wageData && wageData.benefits.avg_annual && (
+                  <div className="pl-6">                    <label className="block text-slate-700 font-semibold mb-1">
+                      Annual Self-Funded Benefits Cost ($)
+                      {wageData && wageData.benefits.avg_annual && (
                         <span className="ml-2 text-xs text-blue-600">
-                          (BLS avg: ${wageData.benefits.avg_annual.toLocaleString()})
+                          (Typical: ${wageData.benefits.avg_annual.toLocaleString()})
                         </span>
                       )}
                     </label>
@@ -986,7 +1030,7 @@ Source: Bureau of Labor Statistics Employment Projections`;
                       min={0}
                       onChange={e => setBenefits(Number(e.target.value))}
                     />
-                    <div className="text-xs text-blue-600 mt-1">Use average or your estimate</div>
+                    <div className="text-xs text-blue-600 mt-1">Health insurance, retirement contributions, etc.</div>
                   </div>
                 )}
               </div>
@@ -1040,73 +1084,71 @@ Source: Bureau of Labor Statistics Employment Projections`;
               </div>
             )}
           </div>
-          
-          {/* Additional Calculation Breakdown for Consulting */}
+            {/* Additional Calculation Breakdown for Consulting */}
           {employmentType === 'consulting' && dailyRate > 0 && (
             <div className="w-full max-w-md mt-4 bg-slate-50 border border-slate-200 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-slate-700 mb-4 text-center">Calculation Breakdown</h3>
+              <h3 className="text-lg font-bold text-slate-700 mb-4 text-center">Revenue Breakdown</h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Target Income:</span>
-                  <span className="font-semibold">${income.toLocaleString()}</span>
+                <div className="flex justify-between font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                  <span>Required Gross Revenue:</span>
+                  <span>${grossNeeded.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Business Expenses:</span>
-                  <span className="font-semibold">${expenses.toLocaleString()}</span>
-                </div>
-                {includeBenefits && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Benefits:</span>
-                    <span className="font-semibold">${benefits.toLocaleString()}</span>
+                {wageData && wageData.wage.mean_annual && (
+                  <div className="flex justify-between text-xs text-slate-500 px-2">
+                    <span>vs. BLS Average Gross Comp:</span>
+                    <span>${wageData.wage.mean_annual.toLocaleString()} 
+                      <span className={`ml-1 font-bold ${grossNeeded > wageData.wage.mean_annual ? 'text-green-600' : 'text-red-600'}`}>
+                        ({grossNeeded > wageData.wage.mean_annual ? '+' : ''}{((grossNeeded - wageData.wage.mean_annual) / wageData.wage.mean_annual * 100).toFixed(1)}%)
+                      </span>
+                    </span>
                   </div>
                 )}
-                <hr className="border-slate-300" />
+                <hr className="border-slate-300 my-3" />                <div className="text-xs text-slate-600 font-semibold mb-2">How much gross revenue you need:</div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Subtotal:</span>
-                  <span className="font-semibold">${(income + totalExpenses).toLocaleString()}</span>
+                  <span className="text-slate-600">Your Net Take-Home Target:</span>
+                  <span className="font-semibold text-green-700">${income.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Tax Rate ({taxRate}%):</span>
-                  <span className="font-semibold">${((grossNeeded - (income + totalExpenses))).toLocaleString()}</span>
+                <div className="flex justify-between text-xs text-slate-500">
+                  <span className="pl-2">+ Business Expenses:</span>
+                  <span>${expenses.toLocaleString()}</span>
+                </div>
+                {includeBenefits && (
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span className="pl-2">+ Self-Funded Benefits:</span>
+                    <span>${benefits.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-xs text-slate-500">
+                  <span className="pl-2">+ Taxes ({taxRate}%):</span>
+                  <span>${((grossNeeded - (income + totalExpenses))).toLocaleString()}</span>
                 </div>
                 <hr className="border-slate-300" />
                 <div className="flex justify-between text-base font-bold">
-                  <span className="text-slate-700">Gross Revenue Needed:</span>
+                  <span className="text-slate-700">= Total Gross Revenue:</span>
                   <span className="text-blue-600">${grossNeeded.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-base font-bold">
                   <span className="text-slate-700">÷ Billable Days ({billableDays}):</span>
-                  <span className="text-blue-600">${dailyRate.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>                </div>
+                  <span className="text-blue-600">${dailyRate.toLocaleString(undefined, { maximumFractionDigits: 2 })}/day</span>
+                </div>
               </div>
             </div>
           )}          {/* Action Buttons - Export Analysis */}
           {(dailyRate > 0 || blsDaily) && (
-            <div className="w-full max-w-md mt-6 space-y-2 relative z-50">
+            <div className="w-full max-w-md mt-6 space-y-2 relative z-20">
               <div className="text-xs text-slate-600 font-medium mb-3 text-center">Export Analysis</div>
-              <div className="grid grid-cols-3 gap-3">
-                <button
-                  onClick={(e) => {
-                    console.log('Copy button clicked - event fired!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                    copyToClipboard(generateShareableResults());
-                  }}
-                  onMouseDown={(e) => {
-                    console.log('Copy button mouse down');
-                    e.preventDefault();
-                  }}
-                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-sky-400 hover:bg-sky-50 text-slate-600 hover:text-sky-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer relative z-50"
+              <div className="grid grid-cols-3 gap-3">                <button
+                  onClick={() => copyToClipboard(generateShareableResults())}
+                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-sky-400 hover:bg-sky-50 text-slate-600 hover:text-sky-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
                   title="Copy detailed analysis to clipboard"
-                  style={{ pointerEvents: 'all', position: 'relative', zIndex: 999 }}
+                  type="button"
+                  style={{ pointerEvents: 'auto' }}
                 >
-                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform pointer-events-none">📋</span>
-                  <span className="text-xs pointer-events-none">Copy</span>
+                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform">📋</span>
+                  <span className="text-xs">Copy</span>
                 </button>
                 <button
-                  onClick={(e) => {
-                    console.log('Save button clicked - event fired!');
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     const results = generateShareableResults();
                     const blob = new Blob([results], { type: 'text/plain' });
                     const url = URL.createObjectURL(blob);
@@ -1118,22 +1160,14 @@ Source: Bureau of Labor Statistics Employment Projections`;
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                   }}
-                  onMouseDown={(e) => {
-                    console.log('Save button mouse down');
-                    e.preventDefault();
-                  }}
-                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-emerald-400 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer relative z-50"
+                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-emerald-400 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                   title="Download analysis as text file"
-                  style={{ pointerEvents: 'all', position: 'relative', zIndex: 999 }}
                 >
-                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform pointer-events-none">💾</span>
-                  <span className="text-xs pointer-events-none">Save</span>
+                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform">💾</span>
+                  <span className="text-xs">Save</span>
                 </button>
                 <button
-                  onClick={(e) => {
-                    console.log('Print button clicked - event fired!');
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     const printWindow = window.open('', '_blank');
                     if (printWindow) {
                       printWindow.document.write(`
@@ -1156,20 +1190,14 @@ Source: Bureau of Labor Statistics Employment Projections`;
                       alert('Please allow popups to use the print feature');
                     }
                   }}
-                  onMouseDown={(e) => {
-                    console.log('Print button mouse down');
-                    e.preventDefault();
-                  }}
-                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 cursor-pointer relative z-50"
+                  className="group flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 font-medium py-3 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
                   title="Print detailed analysis"
-                  style={{ pointerEvents: 'all', position: 'relative', zIndex: 999 }}
                 >
-                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform pointer-events-none">🖨️</span>
-                  <span className="text-xs pointer-events-none">Print</span>
+                  <span className="text-lg mb-1 group-hover:scale-110 transition-transform">🖨️</span>
+                  <span className="text-xs">Print</span>
                 </button>
               </div>
-            </div>
-          )}
+            </div>          )}
         </div>
       </div>
     </main>

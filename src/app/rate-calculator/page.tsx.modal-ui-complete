@@ -265,40 +265,6 @@ export default function Page() {
   const dailyRate = billableDays > 0 ? grossNeeded / billableDays : 0;
   const blsDaily = blsWage && billableDays > 0 ? blsWage / billableDays : null;
   
-  // 📊 MODAL DATA LOADING FUNCTIONS
-  
-  // Load major categories when modal opens
-  useEffect(() => {
-    console.log('🔍 Modal state changed:', showOccupationModal, 'Categories loaded:', majorCategories.length);
-    if (showOccupationModal && majorCategories.length === 0) {
-      console.log('🚀 Triggering loadMajorCategories...');
-      loadMajorCategories();
-    }
-  }, [showOccupationModal]);
-
-  // Load major categories from API
-  const loadMajorCategories = async () => {
-    try {
-      console.log('🔄 Starting API call to load major categories...');
-      const response = await fetch('/api/rate-calculator?action=get-major-categories');
-      const data = await response.json();
-      
-      console.log('📊 API Response:', data);
-      console.log('✅ Categories received:', data.categories?.length || 0);
-      
-      if (response.ok && data.categories) {
-        setMajorCategories(data.categories);
-        console.log('💾 Major categories set in state:', data.categories.length, 'items');
-      } else {
-        console.error('❌ API response not OK:', data);
-        setMajorCategories([{ code: "00-0000", name: "All Occupations" }]);
-      }
-    } catch (error) {
-      console.error('💥 Error in loadMajorCategories:', error);
-      setMajorCategories([{ code: "00-0000", name: "All Occupations" }]);
-    }
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-white flex items-center justify-center py-12">
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl border border-slate-200 p-10 relative overflow-hidden">
