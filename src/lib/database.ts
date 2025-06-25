@@ -159,6 +159,114 @@ export const dbHelpers = {
   // Get projections data for an occupation
   async getOccupationProjections(occupationCode: string) {
     return await getOccupationProjections(occupationCode);
+  },
+
+  // SEO Intake Form helpers
+  async getSeoIntakeForms(status?: string, limit?: number) {
+    let sql = 'SELECT * FROM seo_intake_forms';
+    const args: any[] = [];
+    
+    if (status) {
+      sql += ' WHERE status = ?';
+      args.push(status);
+    }
+    
+    sql += ' ORDER BY submitted_at DESC';
+    
+    if (limit) {
+      sql += ' LIMIT ?';
+      args.push(limit);
+    }
+    
+    const result = await db.execute({ sql, args });
+    return result.rows;
+  },
+
+  async getSeoIntakeFormById(id: string | number) {
+    const result = await db.execute({
+      sql: 'SELECT * FROM seo_intake_forms WHERE id = ?',
+      args: [id]
+    });
+    return result.rows[0] || null;
+  },
+
+  async updateSeoIntakeFormStatus(id: string | number, status: string, notes?: string) {
+    const sql = notes 
+      ? 'UPDATE seo_intake_forms SET status = ?, notes = ? WHERE id = ?'
+      : 'UPDATE seo_intake_forms SET status = ? WHERE id = ?';
+    
+    const args = notes ? [status, notes, id] : [status, id];
+    
+    const result = await db.execute({ sql, args });
+    return result.rowsAffected > 0;
+  },
+
+  // SEO Intake Form Functions
+  async insertSeoIntakeForm(formData: any) {
+    const result = await db.execute({
+      sql: `
+        INSERT INTO seo_intake_forms (
+          name, title, company, phone, email, best_time,
+          website, years_in_business, services, service_areas, competitors,
+          current_seo_provider, monthly_seo_investment, current_seo_work,
+          website_platform, admin_access, google_accounts,
+          primary_goal, target_customers, customer_value, top_services,
+          package_interest, differentiators, common_questions, additional_info
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [
+        formData.name,
+        formData.title || null,
+        formData.company,
+        formData.phone,
+        formData.email,
+        formData.bestTime || null,
+        formData.website,
+        formData.yearsInBusiness ? parseInt(formData.yearsInBusiness) : null,
+        JSON.stringify(formData.services || []),
+        formData.serviceAreas,
+        formData.competitors || null,
+        formData.currentSeoProvider || null,
+        formData.monthlySeoInvestment || null,
+        JSON.stringify(formData.currentSeoWork || []),
+        formData.websitePlatform || null,
+        formData.adminAccess || null,
+        JSON.stringify(formData.googleAccounts || []),
+        formData.primaryGoal || null,
+        formData.targetCustomers || null,
+        formData.customerValue || null,
+        formData.topServices || null,
+        formData.package || null,
+        formData.differentiators || null,
+        formData.commonQuestions || null,
+        formData.additionalInfo || null
+      ]
+    });
+    return result;
+  },
+
+  // Get all SEO intake forms (for admin)
+  async getAllSeoIntakeForms() {
+    const result = await db.execute(`
+      SELECT * FROM seo_intake_forms 
+      ORDER BY submitted_at DESC
+    `);
+    return result.rows;
+  },
+
+  // Get summary stats for admin dashboard
+  async getSeoIntakeStats() {
+    const totalResult = await db.execute('SELECT COUNT(*) as total FROM seo_intake_forms');
+    const newResult = await db.execute('SELECT COUNT(*) as new FROM seo_intake_forms WHERE status = "new"');
+    const contactedResult = await db.execute('SELECT COUNT(*) as contacted FROM seo_intake_forms WHERE status = "contacted"');
+    const convertedResult = await db.execute('SELECT COUNT(*) as converted FROM seo_intake_forms WHERE status = "converted"');
+    
+    return {
+      total: totalResult.rows[0]?.total || 0,
+      new: newResult.rows[0]?.new || 0,
+      contacted: contactedResult.rows[0]?.contacted || 0,
+      converted: convertedResult.rows[0]?.converted || 0
+    };
   }
 };
 
