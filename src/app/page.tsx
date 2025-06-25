@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaChartLine, FaLaptopCode, FaTools } from 'react-icons/fa';
+import { FaChartLine, FaLaptopCode, FaTools, FaSearch, FaGlobe, FaRocket } from 'react-icons/fa';
 
 export default function Home() {
   return (
@@ -13,22 +13,22 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Jim Lowry, B.S.</h1>
-              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">Data Analytics & Microsoft Power Platform Solutions</h2>
+              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">Data Analytics, SEO & Website Development Solutions</h2>
               <p className="text-lg mb-8">
-                Empowering organizations to unlock insights and drive smarter decisions through advanced analytics, automation, and business intelligence—specializing in Microsoft Power BI, Power Query (M), and the Power Platform suite.
+                Empowering businesses to unlock insights and grow online through advanced analytics, strategic SEO, and modern website development—specializing in Microsoft Power BI, Power Platform, and digital marketing solutions.
               </p>
               <p className="text-md mb-6 text-blue-200">
-                <strong>Current Focus:</strong> Data analytics, Power BI, Power Query/M, and continuous upskilling in SQL, Tableau, and Google Data Studio. Always learning, always growing.
+                <strong>Comprehensive Digital Solutions:</strong> From data analytics & Power BI dashboards to SEO strategy & custom website development. I help businesses unlock insights from their data while building a strong online presence that drives growth.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
                   Get in Touch
                 </Link>
-                <Link href="/projects" className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-6 py-3 border border-white rounded-lg transition duration-300">
-                  View Analytics Projects
+                <Link href="/seo-intake-form" className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition duration-300">
+                  SEO Consultation
                 </Link>
-                <Link href="/demo" className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition duration-300">
-                  Try Analytics Demo
+                <Link href="/projects" className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-6 py-3 border border-white rounded-lg transition duration-300">
+                  View Projects
                 </Link>
               </div>
             </div>
@@ -36,7 +36,7 @@ export default function Home() {
               <div className="w-64 h-64 overflow-hidden rounded-full border-4 border-blue-400">
                 <Image 
                   src="/images/jim-lowry-profile.jpg"
-                  alt="Jim Lowry, Data Analytics & Power Platform Specialist"
+                  alt="Jim Lowry, Data Analytics, SEO & Website Development Specialist"
                   width={256}
                   height={256}
                   className="object-cover w-full h-full object-[center_top]"
@@ -50,8 +50,8 @@ export default function Home() {
       {/* Core Competencies Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Data Analytics & Power Platform Capabilities</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold text-center mb-12">Core Competencies & Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
                 <FaChartLine />
@@ -68,6 +68,33 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-3">Automation with Power Platform</h3>
               <p className="text-gray-600">
                 Automating workflows and integrating data across systems using Power Automate, Dataverse, and custom connectors—reducing manual work and boosting efficiency.
+              </p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
+                <FaSearch />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">SEO & Digital Marketing</h3>
+              <p className="text-gray-600">
+                Strategic SEO audits, keyword research, and digital marketing campaigns to improve search rankings and drive qualified traffic to your business.
+              </p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
+                <FaGlobe />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Website Development</h3>
+              <p className="text-gray-600">
+                Modern, responsive websites built with Next.js, React, and Tailwind CSS—optimized for performance, SEO, and user experience across all devices.
+              </p>
+            </div>
+            <div className="bg-white p-8 rounded-lg shadow-md text-center">
+              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
+                <FaRocket />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Full-Stack Solutions</h3>
+              <p className="text-gray-600">
+                End-to-end digital solutions combining data analytics, modern web development, and SEO strategy to create comprehensive business growth platforms.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
