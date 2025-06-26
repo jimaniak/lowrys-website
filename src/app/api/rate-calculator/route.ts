@@ -7,18 +7,31 @@ export async function GET(request: NextRequest) {
 
   try {
     switch (action) {      case 'major-groups':
-        const majorGroupsResult = await db.execute('SELECT * FROM major_groups ORDER BY name');
+        // Get MAJOR category occupations
+        const majorGroupsResult = await db.execute(`
+          SELECT code, name, category 
+          FROM occupations 
+          WHERE category = 'MAJOR'
+          ORDER BY name
+        `);
         return NextResponse.json({ majorGroups: majorGroupsResult.rows });      case 'hierarchy':
-        // Get all major groups with their occupations count
+        // Get all major groups with their detailed occupations count
         const majorGroupsWithCounts = await db.execute(`
           SELECT 
-            mg.code,
-            mg.name,
+            m.code,
+            m.name,
             COUNT(o.code) as occupation_count
-          FROM major_groups mg
-          LEFT JOIN occupations o ON mg.code = o.major_group_code
-          GROUP BY mg.code, mg.name
-          ORDER BY mg.name
+          FROM (
+            SELECT code, name 
+            FROM occupations 
+            WHERE occupation_type = 'Summary' 
+              AND code LIKE '%-0000' 
+              AND code != '00-0000'
+          ) m
+          LEFT JOIN occupations o ON o.parent_code = m.code OR o.code LIKE SUBSTR(m.code, 1, 2) || '%'
+          WHERE (o.occupation_type = 'Line item' OR o.occupation_type IS NULL)
+          GROUP BY m.code, m.name
+          ORDER BY m.name
         `);
         
         return NextResponse.json({ 
@@ -26,8 +39,7 @@ export async function GET(request: NextRequest) {
             code: row.code,
             name: row.name,
             count: row.occupation_count
-          }))
-        });
+          }))        });
 
       case 'occupations-by-major':
         const majorCode = searchParams.get('majorCode');
@@ -35,26 +47,61 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ error: 'Major code required' }, { status: 400 });
         }
         
+        // Get MINOR and BROAD occupations for this major group
         const occupationsForMajor = await db.execute({
-          sql: 'SELECT code, name FROM occupations WHERE major_group_code = ? ORDER BY name',
-          args: [majorCode]
+          sql: `SELECT code, name, category FROM occupations 
+                WHERE (category = 'MINOR' OR category = 'BROAD')
+                  AND code LIKE ? 
+                  AND code != ?
+                ORDER BY name`,
+          args: [majorCode.substring(0, 2) + '%', majorCode]
         });        
-        return NextResponse.json({ 
+          return NextResponse.json({ 
           occupations: occupationsForMajor.rows
         });
 
       case 'detailed-occupations':
-        const majorGroup = searchParams.get('majorGroup');        // Only include Line item occupations (actual jobs, not Summary categories)
-        let occupationsQuery = 'SELECT * FROM occupations WHERE occupation_type = ?';
-        let occupationsArgs: any[] = ['Line item'];
-          if (majorGroup && majorGroup !== 'ALL') {
-          occupationsQuery += ' AND major_group_code = ?';
-          occupationsArgs.push(majorGroup);
+        const majorGroup = searchParams.get('majorGroup');
+        const minorCode = searchParams.get('minorCode');
+        
+        // Get DETAILED occupations - these are parents to OCCUPATION
+        let occupationsQuery = `
+          SELECT code, name, occupation_type, category 
+          FROM occupations 
+          WHERE category = 'DETAILED'`;
+        let occupationsArgs: any[] = [];
+        
+        if (minorCode && minorCode !== 'ALL') {
+          occupationsQuery += ' AND (parent_code = ? OR code LIKE ?)';
+          occupationsArgs.push(minorCode, minorCode.substring(0, 4) + '%');
+        } else if (majorGroup && majorGroup !== 'ALL') {
+          occupationsQuery += ' AND code LIKE ?';
+          occupationsArgs.push(majorGroup.substring(0, 2) + '%');
         }
         
         occupationsQuery += ' ORDER BY name';
         const occupationsResult = await db.execute({ sql: occupationsQuery, args: occupationsArgs });
         return NextResponse.json({ occupations: occupationsResult.rows });
+
+      case 'occupations-by-detailed':
+        const detailedCode = searchParams.get('detailedCode');
+        if (!detailedCode) {
+          return NextResponse.json({ error: 'Detailed code required' }, { status: 400 });
+        }
+        
+        // Get OCCUPATION jobs under this DETAILED parent
+        const occupationsByDetailed = await db.execute({
+          sql: `SELECT code, name, occupation_type, category 
+                FROM occupations 
+                WHERE category = 'OCCUPATION'
+                  AND (parent_code = ? OR code LIKE ?)
+                ORDER BY name`,
+          args: [detailedCode, detailedCode.substring(0, 6) + '%']
+        });
+        
+        return NextResponse.json({ 
+          occupations: occupationsByDetailed.rows
+        });
 
       case 'regions':
         const occupation = searchParams.get('occupation');
@@ -466,37 +513,50 @@ export async function GET(request: NextRequest) {
         if (!majorCodeForMinors) {
           return NextResponse.json({ error: 'Major code required' }, { status: 400 });
         }
-        
-        try {
-          // For "All Occupations" (00-0000), return all major categories as if they were minors
+          try {          // For "All Occupations" (00-0000), return ALL minor & broad categories from all major groups
           if (majorCodeForMinors === '00-0000') {
-            const allMajorsResult = await db.execute(`
+            const allMinorsResult = await db.execute(`
               SELECT DISTINCT code, name 
               FROM occupations 
-              WHERE code LIKE '%-0000' 
-              AND code != '00-0000'
-              AND occupation_type = 'Summary'
+              WHERE occupation_type = 'Summary'
+              AND LENGTH(code) = 7
+              AND (
+                -- BROAD: 2nd from right = '0', 3rd from right ≠ '0'
+                (SUBSTR(code, -2, 1) = '0' AND SUBSTR(code, -3, 1) != '0')
+                OR
+                -- MINOR: 4th from right ≠ '0', last 3 chars = '000'  
+                (SUBSTR(code, -4, 1) != '0' AND SUBSTR(code, -3) = '000')
+              )
               ORDER BY code
             `);
             
+            console.log('All minor & broad categories query result:', allMinorsResult.rows.length, 'items');
+            
             return NextResponse.json({ 
-              categories: allMajorsResult.rows 
+              categories: allMinorsResult.rows 
             });
           }
-            // Get minor categories for the selected major group
-          // Minor categories have the same first two digits as major but end in different patterns
+            // Get minor & broad categories for the selected major group
+          // Use proper BLS hierarchy logic: Summary type, 4th char != '0', ends with '000' (minor) or '00' (broad)
           const majorPrefix = majorCodeForMinors.substring(0, 2);          const minorCategoriesResult = await db.execute({
             sql: `SELECT DISTINCT code, name 
                   FROM occupations 
-                  WHERE code LIKE ? 
+                  WHERE code LIKE ?
                   AND code != ?
                   AND occupation_type = 'Summary'
-                  AND code NOT LIKE '%-0000'
+                  AND LENGTH(code) = 7
+                  AND (
+                    -- BROAD: 2nd from right = '0', 3rd from right ≠ '0'
+                    (SUBSTR(code, -2, 1) = '0' AND SUBSTR(code, -3, 1) != '0')
+                    OR
+                    -- MINOR: 4th from right ≠ '0', last 3 chars = '000'  
+                    (SUBSTR(code, -4, 1) != '0' AND SUBSTR(code, -3) = '000')
+                  )
                   ORDER BY code`,
             args: [`${majorPrefix}-%`, majorCodeForMinors]
           });
           
-          console.log('Minor categories query result for', majorCodeForMinors, ':', minorCategoriesResult.rows);
+          console.log('Minor categories query result for', majorCodeForMinors, ':', minorCategoriesResult.rows.length, 'items');
           
           return NextResponse.json({ 
             categories: minorCategoriesResult.rows 
@@ -506,7 +566,132 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ 
             categories: [] 
           });
+        }      case 'get-detailed-categories':
+        const minorCodeForDetailed = searchParams.get('minorCode');
+        
+        if (!minorCodeForDetailed) {          return NextResponse.json({ error: 'Minor code required' }, { status: 400 });
         }
+        
+        try {
+          // Get detailed categories (7-character Summary codes) for the selected minor group
+          // Look for occupations that start with the same prefix as the minor group but are Summary categories
+          const minorPrefix = minorCodeForDetailed.substring(0, 5); // Get XX-XX part
+          
+          const detailedCategoriesResult = await db.execute({
+            sql: `SELECT DISTINCT code, name 
+                  FROM occupations 
+                  WHERE code LIKE ?
+                  AND occupation_type = 'Summary'
+                  AND LENGTH(code) = 7
+                  AND SUBSTR(code, 6, 1) != '0'
+                  ORDER BY code`,
+            args: [`${minorPrefix}%`]
+          });
+          
+          console.log('Detailed categories query result for', minorCodeForDetailed, ':', detailedCategoriesResult.rows.length, 'items');
+          
+          return NextResponse.json({ 
+            categories: detailedCategoriesResult.rows 
+          });
+        } catch (error) {
+          console.error('Error fetching detailed categories:', error);
+          return NextResponse.json({ 
+            categories: [] 
+          });
+        }
+
+      case 'get-all-detailed-categories':        try {
+          // Get ALL detailed categories (7-character Summary codes) from the database
+          const allDetailedResult = await db.execute(`
+            SELECT DISTINCT code, name 
+            FROM occupations 
+            WHERE occupation_type = 'Summary'
+            AND LENGTH(code) = 7
+            ORDER BY code
+            LIMIT 100
+          `);
+          
+          console.log('All detailed categories query result:', allDetailedResult.rows.length, 'items');
+          
+          return NextResponse.json({ 
+            categories: allDetailedResult.rows 
+          });
+        } catch (error) {
+          console.error('Error fetching all detailed categories:', error);
+          return NextResponse.json({ 
+            categories: [] 
+          });
+        }      case 'get-detailed-categories-by-major':
+        const majorCodeForDetailed = searchParams.get('majorCode');
+        
+        if (!majorCodeForDetailed) {
+          return NextResponse.json({ error: 'Major code required' }, { status: 400 });
+        }
+          try {
+          // Get detailed categories (7-character Summary codes) for a specific major group
+          // Find all Summary categories where the code starts with the major's prefix
+          const majorPrefix = majorCodeForDetailed.substring(0, 2);
+          const detailedByMajorResult = await db.execute({
+            sql: `SELECT DISTINCT code, name 
+                  FROM occupations 
+                  WHERE code LIKE ?
+                  AND occupation_type = 'Summary'
+                  AND LENGTH(code) = 7
+                  ORDER BY code`,
+            args: [`${majorPrefix}-%`]
+          });
+          
+          console.log('Detailed categories by major query result for', majorCodeForDetailed, ':', detailedByMajorResult.rows.length, 'items');
+          
+          return NextResponse.json({ 
+            categories: detailedByMajorResult.rows 
+          });
+        } catch (error) {
+          console.error('Error fetching detailed categories by major:', error);
+          return NextResponse.json({ 
+            categories: [] 
+          });
+        }case 'get-detailed-categories-for-minors':
+        const minorCodesParam = searchParams.get('minorCodes');
+        
+        if (!minorCodesParam) {
+          return NextResponse.json({ error: 'Minor codes required' }, { status: 400 });
+        }
+        
+        try {
+          // Split the comma-separated minor codes and get detailed categories for all of them
+          const minorCodes = minorCodesParam.split(',');
+          console.log('Getting detailed categories for minors:', minorCodes);
+          
+          // Create a WHERE clause that matches the prefix of each minor code
+          const whereConditions = minorCodes.map(() => 'code LIKE ?').join(' OR ');
+          const minorPrefixes = minorCodes.map(code => code.substring(0, 5) + '%');            const detailedForMinorsResult = await db.execute({
+            sql: `SELECT DISTINCT code, name 
+                  FROM occupations 
+                  WHERE (${whereConditions})
+                  AND occupation_type = 'Summary'
+                  AND LENGTH(code) = 7
+                  AND SUBSTR(code, 6, 1) != '0'
+                  ORDER BY code`,
+            args: minorPrefixes
+          });
+          
+          console.log('Detailed categories for minors query result:', detailedForMinorsResult.rows.length, 'items');
+          
+          return NextResponse.json({ 
+            categories: detailedForMinorsResult.rows 
+          });
+        } catch (error) {
+          console.error('Error fetching detailed categories for minors:', error);
+          return NextResponse.json({ 
+            categories: [] 
+          });
+        }
+
+      case 'sample-occupations':
+      // TEMP: Return first 10 rows from occupations table where category is not 'OTHER'
+      const sampleResult = await db.execute("SELECT * FROM occupations WHERE category != 'OTHER' LIMIT 10");
+      return NextResponse.json({ sample: sampleResult.rows });
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
