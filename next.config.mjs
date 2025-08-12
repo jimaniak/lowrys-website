@@ -6,7 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  reactStrictMode: true
+  reactStrictMode: true,
+  experimental: {
+    esmExternals: false
+  }
 };
 
 export default nextConfig;

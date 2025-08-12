@@ -1,0 +1,117 @@
+{
+  "tableInfo": {
+    "1.1": {
+      "sheetName": "Index",
+      "description": "employment by major occupational group, 2023 and projected 2033",
+      "fullText": "Table 1.1 Employment by major occupational group, 2023 and projected 2033",
+      "dataSheet": "Table 1.1",
+      "hasData": true
+    },
+    "1.2": {
+      "sheetName": "Index",
+      "description": "occupational projections, 2023–33, and worker characteristics, 2023",
+      "fullText": "Table 1.2 Occupational projections, 2023–33, and worker characteristics, 2023",
+      "dataSheet": "Table 1.2",
+      "hasData": true
+    },
+    "1.3": {
+      "sheetName": "Index",
+      "description": "fastest growing occupations, 2023 and projected 2033",
+      "fullText": "Table 1.3 Fastest growing occupations, 2023 and projected 2033",
+      "dataSheet": "Table 1.3",
+      "hasData": true
+    },
+    "1.4": {
+      "sheetName": "Index",
+      "description": "occupations with the most job growth, 2023 and projected 2033",
+      "fullText": "Table 1.4 Occupations with the most job growth, 2023 and projected 2033",
+      "dataSheet": "Table 1.4",
+      "hasData": true
+    },
+    "1.5": {
+      "sheetName": "Index",
+      "description": "fastest declining occupations, 2023 and projected 2033",
+      "fullText": "Table 1.5 Fastest declining occupations, 2023 and projected 2033",
+      "dataSheet": "Table 1.5",
+      "hasData": true
+    },
+    "1.6": {
+      "sheetName": "Index",
+      "description": "occupations with the largest job declines, 2023 and projected 2033",
+      "fullText": "Table 1.6 Occupations with the largest job declines, 2023 and projected 2033",
+      "dataSheet": "Table 1.6",
+      "hasData": true
+    },
+    "1.7": {
+      "sheetName": "Index",
+      "description": "occupational projections, 2023–33, and worker characteristics, 2023",
+      "fullText": "Table 1.7 Occupational projections, 2023–33, and worker characteristics, 2023",
+      "dataSheet": "Table 1.7",
+      "hasData": true
+    },
+    "1.8": {
+      "sheetName": "Index",
+      "description": "2023–33 industry-occupation matrix data, by occupation",
+      "fullText": "Table 1.8 2023–33 Industry-occupation matrix data, by occupation",
+      "dataSheet": "Table 1.8",
+      "hasData": true
+    },
+    "1.9": {
+      "sheetName": "Index",
+      "description": "2023–33 industry-occupation matrix data, by industry",
+      "fullText": "Table 1.9 2023–33 Industry-occupation matrix data, by industry",
+      "dataSheet": "Table 1.9",
+      "hasData": true
+    },
+    "1.10": {
+      "sheetName": "Index",
+      "description": "occupational separations and openings, projected 2023–33",
+      "fullText": "Table 1.10 Occupational separations and openings, projected 2023–33",
+      "dataSheet": "Table 1.10",
+      "hasData": true
+    },
+    "1.11": {
+      "sheetName": "Index",
+      "description": "employment in stem occupations, 2023 and projected 2033",
+      "fullText": "Table 1.11 Employment in STEM occupations, 2023 and projected 2033",
+      "dataSheet": "Table 1.11",
+      "hasData": true
+    },
+    "1.12": {
+      "sheetName": "Index",
+      "description": "factors affecting occupational utilization, projected 2023–33",
+      "fullText": "Table 1.12 Factors affecting occupational utilization, projected 2023–33",
+      "dataSheet": "Table 1.12",
+      "hasData": true
+    }
+  },
+  "tableNameSuggestions": {
+    "1.1": "employment_by_major_occupational",
+    "1.10": "occupational_separations_and_openings",
+    "1.11": "employment_in_stem_occupations",
+    "1.12": "factors_affecting_occupational_utilization",
+    "1.2": "occupational_projections_2023_33",
+    "1.3": "fastest_growing_occupations_2023",
+    "1.4": "occupations_with_the_most",
+    "1.5": "fastest_declining_occupations_2023",
+    "1.6": "occupations_with_the_largest",
+    "1.7": "occupational_projections_2023_33",
+    "1.8": "2023_33_industry_occupation",
+    "1.9": "2023_33_industry_occupation"
+  },
+  "sheetNames": [
+    "Index",
+    "Table 1.1",
+    "Table 1.2",
+    "Table 1.3",
+    "Table 1.4",
+    "Table 1.5",
+    "Table 1.6",
+    "Table 1.7",
+    "Table 1.8",
+    "Table 1.9",
+    "Table 1.10",
+    "Table 1.11",
+    "Table 1.12"
+  ]
+}

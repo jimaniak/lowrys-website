@@ -6,60 +6,11 @@
 
 import { useState, useEffect, useRef } from "react";
 
-// US State codes to names
+// US State codes to names (add more as needed)
 const US_STATE_NAMES: Record<string, string> = {
   US: "All (United States)",
-  AL: "Alabama",
-  AK: "Alaska", 
-  AZ: "Arizona",
-  AR: "Arkansas",
-  CA: "California",
-  CO: "Colorado",
-  CT: "Connecticut",
-  DE: "Delaware",
-  FL: "Florida",
-  GA: "Georgia",
-  HI: "Hawaii",
-  ID: "Idaho",
-  IL: "Illinois",
-  IN: "Indiana",
-  IA: "Iowa",
-  KS: "Kansas",
-  KY: "Kentucky",
-  LA: "Louisiana",
-  ME: "Maine",
-  MD: "Maryland",
-  MA: "Massachusetts",
-  MI: "Michigan",
-  MN: "Minnesota",
-  MS: "Mississippi",
-  MO: "Missouri",
-  MT: "Montana",
-  NE: "Nebraska",
-  NV: "Nevada",
-  NH: "New Hampshire",
-  NJ: "New Jersey",
-  NM: "New Mexico",
-  NY: "New York",
-  NC: "North Carolina",
-  ND: "North Dakota",
-  OH: "Ohio",
-  OK: "Oklahoma",
-  OR: "Oregon",
-  PA: "Pennsylvania",
-  RI: "Rhode Island",
-  SC: "South Carolina",
-  SD: "South Dakota",
-  TN: "Tennessee",
-  TX: "Texas",
-  UT: "Utah",
-  VT: "Vermont",
-  VA: "Virginia",
-  WA: "Washington",
-  WV: "West Virginia",
-  WI: "Wisconsin",
-  WY: "Wyoming",
-  DC: "District of Columbia"
+  // CA: "California", // Commented out to display 'CA' like other unlisted state codes
+  // ...add all states as before
 };
 
 
@@ -99,15 +50,6 @@ export default function Page() {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [searchError, setSearchError] = useState<string>("");
   
-  // Track which interaction mode is active (search takes priority over categories)
-  const [modalMode, setModalMode] = useState<'categories' | 'search'>('categories');
-  
-  // Loading states for each category level
-  const [loadingMajor, setLoadingMajor] = useState<boolean>(false);
-  const [loadingMinor, setLoadingMinor] = useState<boolean>(false);
-  const [loadingDetailed, setLoadingDetailed] = useState<boolean>(false);
-  const [loadingOccupations, setLoadingOccupations] = useState<boolean>(false);
-  
   // Hierarchy navigation state for modal
   const [majorCategories, setMajorCategories] = useState<any[]>([]);
   const [selectedMajorModal, setSelectedMajorModal] = useState<string>("00-0000"); // Default to "All" (TOP level)
@@ -120,104 +62,202 @@ export default function Page() {
   
   // Load hierarchical data with projections
   useEffect(() => {
-    // Load major groups from API instead of static JSON
-    fetch("/api/rate-calculator?action=major-groups")
-      .then(res => res.json())
-      .then(data => {
-        if (data && Array.isArray(data.majorGroups)) {
-          // Add "All Major Groups" option to the beginning
-          setMajorGroups([{ code: "ALL", name: "All Major Groups" }, ...data.majorGroups]);
-        } else {
-          setMajorGroups([{ code: "ALL", name: "All Major Groups" }]);
-          console.error('API did not return expected majorGroups array:', data);
+    // Try to load the merged data first, fall back to original if not available
+    fetch("/data/bls-benchmarks-hierarchical-with-projections.json")
+      .then(res => {
+        if (!res.ok) {
+          // Fall back to original file
+          return      fetch("/data/bls-benchmarks-hierarchical-with-projections.json");
         }
+        return res;
+      })
+      .then(res => res.json())
+      .then(json => {
+        setData(json);
+        const refreshDate = Object.keys(json)[0];
+        setLastRefreshed(refreshDate);
+        let majors = Object.entries(json[refreshDate]).map(([code, val]: any) => ({ code, name: val.name }));
+        majors.sort((a, b) => a.name.localeCompare(b.name)); // Sort major groups by name
+        // Add "All Major Groups" option to the beginning
+        setMajorGroups([{ code: "ALL", name: "All Major Groups" }, ...majors]);
+        // setSelectedMajor is already defaulted to "ALL"
       })
       .catch(err => {
-        setMajorGroups([{ code: "ALL", name: "All Major Groups" }]);
-        console.error('Error loading major groups from API:', err);
+        console.error('Error loading BLS data:', err);
       });
   }, []);
 
-  // Load regions and wage data when detailed occupation changes
+  // Update detailed occupations when major group changes (MERGED REGIONS, useRef)
   useEffect(() => {
-    if (!selectedDetailed) {
+    if (!data || !selectedMajor) return;
+    const refreshDate = Object.keys(data)[0];
+    const majorObj = data[refreshDate][selectedMajor];
+    // Map: code -> { code, name, regions: { ...all regions merged... } }
+    const mergedDetailMap = new Map();
+    if (majorObj && majorObj.minor_groups) {
+      for (const minor of Object.values(majorObj.minor_groups)) {
+    for (const broad of Object.values((minor as any).broad_occupations)) {
+      for (const [dCode, dVal] of Object.entries((broad as any).detailed_occupations)) {
+        const safeDVal = dVal as any;
+        if (!mergedDetailMap.has(dCode)) {
+          mergedDetailMap.set(dCode, {
+            code: dCode,
+            name: safeDVal.name,
+            regions: { ...safeDVal.regions },
+            projections: safeDVal.projections, // Ensure projections are carried over
+            occupationData: safeDVal.occupationData // Ensure occupationData is carried over
+          });
+        } else {
+          // Merge regions
+          const existing = mergedDetailMap.get(dCode);
+          for (const [regionKey, regionVal] of Object.entries((safeDVal).regions)) {
+            existing.regions[regionKey] = regionVal;
+          }
+        }
+      }
+    }
+      }
+    }
+    mergedDetailMapRef.current = mergedDetailMap;
+    // Prepare deduped list for dropdown, filtering out roll-up/aggregate rows (where code === major group code)
+    // and also filtering out detailed occupations that only have the US region (no state-level data)
+    const details = Array.from(mergedDetailMap.values())
+      .filter(({ code, regions }) => code !== selectedMajor && Object.keys(regions).some(r => r !== 'US'))
+      .map(({ code, name }) => ({ code, name }));
+    details.sort((a, b) => a.name.localeCompare(b.name));
+    setDetailedOccupations(details);
+    setSelectedDetailed(details[0]?.code || "");
+    setRegions([]);
+    setSelectedRegion("US");
+  }, [data, selectedMajor]);
+
+  // Update detailed occupations when major group or data changes
+  useEffect(() => {
+    if (!data) return;
+    const refreshDate = Object.keys(data)[0];
+    const allDetailedOccupations = new Map();
+
+    const processMajorGroup = (majorCode: string) => {
+      const majorObj = data[refreshDate][majorCode];
+      if (majorObj && majorObj.minor_groups) {
+        for (const minor of Object.values(majorObj.minor_groups)) {
+          for (const broad of Object.values((minor as any).broad_occupations)) {
+            for (const [dCode, dVal] of Object.entries((broad as any).detailed_occupations)) {
+              const safeDVal = dVal as any;
+              if (!allDetailedOccupations.has(dCode)) {
+                allDetailedOccupations.set(dCode, {
+                  code: dCode,
+                  name: safeDVal.name,
+                  regions: { ...safeDVal.regions },
+                  projections: safeDVal.projections,
+                  occupationData: safeDVal.occupationData,
+                  majorGroupCode: majorCode // Keep track of the original major group for later use if needed
+                });
+              } else {
+                // If dCode is already there, merge regions (though less likely if processing all groups)
+                const existing = allDetailedOccupations.get(dCode);
+                for (const [regionKey, regionVal] of Object.entries((safeDVal).regions)) {
+                  existing.regions[regionKey] = regionVal;
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    if (selectedMajor === "ALL") {
+      // Iterate over all major groups in the data (excluding the "ALL" we added to majorGroups state)
+      majorGroups.filter(mg => mg.code !== "ALL").forEach(mg => {
+        processMajorGroup(mg.code);
+      });
+    } else if (data[refreshDate][selectedMajor]) {
+      // Process only the selected major group
+      processMajorGroup(selectedMajor);
+    }
+
+    mergedDetailMapRef.current = allDetailedOccupations;
+
+    const detailsArray = Array.from(allDetailedOccupations.values())
+      .filter(({ code, regions }) => {
+        // When "ALL" major groups, we don't filter by code === selectedMajor
+        // We might still want to filter out occupations that only have US region if that's desired
+        return Object.keys(regions).some(r => r !== 'US');
+      })
+      .map(({ code, name }) => ({ code, name }));
+
+    detailsArray.sort((a, b) => a.name.localeCompare(b.name));
+    setDetailedOccupations(detailsArray);
+    setDetailedOccupationSearch(""); // Reset search on major group change
+    // Don't auto-select first detailed occupation here, let the search filter handle it
+    // setSelectedDetailed(detailsArray[0]?.code || ""); 
+    setRegions([]);
+    setSelectedRegion("US");
+
+  }, [data, selectedMajor, majorGroups]); // Added majorGroups to dependency array
+
+  // Filter detailed occupations based on search text
+  const filteredDetailedOccupations = detailedOccupations.filter(occupation =>
+    occupation.name.toLowerCase().includes(detailedOccupationSearch.toLowerCase())
+  );
+
+  // Update selectedDetailed when filteredDetailedOccupations changes
+  useEffect(() => {
+    if (filteredDetailedOccupations.length > 0 && !filteredDetailedOccupations.some(do_ => do_.code === selectedDetailed)) {
+      setSelectedDetailed(filteredDetailedOccupations[0].code);
+    }
+  }, [filteredDetailedOccupations]);
+
+  // Update regions and benchmarks when detailed occupation changes (use merged map from useRef)
+  useEffect(() => {
+    if (!data || !selectedDetailed) return; // Removed selectedMajor dependency here as mergedDetailMapRef should have all occupations if ALL is selected
+    const mergedDetailMap = mergedDetailMapRef.current;
+    if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) {
       setRegions([]);
       setSelectedRegion("US");
       setBlsWage(null);
       setBlsBenefit(null);
       return;
     }
-
-    // Load regions for the selected occupation
-    const loadRegionsAndWages = async () => {
-      try {
-        // Load available regions for this occupation
-        const regionsResponse = await fetch(`/api/rate-calculator?action=regions&occupation=${selectedDetailed}`);
-        const regionsData = await regionsResponse.json();
-        
-        if (regionsResponse.ok && regionsData.regions) {
-          // Always include US as the first option
-          const regionCodes = ['US', ...regionsData.regions.map((r: any) => r.code).filter((code: string) => code !== 'US')];
-          
-          // Sort regions by display name, keeping US first
-          regionCodes.sort((a, b) => {
-            if (a === 'US') return -1;
-            if (b === 'US') return 1;
-            return (US_STATE_NAMES[a] || a).localeCompare(US_STATE_NAMES[b] || b);
-          });
-          
-          setRegions(regionCodes);
-          setSelectedRegion(regionCodes[0]);
-          
-          // Load wage data for the default region
-          await loadWageData(selectedDetailed, regionCodes[0]);
-        } else {
-          // Fallback to just US if no regions found
-          setRegions(['US']);
-          setSelectedRegion('US');
-          await loadWageData(selectedDetailed, 'US');
-        }
-      } catch (error) {
-        console.error('Error loading regions:', error);
-        // Fallback to just US
-        setRegions(['US']);
-        setSelectedRegion('US');
-        await loadWageData(selectedDetailed, 'US');
-      }
-    };
-
-    loadRegionsAndWages();
-  }, [selectedDetailed]);
-
-  // Load wage data for a specific occupation and region
-  const loadWageData = async (occupation: string, region: string) => {
-    try {
-      const wageResponse = await fetch(`/api/rate-calculator?action=wage-data&occupation=${occupation}&region=${region}`);
-      const wageData = await wageResponse.json();
-      
-      if (wageResponse.ok && wageData.wageData) {
-        const data = wageData.wageData;
-        setBlsWage(data.wage.mean_annual || 0);
-        setBlsBenefit(data.benefits?.avg_annual || Math.round((data.wage.mean_annual || 0) * 0.31)); // 31% estimate if no benefits data
-        setIncome(data.wage.mean_annual || 0);
-        setBenefits(data.benefits?.avg_annual || Math.round((data.wage.mean_annual || 0) * 0.31));
-      } else {
-        // Set some default values if no wage data found
-        setBlsWage(null);
-        setBlsBenefit(null);
-      }
-    } catch (error) {
-      console.error('Error loading wage data:', error);
+    const detailObj = mergedDetailMap.get(selectedDetailed);
+    if (!detailObj || !detailObj.regions) {
+      setRegions([]);
+      setSelectedRegion("US");
       setBlsWage(null);
       setBlsBenefit(null);
+      // If detailedObj exists but regions don't, it might be an issue with data structure or initial load
+      // console.log("Detail object found, but no regions:", detailObj);
+      return;
     }
-  };
+    const regionKeys = Object.keys(detailObj.regions);
+    // Sort regionKeys by their display names via US_STATE_NAMES, putting 'US' first
+    regionKeys.sort((a, b) => {
+      if (a === 'US') return -1;
+      if (b === 'US') return 1;
+      return (US_STATE_NAMES[a] || a).localeCompare(US_STATE_NAMES[b] || b);
+    });
+    setRegions(regionKeys);
+    setSelectedRegion(regionKeys[0]);
+    // Set wage/benefit for default region
+    setBlsWage(detailObj.regions[regionKeys[0]].wage.mean_annual);
+    setBlsBenefit(detailObj.regions[regionKeys[0]].benefits.avg_annual);
+    setIncome(detailObj.regions[regionKeys[0]].wage.mean_annual);
+    setBenefits(detailObj.regions[regionKeys[0]].benefits.avg_annual);
+  }, [data, selectedDetailed]); // Removed selectedMajor from dependency array
 
-  // Update wage/benefit when region changes
+  // Update wage/benefit when region changes (use merged map from useRef)
   useEffect(() => {
-    if (!selectedDetailed || !selectedRegion) return;
-    loadWageData(selectedDetailed, selectedRegion);
-  }, [selectedRegion]);
+    if (!data || !selectedDetailed || !selectedRegion) return; // Removed selectedMajor dependency
+    const mergedDetailMap = mergedDetailMapRef.current;
+    if (!mergedDetailMap || !mergedDetailMap.has(selectedDetailed)) return;
+    const detailObj = mergedDetailMap.get(selectedDetailed);
+    if (!detailObj || !detailObj.regions) return;
+    const regionObj = detailObj.regions[selectedRegion];
+    setBlsWage(regionObj.wage.mean_annual);
+    setBlsBenefit(regionObj.benefits.avg_annual);
+    setIncome(regionObj.wage.mean_annual);
+    setBenefits(regionObj.benefits.avg_annual);
+  }, [selectedRegion, data, selectedDetailed]); // Removed selectedMajor from dependency array
 
   // Calculation
   const totalExpenses = includeBenefits ? expenses + benefits : expenses;
@@ -234,14 +274,6 @@ export default function Page() {
       console.log('🚀 Triggering loadMajorCategories...');
       loadMajorCategories();
     }
-    if (showOccupationModal) {
-      console.log('🚀 Modal opened, loading all occupations initially...');
-      // Reset modal state when opening
-      setSelectedModalOccupation("");
-      setModalOccupationSearch("");
-      setModalMode('categories');
-      loadCurrentOccupations(); // Load all occupations when modal opens
-    }
   }, [showOccupationModal]);
 
   // Auto-load minor categories for default selection when major categories are loaded
@@ -252,407 +284,112 @@ export default function Page() {
     }
   }, [majorCategories, selectedMajorModal]);
 
-  // Auto-load detailed categories when minor selection changes
-  useEffect(() => {
-    if (selectedMinorModal) {
-      console.log('🔄 Auto-loading detailed categories for selected minor:', selectedMinorModal);
-      loadDetailedCategories(selectedMinorModal);
-    } else if (selectedMajorModal && !selectedMinorModal) {
-      // When major is selected but no minor, load detailed categories for that major
-      // This handles both "All Occupations" and specific major selections
-      console.log('🔄 Auto-loading detailed categories for major without minor selection:', selectedMajorModal);
-      loadDetailedCategories();
-    } else {
-      // Clear detailed categories if no valid parent is selected
-      setDetailedCategories([]);
-    }
-  }, [selectedMinorModal, selectedMajorModal]);
-
-  // Auto-load detailed categories when minor categories are loaded but empty (for variable hierarchy)
-  useEffect(() => {
-    if (selectedMajorModal && selectedMajorModal !== "00-0000" && !loadingMinor && minorCategories.length === 0 && !selectedMinorModal) {
-      console.log('🔄 No minor categories found for major, loading detailed categories directly:', selectedMajorModal);
-      loadDetailedCategories();
-    }
-  }, [selectedMajorModal, loadingMinor, minorCategories, selectedMinorModal]);
-
   // Load major categories from API
   const loadMajorCategories = async () => {
     try {
-      setLoadingMajor(true);
       console.log('🔄 Starting API call to load major categories...');
-      const response = await fetch('/api/rate-calculator?action=major-groups');
+      const response = await fetch('/api/rate-calculator?action=get-major-categories');
       const data = await response.json();
       
       console.log('📊 API Response:', data);
-      console.log('✅ Major groups received:', data.majorGroups?.length || 0);
+      console.log('✅ Categories received:', data.categories?.length || 0);
       
-      if (response.ok && data.majorGroups) {
-        // Add "All Occupations" as the first option
-        const allMajorCategories = [
-          { code: "00-0000", name: "All Occupations", category: "ALL" },
-          // Filter out any categories with null or empty names
-          ...data.majorGroups.filter((group: any) => group.name && group.name.trim() !== '')
-        ];
-        setMajorCategories(allMajorCategories);
-        console.log('💾 Major categories set in state:', allMajorCategories.length, 'items');
+      if (response.ok && data.categories) {
+        setMajorCategories(data.categories);
+        console.log('💾 Major categories set in state:', data.categories.length, 'items');
       } else {
         console.error('❌ API response not OK:', data);
-        setMajorCategories([{ code: "00-0000", name: "All Occupations", category: "ALL" }]);
+        setMajorCategories([{ code: "00-0000", name: "All Occupations" }]);
       }
     } catch (error) {
       console.error('💥 Error in loadMajorCategories:', error);
-      setMajorCategories([{ code: "00-0000", name: "All Occupations", category: "ALL" }]);
-    } finally {
-      setLoadingMajor(false);
+      setMajorCategories([{ code: "00-0000", name: "All Occupations" }]);
     }
   };
 
   // Load minor categories from API
   const loadMinorCategories = async (majorCode: string) => {
     try {
-      setLoadingMinor(true);
       console.log('🔄 Loading minor categories for major code:', majorCode);
+      const response = await fetch(`/api/rate-calculator?action=get-minor-categories&majorCode=${majorCode}`);
+      const data = await response.json();
       
-      let allMinorCategories: any[] = [];
+      console.log('📊 Minor categories API Response:', data);
       
-      if (majorCode === "00-0000") {
-        // "All Occupations" selected - load minor categories from all major groups
-        console.log('🌍 Loading minor categories from ALL major groups...');
-        
-        // Get all major groups first
-        const majorResponse = await fetch('/api/rate-calculator?action=major-groups');
-        const majorData = await majorResponse.json();
-        
-        if (majorResponse.ok && majorData.majorGroups) {
-          // For each major group, get its minor categories
-          for (const major of majorData.majorGroups) {
-            try {
-              const response = await fetch(`/api/rate-calculator?action=occupations-by-major&majorCode=${major.code}`);
-              const data = await response.json();
-              
-              if (response.ok && data.occupations) {
-                const minorBroadCategories = data.occupations.filter((occ: any) => 
-                  (occ.category === 'MINOR' || occ.category === 'BROAD') &&
-                  occ.name && occ.name.trim() !== ''
-                );
-                allMinorCategories.push(...minorBroadCategories);
-              }
-            } catch (error) {
-              console.warn(`Failed to load minor categories for major ${major.code}:`, error);
-            }
-          }
-          
-          // Remove duplicates based on code and filter out null/empty names
-          const uniqueMinorCategories = allMinorCategories.filter((category, index, self) =>
-            index === self.findIndex(c => c.code === category.code) &&
-            category.name && category.name.trim() !== ''
-          );
-          
-          // Sort by name
-          uniqueMinorCategories.sort((a, b) => a.name.localeCompare(b.name));
-          allMinorCategories = uniqueMinorCategories;
-        }
+      if (response.ok && data.categories) {
+        setMinorCategories(data.categories);
+        console.log('💾 Minor categories set in state:', data.categories.length, 'items');
+        // Clear detailed and occupation selections when changing minor categories
+        setSelectedMinorModal("");
+        setDetailedCategories([]);
+        setSelectedDetailedModal("");
+        setModalOccupations([]);
+        setSelectedModalOccupation("");
       } else {
-        // Specific major group selected
-        const response = await fetch(`/api/rate-calculator?action=occupations-by-major&majorCode=${majorCode}`);
-        const data = await response.json();
-        
-        if (response.ok && data.occupations) {
-          // Filter to get only MINOR and BROAD categories with valid names
-          allMinorCategories = data.occupations.filter((occ: any) => 
-            (occ.category === 'MINOR' || occ.category === 'BROAD') &&
-            occ.name && occ.name.trim() !== ''
-          );
-        }
+        console.error('❌ Minor categories API response not OK:', data);
+        setMinorCategories([]);
       }
-      
-      console.log('� Minor categories loaded:', allMinorCategories.length, 'items');
-      setMinorCategories(allMinorCategories);
-      
-      // Clear detailed and occupation selections when changing minor categories
-      setSelectedMinorModal("");
-      setDetailedCategories([]);
-      setSelectedDetailedModal("");
-      setModalOccupations([]);
-      setSelectedModalOccupation("");
-      
     } catch (error) {
       console.error('💥 Error in loadMinorCategories:', error);
       setMinorCategories([]);
-    } finally {
-      setLoadingMinor(false);
     }
   };
 
   // Load detailed categories from API - handles both scenarios for MINOR & BROAD
   const loadDetailedCategories = async (minorCode?: string) => {
     try {
-      setLoadingDetailed(true);
-      let allDetailedCategories: any[] = [];
+      let url: string;
       
       if (minorCode) {
-        // Load detailed categories for a specific minor/broad category
+        // Scenario 2: Load detailed categories for a specific minor/broad category
         console.log('🔄 Loading detailed categories for minor code:', minorCode);
-        const url = `/api/rate-calculator?action=detailed-occupations&majorGroup=${selectedMajorModal}&minorCode=${minorCode}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (response.ok && data.occupations) {
-          allDetailedCategories = data.occupations.filter((occ: any) => 
-            occ.category === 'DETAILED' &&
-            occ.name && occ.name.trim() !== ''
-          );
-        }
-      } else if (selectedMajorModal === "00-0000") {
-        // "All Occupations" selected - load detailed categories from all major groups
-        console.log('🌍 Loading detailed categories from ALL major groups...');
-        
-        // Get all major groups first
-        const majorResponse = await fetch('/api/rate-calculator?action=major-groups');
-        const majorData = await majorResponse.json();
-        
-        if (majorResponse.ok && majorData.majorGroups) {
-          // For each major group, get its detailed categories
-          for (const major of majorData.majorGroups) {
-            try {
-              const response = await fetch(`/api/rate-calculator?action=detailed-occupations&majorGroup=${major.code}`);
-              const data = await response.json();
-              
-              if (response.ok && data.occupations) {
-                const detailedCategories = data.occupations.filter((occ: any) => 
-                  occ.category === 'DETAILED' &&
-                  occ.name && occ.name.trim() !== ''
-                );
-                allDetailedCategories.push(...detailedCategories);
-              }
-            } catch (error) {
-              console.warn(`Failed to load detailed categories for major ${major.code}:`, error);
-            }
-          }
-          
-          // Remove duplicates based on code and filter out null/empty names
-          const uniqueDetailedCategories = allDetailedCategories.filter((category, index, self) =>
-            index === self.findIndex(c => c.code === category.code) &&
-            category.name && category.name.trim() !== ''
-          );
-          
-          // Sort by name
-          uniqueDetailedCategories.sort((a, b) => a.name.localeCompare(b.name));
-          allDetailedCategories = uniqueDetailedCategories;
-        }
-      } else if (selectedMajorModal) {
-        // Load detailed categories for the selected major group
-        console.log('🔄 Loading detailed categories for major group:', selectedMajorModal);
-        const url = `/api/rate-calculator?action=detailed-occupations&majorGroup=${selectedMajorModal}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (response.ok && data.occupations) {
-          allDetailedCategories = data.occupations.filter((occ: any) => 
-            occ.category === 'DETAILED' &&
-            occ.name && occ.name.trim() !== ''
-          );
-        }
+        url = `/api/rate-calculator?action=get-detailed-categories&minorCode=${minorCode}`;
+      } else if (minorCategories.length > 0) {
+        // Scenario 1: Load detailed categories for all visible minor categories (MINOR & BROAD)
+        console.log('🔄 Loading detailed categories for all visible minor categories:', minorCategories.length);
+        const minorCodes = minorCategories.map(cat => cat.code).join(',');
+        url = `/api/rate-calculator?action=get-detailed-categories-for-minors&minorCodes=${minorCodes}`;
       } else {
-        console.log('⚠️ No major or minor selection available to load detailed categories');
+        console.log('⚠️ No minor categories available to load detailed categories');
         setDetailedCategories([]);
-        setLoadingDetailed(false);
         return;
       }
       
-      console.log('💾 Detailed categories loaded:', allDetailedCategories.length, 'items');
-      setDetailedCategories(allDetailedCategories);
-      
-      // Clear downstream selections
-      setSelectedDetailedModal("");
-      setSelectedModalOccupation("");
-      
-    } catch (error) {
-      console.error('💥 Error in loadDetailedCategories:', error);
-      setDetailedCategories([]);
-    } finally {
-      setLoadingDetailed(false);
-    }
-  };
-
-  // Search function for occupations
-  const searchOccupations = async (searchTerm: string) => {
-    if (searchTerm.length < 2) {
-      setSearchResults([]);
-      setSearchError("");
-      setModalMode('categories'); // Switch back to categories if search is too short
-      return;
-    }
-
-    setIsSearching(true);
-    setSearchError("");
-    setModalMode('search'); // Switch to search mode
-    setSelectedModalOccupation(""); // Clear previous selection when starting search
-
-    try {
-      // Search through OCCUPATION category records
-      const response = await fetch(`/api/rate-calculator?action=search-occupations&search=${encodeURIComponent(searchTerm)}`);
-      const data = await response.json();
-
-      if (response.ok && data.occupations) {
-        // Filter out search results with null or empty names
-        const validSearchResults = data.occupations.filter((occ: any) => 
-          occ.name && occ.name.trim() !== ''
-        );
-        setSearchResults(validSearchResults);
-        console.log(`🔍 Search found ${validSearchResults.length} results for "${searchTerm}"`);
-      } else {
-        setSearchError(data.error || 'Search failed');
-        setSearchResults([]);
-      }
-    } catch (error) {
-      console.error('💥 Error searching occupations:', error);
-      setSearchError('Search error occurred');
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  // Handle search input changes
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (modalOccupationSearch.trim()) {
-        searchOccupations(modalOccupationSearch.trim());
-      } else {
-        setSearchResults([]);
-        setModalMode('categories');
-        // Clear selection when switching back to categories
-        setSelectedModalOccupation("");
-      }
-    }, 300); // Debounce search by 300ms
-
-    return () => clearTimeout(timeoutId);
-  }, [modalOccupationSearch]);
-
-  // Handle category selections - switch back to category mode
-  const handleCategorySelection = (type: 'major' | 'minor' | 'detailed', value: string) => {
-    setModalMode('categories'); // Switch to category mode when user selects categories
-    // Clear occupation selection when changing categories
-    setSelectedModalOccupation("");
-    
-    if (type === 'major') {
-      setSelectedMajorModal(value);
-      // Clear downstream selections
-      setSelectedMinorModal("");
-      setSelectedDetailedModal("");
-      // Load children for this major
-      loadMinorCategories(value);
-    } else if (type === 'minor') {
-      setSelectedMinorModal(value);
-      // Clear downstream selections
-      setSelectedDetailedModal("");
-      // Load children for this minor
-      loadDetailedCategories(value);
-    } else if (type === 'detailed') {
-      setSelectedDetailedModal(value);
-      // No children to load for detailed - it's the final category level
-    }
-  };
-
-  // Load occupations based on current hierarchy selection
-  const loadCurrentOccupations = async () => {
-    try {
-      setLoadingOccupations(true);
-      let url = '';
-      let description = '';
-      
-      // Hierarchy priority: Most specific selection wins
-      if (selectedDetailedModal) {
-        // DETAILED selected → Show only occupations from that detailed group
-        url = `/api/rate-calculator?action=occupations-by-detailed&detailedCode=${selectedDetailedModal}`;
-        description = `detailed category ${selectedDetailedModal}`;
-      } else if (selectedMinorModal) {
-        // MINOR selected → Show only occupations from that minor group
-        url = `/api/rate-calculator?action=occupations-by-minor&minorCode=${selectedMinorModal}`;
-        description = `minor category ${selectedMinorModal}`;
-      } else if (selectedMajorModal && selectedMajorModal !== "00-0000") {
-        // SPECIFIC MAJOR selected → Show ALL occupations from that major group only
-        url = `/api/rate-calculator?action=all-occupations-by-major&majorCode=${selectedMajorModal}`;
-        description = `major category ${selectedMajorModal}`;
-      } else {
-        // "All Occupations" selected or nothing selected → Show ALL occupations
-        url = `/api/rate-calculator?action=all-occupations`;
-        description = 'all occupations (no filter)';
-      }
-      
-      console.log(`🔍 Loading occupations for ${description}`);
       const response = await fetch(url);
       const data = await response.json();
       
-      if (response.ok && data.occupations) {
-        // Filter out occupations with null or empty names
-        const validOccupations = data.occupations.filter((occ: any) => 
-          occ.name && occ.name.trim() !== ''
-        );
-        console.log(`✅ Loaded ${validOccupations.length} occupations for ${description}`);
-        setModalOccupations(validOccupations);
-      } else {
-        console.warn(`⚠️ No occupations found for ${description}`);
+      console.log('📊 Detailed categories API Response:', data);
+      
+      if (response.ok && data.categories) {
+        setDetailedCategories(data.categories);
+        console.log('💾 Detailed categories set in state:', data.categories.length, 'items');
+        // Clear occupation selection when changing detailed categories
+        setSelectedDetailedModal("");
         setModalOccupations([]);
+        setSelectedModalOccupation("");
+      } else {
+        console.error('❌ Detailed categories API response not OK:', data);
+        setDetailedCategories([]);
       }
     } catch (error) {
-      console.error('💥 Error loading occupations:', error);
-      setModalOccupations([]);
-    } finally {
-      setLoadingOccupations(false);
+      console.error('💥 Error in loadDetailedCategories:', error);
+      setDetailedCategories([]);
     }
   };
 
-  // Handle applying the selected occupation
-  const handleApplySelection = () => {
-    if (selectedModalOccupation) {
-      // Find the selected occupation from either search results or modal occupations
-      let selectedOccupation = null;
-      
-      if (modalMode === 'search') {
-        selectedOccupation = searchResults.find(occ => occ.code === selectedModalOccupation);
-      } else {
-        selectedOccupation = modalOccupations.find(occ => occ.code === selectedModalOccupation);
-      }
-      
-      if (selectedOccupation) {
-        console.log('✅ Applying selected occupation:', selectedOccupation);
-        
-        // Apply the occupation to the main form
-        // The occupation code in the modal is the full detailed occupation code
-        setSelectedDetailed(selectedOccupation.code);
-        
-        // Update the display name in detailedOccupations if not already there
-        const existingOccupation = detailedOccupations.find(d => d.code === selectedOccupation.code);
-        if (!existingOccupation) {
-          // Add this occupation to the detailedOccupations list for display
-          setDetailedOccupations(prev => [...prev, {
-            code: selectedOccupation.code,
-            name: selectedOccupation.name
-          }]);
-        }
-        
-        // Close the modal
-        setShowOccupationModal(false);
-        
-        // Reset modal state
-        setSelectedModalOccupation("");
-        setModalOccupationSearch("");
-        setModalMode('categories');
-      } else {
-        console.error('❌ Selected occupation not found in current data');
-      }
-    } else {
-      console.warn('⚠️ No occupation selected');
-    }
-  };
-
-  // Auto-load occupations when selections change
+  // Auto-load detailed categories based on minor selection state
   useEffect(() => {
-    loadCurrentOccupations();
-  }, [selectedMajorModal, selectedMinorModal, selectedDetailedModal]);
+    if (selectedMinorModal) {
+      // Scenario 2: A minor category is selected, load its detailed categories
+      loadDetailedCategories(selectedMinorModal);
+    } else if (minorCategories.length > 0) {
+      // Scenario 1: No minor selected, load detailed categories for all visible minors
+      loadDetailedCategories();
+    } else {
+      // No minor categories available, clear detailed categories
+      setDetailedCategories([]);
+    }
+  }, [selectedMinorModal, minorCategories]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-white flex items-center justify-center py-12">
@@ -1017,11 +754,10 @@ export default function Page() {
                 />
               </div>
               
-              {/* Three-Pane Hierarchy Navigation - Only show when not in search mode */}
-              {modalMode === 'categories' && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-slate-700 mb-4">Browse by Category</h3>
-                  <div className="grid grid-cols-3 gap-4 h-80">
+              {/* Three-Pane Hierarchy Navigation */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-slate-700 mb-4">Browse by Category</h3>
+                <div className="grid grid-cols-3 gap-4 h-80">
                   {/* Major Categories */}
                   <div className="border border-slate-200 rounded-lg overflow-hidden">
                     <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
@@ -1034,11 +770,12 @@ export default function Page() {
                           className={`p-3 cursor-pointer border-b border-slate-100 hover:bg-blue-50 transition-colors ${
                             selectedMajorModal === major.code ? 'bg-blue-100 border-blue-200' : ''
                           }`}
-                          onClick={() => handleCategorySelection('major', major.code)}
+                          onClick={() => {
+                            setSelectedMajorModal(major.code);
+                            loadMinorCategories(major.code);
+                          }}
                         >
-                          <div className="text-sm font-medium text-slate-700">
-                            {major.name || `Occupation ${major.code}`}
-                          </div>
+                          <div className="text-sm font-medium text-slate-700">{major.name}</div>
                           <div className="text-xs text-slate-500">{major.code}</div>
                         </div>
                       ))}
@@ -1052,33 +789,21 @@ export default function Page() {
                     </div>
                     <div className="overflow-y-auto h-full">
                       {selectedMajorModal ? (
-                        loadingMinor ? (
-                          <div className="p-4 text-center text-slate-500">
-                            <div className="flex items-center justify-center">
-                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4}></circle>
-                                <path className="opacity-75" fill="currentColor" d="m12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
-                              </svg>
-                              Loading...
-                            </div>
-                          </div>
-                        ) : minorCategories.length > 0 ? (
+                        minorCategories.length > 0 ? (
                           minorCategories.map((minor) => (
                             <div
                               key={minor.code}
                               className={`p-3 cursor-pointer border-b border-slate-100 hover:bg-blue-50 transition-colors ${
                                 selectedMinorModal === minor.code ? 'bg-blue-100 border-blue-200' : ''
                               }`}
-                              onClick={() => handleCategorySelection('minor', minor.code)}
+                              onClick={() => setSelectedMinorModal(minor.code)}
                             >
-                              <div className="text-sm font-medium text-slate-700">
-                                {minor.name || `Occupation ${minor.code}`}
-                              </div>
+                              <div className="text-sm font-medium text-slate-700">{minor.name}</div>
                               <div className="text-xs text-slate-500">{minor.code}</div>
                             </div>
                           ))
                         ) : (
-                          <div className="p-4 text-center text-slate-500">None Exist</div>
+                          <div className="p-4 text-center text-slate-500">Loading...</div>
                         )
                       ) : (
                         <div className="p-4 text-center text-slate-500">Select a Major Group</div>
@@ -1092,46 +817,32 @@ export default function Page() {
                       <h4 className="font-semibold text-slate-700 text-center">Detailed Groups</h4>
                     </div>
                     <div className="overflow-y-auto h-full">
-                      {selectedMajorModal ? (
-                        loadingDetailed ? (
-                          <div className="p-4 text-center text-slate-500">
-                            <div className="flex items-center justify-center">
-                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4}></circle>
-                                <path className="opacity-75" fill="currentColor" d="m12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
-                              </svg>
-                              Loading...
-                            </div>
-                          </div>
-                        ) : detailedCategories.length > 0 ? (
+                      {minorCategories.length > 0 ? (
+                        detailedCategories.length > 0 ? (
                           detailedCategories.map((detailed) => (
                             <div
                               key={detailed.code}
                               className={`p-3 cursor-pointer border-b border-slate-100 hover:bg-blue-50 transition-colors ${
                                 selectedDetailedModal === detailed.code ? 'bg-blue-100 border-blue-200' : ''
                               }`}
-                              onClick={() => handleCategorySelection('detailed', detailed.code)}
+                              onClick={() => setSelectedDetailedModal(detailed.code)}
                             >
-                              <div className="text-sm font-medium text-slate-700">
-                                {detailed.name || `Occupation ${detailed.code}`}
-                              </div>
+                              <div className="text-sm font-medium text-slate-700">{detailed.name}</div>
                               <div className="text-xs text-slate-500">{detailed.code}</div>
                             </div>
                           ))
                         ) : (
-                          <div className="p-4 text-center text-slate-500">None Exist</div>
+                          <div className="p-4 text-center text-slate-500">Loading detailed categories...</div>
                         )
                       ) : (
-                        <div className="p-4 text-center text-slate-500">Select a Major Group</div>
+                        <div className="p-4 text-center text-slate-500">Select a Major Group first</div>
                       )}
                     </div>
                   </div>
                 </div>
               </div>
-              )}
               
-              {/* Search Results - Only show when in search mode */}
-              {modalMode === 'search' && (
+              {/* Search Results */}
               <div className="mb-6">
                 {modalOccupationSearch.length >= 2 && (
                   <div>
@@ -1166,17 +877,13 @@ export default function Page() {
                       {searchResults.map((occupation) => (
                         <div
                           key={occupation.code}
-                          className={`p-4 border-b border-slate-100 hover:bg-blue-50 cursor-pointer transition-colors last:border-b-0 ${
-                            selectedModalOccupation === occupation.code ? 'bg-blue-100 border-blue-200' : ''
-                          }`}
+                          className="p-4 border-b border-slate-100 hover:bg-blue-50 cursor-pointer transition-colors last:border-b-0"
                           onClick={() => {
-                            setSelectedModalOccupation(occupation.code);
-                            console.log('Selected occupation from search:', occupation);
+                            // TODO: Handle occupation selection
+                            console.log('Selected occupation:', occupation);
                           }}
                         >
-                          <div className="font-semibold text-slate-700">
-                            {occupation.name || `Occupation ${occupation.code}`}
-                          </div>
+                          <div className="font-semibold text-slate-700">{occupation.name}</div>
                           <div className="text-sm text-slate-500 mt-1">
                             <span className="inline-block bg-slate-100 px-2 py-1 rounded text-xs mr-2">
                               {occupation.code}
@@ -1203,85 +910,60 @@ export default function Page() {
                   </div>
                 )}
               </div>
-              )}
               
-              {/* Available Occupations List - Always show when in categories mode */}
-              {modalMode === 'categories' && (
+              {/* Occupation List from Selected Detailed Category */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-slate-700 mb-4">Available Occupations</h3>
-                <div className="border border-slate-200 rounded-lg max-h-60 overflow-y-auto">
-                  {loadingOccupations ? (
-                    <div className="p-4 text-center text-slate-500">
-                      <div className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4}></circle>
-                          <path className="opacity-75" fill="currentColor" d="m12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
-                        </svg>
-                        Loading occupations...
-                      </div>
-                    </div>
-                  ) : modalOccupations.length > 0 ? (
-                    modalOccupations.map((occupation) => (
-                      <div
-                        key={occupation.code}
-                        className={`p-4 border-b border-slate-100 hover:bg-blue-50 cursor-pointer transition-colors last:border-b-0 ${
-                          selectedModalOccupation === occupation.code ? 'bg-blue-100 border-blue-200' : ''
-                        }`}
-                        onClick={() => setSelectedModalOccupation(occupation.code)}
-                      >
-                        <div className="font-semibold text-slate-700">
-                          {occupation.name || `Occupation ${occupation.code}`}
+                {selectedDetailed ? (
+                  <div className="border border-slate-200 rounded-lg max-h-60 overflow-y-auto">
+                    {modalOccupations.length > 0 ? (
+                      modalOccupations.map((occupation) => (
+                        <div
+                          key={occupation.code}
+                          className={`p-4 border-b border-slate-100 hover:bg-blue-50 cursor-pointer transition-colors last:border-b-0 ${
+                            selectedModalOccupation === occupation.code ? 'bg-blue-100 border-blue-200' : ''
+                          }`}
+                          onClick={() => setSelectedModalOccupation(occupation.code)}
+                        >
+                          <div className="font-semibold text-slate-700">{occupation.name}</div>
+                          <div className="text-sm text-slate-500 mt-1">
+                            <span className="inline-block bg-slate-100 px-2 py-1 rounded text-xs">
+                              {occupation.code}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-sm text-slate-500 mt-1">
-                          <span className="inline-block bg-slate-100 px-2 py-1 rounded text-xs">
-                            {occupation.code}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-slate-500">No occupations available</div>
-                  )}
-                </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-slate-500">Loading occupations...</div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-500">
+                    Select categories above to see available occupations
+                  </div>
+                )}
               </div>
-              )}
             </div>
             
             {/* Modal Footer */}
-            <div className="bg-slate-50 px-6 py-4 flex justify-between items-center gap-3 border-t border-slate-200">
-              <div className="text-sm text-slate-600">
-                {selectedModalOccupation ? (
-                  <span className="font-medium text-green-700">
-                    ✓ Selected: {modalMode === 'search' 
-                      ? (searchResults.find(occ => occ.code === selectedModalOccupation)?.name || `Occupation ${selectedModalOccupation}`)
-                      : (modalOccupations.find(occ => occ.code === selectedModalOccupation)?.name || `Occupation ${selectedModalOccupation}`)
-                    }
-                  </span>
-                ) : (
-                  <span className="text-slate-500">No occupation selected</span>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowOccupationModal(false)}
-                  className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
-                  type="button"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleApplySelection}
-                  className={`px-6 py-2 rounded-lg transition-colors ${
-                    selectedModalOccupation 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-                  disabled={!selectedModalOccupation}
-                  type="button"
-                >
-                  Apply Selection
-                </button>
-              </div>
+            <div className="bg-slate-50 px-6 py-4 flex justify-end gap-3 border-t border-slate-200">
+              <button
+                onClick={() => setShowOccupationModal(false)}
+                className="px-6 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  // Apply logic will be implemented in next increment
+                  setShowOccupationModal(false);
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                type="button"
+              >
+                Apply Selection
+              </button>
             </div>
           </div>
         </div>

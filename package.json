@@ -6,6 +6,8 @@
     "update-bls": "node scripts/update-bls-benchmarks.js",
     "update-bls-turso": "node scripts/update-bls-to-turso.js",
     "migrate-turso": "node scripts/migrate-to-turso.js",
+    "setup-seo-table": "node scripts/setup-seo-intake-table.js",
+    "add-industry-column": "node scripts/add-industry-column-update.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-06-26T23:40:19.061Z",
+  "droppedTables": [
+    {
+      "name": "bls_data_versions",
+      "rowCount": 1,
+      "schema": "CREATE TABLE bls_data_versions (\n      data_source TEXT PRIMARY KEY,\n      year INTEGER NOT NULL,\n      file_hash TEXT NOT NULL,\n      file_size INTEGER NOT NULL,\n      last_modified TEXT,\n      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,\n      record_count INTEGER\n    )"
+    }
+  ],
+  "remainingTables": [
+    "bls_special_tables",
+    "bls_table_1_1",
+    "bls_table_1_10",
+    "bls_table_1_11",
+    "bls_table_1_12",
+    "bls_table_1_2",
+    "bls_table_1_3",
+    "bls_table_1_4",
+    "bls_table_1_5",
+    "bls_table_1_6",
+    "bls_table_1_8",
+    "bls_table_1_9",
+    "occupation_data",
+    "occupations",
+    "projections",
+    "seo_intake_forms",
+    "sqlite_sequence"
+  ]
+}

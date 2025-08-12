@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Test and Validate Business Setup Workflow",
+			"type": "shell",
+			"command": "cd /d c:\\Users\\jimlo\\Desktop\\Projects\\lowrys-seo-website && npm run build",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			]
+		}
+	]
+}

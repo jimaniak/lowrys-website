@@ -14,7 +14,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">About Jim Lowry, B.S.</h1>
           <p className="text-xl max-w-3xl">
-            Data Analytics & Power Platform Specialist | Turning Data Into Actionable Insights
+            Versatile Technical Professional | From Enterprise Portfolio Management to AI-Enhanced Development
           </p>
         </div>
       </section>
@@ -25,49 +25,66 @@ export default function About() {
           <div className="flex flex-col md:flex-row gap-12">
             {/* Left Column - Bio */}
             <div className="md:w-2/3">
-              <h2 className="text-3xl font-bold mb-6">My Analytics & Business Solutions Approach</h2>
+              <h2 className="text-3xl font-bold mb-6">My Journey: From Railroad to Enterprise Technology</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  I&apos;m Jim Lowry, B.S., a data analytics and business solutions consultant specializing in Microsoft Power Platform, Power BI, and Power Query (M). My passion is helping organizations transform raw data into actionable insights and automate processes for measurable business impact.
+                  My path to technology wasn't conventional. After 16 years working for the railroad, an injury ended that career and put me at a major crossroads. I faced a choice that many blue-collar workers might not have considered: go back to college as a non-traditional student, much older than my peers, with everything on the line.
                 </p>
                 <p className="text-lg">
-                  I focus on building interactive dashboards, automating workflows, and integrating data across systems—empowering teams to make smarter, faster decisions. My core strengths are in Power BI, Power Query/M, and the broader Power Platform suite, with a growing skillset in SQL, Tableau, and Google Data Studio.
+                  It was intimidating being different from my classmates, but I pressed on because I felt I had no other options. If this didn't work, I risked losing the financial stability I was accustomed to. That fear and determination drove me to succeed in ways I never expected.
                 </p>
                 <p className="text-lg">
-                  I believe in honest self-assessment and continuous learning. While I have deep expertise in Power Platform and data analytics, I am actively expanding my toolkit to include more advanced data engineering and visualization tools. My learning journey is ongoing, and I’m committed to staying at the forefront of analytics best practices.
+                  That leap of faith led to an enterprise technology career managing $50M+ in cybersecurity portfolios across critical infrastructure. Over 7 years, I led concurrent projects while serving as both Project Manager and Business Analyst—learning to fill whatever gaps needed filling because I "never had the luxury" of having dedicated BAs on my projects.
                 </p>
                 <p className="text-lg">
-                  My approach combines analytical thinking, technical implementation, and a drive for practical results. I thrive on solving complex business challenges and delivering solutions that bridge the gap between data, technology, and real-world business needs.
+                  Today, I'm a versatile technical professional working across data analytics, SEO optimization, AI-enhanced development, and modern web solutions. My railroad background taught me work ethic and problem-solving; my enterprise experience taught me stakeholder management and business requirements; my recent journey into AI and full-stack development keeps me current with emerging technologies.
                 </p>
               </div>
 
-              <h2 className="text-3xl font-bold mt-12 mb-6">Education & Credentials</h2>
+              <h2 className="text-3xl font-bold mt-12 mb-6">The Value of a Non-Linear Path</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  Bachelor of Science in Information Management, George Herbert Walker School of Business & Technology, Webster University
+                  My unconventional journey gives me a unique perspective that pure technical backgrounds often lack. I understand what it's like to face real stakes, to reinvent yourself when circumstances demand it, and to succeed despite feeling like an outsider.
                 </p>
                 <p className="text-lg">
-                  My academic background provides a strong foundation in information systems, analytics, and business process optimization.
+                  This experience makes me particularly effective at translating between different worlds—whether that's business stakeholders and technical teams, or legacy systems and modern solutions. I've learned to be adaptable, resilient, and focused on delivering real value rather than just technical features.
+                </p>
+                <p className="text-lg">
+                  I'm drawn to AI-enhanced development and modern web technologies because they represent the future, but my enterprise portfolio management background ensures I always think about scalability, stakeholder needs, and business impact. I'm not just building technology—I'm solving problems.
                 </p>
               </div>
 
-              <h2 className="text-3xl font-bold mt-12 mb-6">Analytics Methodology & Learning Journey</h2>
+              <h2 className="text-3xl font-bold mt-12 mb-6">Education & Professional Evolution</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  My analytics and business optimization methodology is rooted in:
-                </p>
-                <ol className="list-decimal pl-6 space-y-2">
-                  <li className="text-lg"><strong>Data Discovery:</strong> Identifying key data sources and business questions</li>
-                  <li className="text-lg"><strong>Solution Design:</strong> Building custom analytics and automation solutions using Power BI, Power Query/M, and Power Platform</li>
-                  <li className="text-lg"><strong>Implementation:</strong> Delivering solutions that integrate seamlessly with business operations</li>
-                  <li className="text-lg"><strong>Measurement:</strong> Tracking KPIs and business outcomes to ensure real value</li>
-                  <li className="text-lg"><strong>Continuous Improvement:</strong> Iterating and learning from every project, always seeking new skills and better results</li>
-                </ol>
-                <p className="text-lg">
-                  <strong>Current learning goals:</strong> Deepening my expertise in SQL, Tableau, and Google Data Studio to complement my Power Platform skills and deliver even more impactful analytics solutions.
+                  <strong>Bachelor of Science in Information Management</strong><br />
+                  George Herbert Walker School of Business & Technology, Webster University
                 </p>
                 <p className="text-lg">
-                  I communicate effectively with both technical and business stakeholders, translating complex analytics into clear, actionable insights. My cross-domain perspective helps me see connections and opportunities that drive innovation.
+                  Returning to school as a non-traditional student after 16 years in the railroad industry was challenging, but it provided crucial foundation in information systems, business process optimization, and analytical thinking that would prove essential in my enterprise technology career.
+                </p>
+                <p className="text-lg">
+                  <strong>Enterprise Portfolio Management Experience:</strong> 7 years managing $50M+ in cybersecurity programs across critical infrastructure, serving dual roles as Project Manager and Business Analyst across multiple concurrent projects.
+                </p>
+              </div>
+
+              <h2 className="text-3xl font-bold mt-12 mb-6">Current Technical Focus & Continuous Learning</h2>
+              <div className="space-y-6">
+                <p className="text-lg">
+                  I'm passionate about staying current with emerging technologies while leveraging the business insight gained from enterprise experience. My current areas of focus include:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li className="text-lg"><strong>AI-Enhanced Development:</strong> Exploring how AI tools can accelerate and improve technical solution delivery</li>
+                  <li className="text-lg"><strong>Modern Web Development:</strong> Building with Next.js, React, and modern frameworks</li>
+                  <li className="text-lg"><strong>Data Analytics & Visualization:</strong> Power BI, data transformation, and business intelligence</li>
+                  <li className="text-lg"><strong>SEO & Digital Marketing:</strong> Technical SEO, analytics, and digital presence optimization</li>
+                  <li className="text-lg"><strong>Business Analysis:</strong> Requirements gathering, stakeholder management, and solution design</li>
+                </ul>
+                <p className="text-lg">
+                  My approach combines technical implementation with deep understanding of business requirements—ensuring solutions don't just work technically, but deliver real value to stakeholders and end users.
+                </p>
+                <p className="text-lg">
+                  <strong>Philosophy:</strong> Technology should solve real problems. My diverse background—from blue-collar work ethic to enterprise project leadership—helps me build solutions that are both technically sound and practically valuable.
                 </p>
               </div>
             </div>
@@ -79,14 +96,15 @@ export default function About() {
                 <div className="w-48 h-48 mx-auto mb-6 overflow-hidden rounded-full">
                   <Image 
                     src="/images/jim-lowry-profile.jpg"
-                    alt="Jim Lowry, Data Analytics & Power Platform Specialist"
+                    alt="Jim Lowry, Versatile Technical Professional specializing in Enterprise Portfolio Management, AI Development, and Analytics"
                     width={192}
                     height={192}
                     className="object-cover w-full h-full object-[center_top]"
                   />
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-center">Jim Lowry, B.S.</h3>
-                <p className="text-center mb-6">Data Analytics & Power Platform Specialist</p>
+                <p className="text-center mb-6">Versatile Technical Professional<br />
+                <span className="text-sm text-gray-600">Enterprise Portfolio Management • AI Development • Analytics</span></p>
                 <div className="space-y-4">
                   <a 
                     href="https://www.linkedin.com/in/jimsitsecurity" 
@@ -106,4 +124,5 @@ export default function About() {
       </section>
     </>
   );
+}
 }
