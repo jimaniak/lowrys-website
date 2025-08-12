@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaChartLine, FaLaptopCode, FaTools, FaSearch, FaGlobe, FaRocket } from 'react-icons/fa';
+import { FaChartLine, FaLaptopCode, FaTools, FaSearch, FaGlobe, FaRocket, FaRobot } from 'react-icons/fa';
 
 export default function Home() {
   return (
@@ -13,12 +13,12 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Jim Lowry, B.S.</h1>
-              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">Data Analytics, SEO & Website Development Solutions</h2>
+              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">Data Analytics, SEO, AI Development & Technical Solutions</h2>
               <p className="text-lg mb-8">
-                Empowering businesses to unlock insights and grow online through advanced analytics, strategic SEO, and modern website development—specializing in Microsoft Power BI, Power Platform, and digital marketing solutions.
+                Versatile technical professional delivering data analytics, SEO optimization, AI-enhanced development, and comprehensive digital solutions—with enterprise project management experience that ensures deep understanding of business requirements and stakeholder needs.
               </p>
               <p className="text-md mb-6 text-blue-200">
-                <strong>Comprehensive Digital Solutions:</strong> From data analytics & Power BI dashboards to SEO strategy & custom website development. I help businesses unlock insights from their data while building a strong online presence that drives growth.
+                <strong>Adaptable Technical Expertise:</strong> Whether it's Power BI dashboards, SEO strategy, modern web development, or AI-enhanced solutions, my enterprise portfolio management background ($50M+ programs) provides unique insight into translating business needs into effective technical implementations.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
@@ -90,11 +90,11 @@ export default function Home() {
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaRocket />
+                <FaRobot />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Full-Stack Solutions</h3>
+              <h3 className="text-xl font-semibold mb-3">Technical Solutions with Business Insight</h3>
               <p className="text-gray-600">
-                End-to-end digital solutions combining data analytics, modern web development, and SEO strategy to create comprehensive business growth platforms.
+                Delivering comprehensive technical solutions across analytics, development, and SEO with enterprise project management experience that provides deep understanding of stakeholder needs, requirements gathering, and solution delivery—ensuring technical work translates to real business value.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
@@ -113,9 +113,9 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 bg-blue-600 text-white text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to Unlock the Power of Your Data?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Data and Digital Presence?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Let’s talk about how modern analytics and automation—especially with Microsoft Power Platform—can help you discover new opportunities, solve business challenges, and drive measurable results.
+            Whether you need analytics dashboards, SEO optimization, modern web development, or AI-enhanced solutions, let's discuss how technical expertise combined with enterprise project experience can deliver results that truly meet your business needs.
           </p>
           <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
             Contact Me

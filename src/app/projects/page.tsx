@@ -10,31 +10,119 @@ export default function Projects() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-6 leading-tight">Analytics & Power Platform Projects</h1>
+          <h1 className="text-5xl font-bold mb-6 leading-tight">Enterprise Portfolio Management</h1>
           <p className="text-xl max-w-3xl leading-relaxed">
-            Explore how I use data analytics, Microsoft Power BI, Power Query (M), and the Power Platform to solve real business challenges, automate workflows, and deliver actionable insights. My projects reflect a commitment to continuous learning, honest skills assessment, and measurable business impact.
+            $50M+ portfolio management experience across 7 cybersecurity projects (2018-2025) in critical infrastructure environments. Proven ability to manage multiple concurrent projects while serving as both Project Manager and Business Analyst, delivering complex technical solutions that meet business requirements.
           </p>
         </div>
       </section>
 
-      {/* Featured Analytics Work Section */}
+      {/* Project Overview Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">Featured Analytics & Automation Projects</h2>
+          <h2 className="text-3xl font-bold mb-8">Portfolio Management Excellence</h2>
           <p className="text-lg mb-12 max-w-3xl mx-auto">
-            These projects showcase my expertise in Power BI, Power Query/M, and the Power Platform, as well as my ongoing journey to expand my analytics toolkit with SQL, Tableau, and Google Data Studio.
+            Featured projects from a $50M cybersecurity portfolio spanning 7 years of enterprise program management. These showcase concurrent project leadership, business analysis expertise, and the ability to deliver complex technical solutions that bridge stakeholder requirements with operational realities. <a href="/hobbies" className="text-blue-600 underline">Technical interests and personal projects</a> are featured separately.
           </p>
         </div>
       </section>
 
-      {/* Analytics & Power Platform Projects */}
+      {/* Professional Projects */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center mb-12">
             <FaChartLine className="text-blue-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">Analytics & Power Platform Projects</h2>
+            <h2 className="text-3xl font-bold text-center">Professional Projects</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-12">
+            
+            {/* Enterprise OT Cybersecurity Infrastructure Program */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1 md:col-span-2" id="ot-cybersecurity-program">
+              <div className="h-64 bg-gradient-to-br from-red-50 to-orange-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-red-500">
+                  <FaShieldAlt className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Enterprise OT Cybersecurity Infrastructure Program</h3>
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Critical infrastructure organization with 30+ generation facilities faced multiple cybersecurity challenges: lack of asset visibility across industrial networks, IT/OT convergence risks, legacy system vulnerabilities, manual patch management processes, overwhelming vulnerability alerts without prioritization, limited OT cybersecurity expertise, and ineffective incident response capabilities.
+                  </p>
+                </div>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Led a comprehensive 4-year, $15M enterprise cybersecurity program implementing industrial cybersecurity infrastructure across diverse generation environments. Managed complex stakeholder coordination with each facility having unique operational constraints, downtime windows, and regulatory requirements. Executed strategic 3-phase approach: Central management infrastructure (Phase 1), non-regulatory facilities deployment (Phase 2), and regulatory-sensitive facilities implementation (Phase 3).
+                  </p>
+                </div>
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Successfully delivered $15M program on schedule across 4-year timeline with zero operational disruptions. Coordinated 30+ facility teams with diverse operational requirements. Achieved enterprise-wide asset visibility, automated patch management, centralized incident response capabilities, and bridged IT/OT security gaps across all generation environments.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">Program Management</span>
+                  <span className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">OT Cybersecurity</span>
+                  <span className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">Critical Infrastructure</span>
+                  <span className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">Stakeholder Management</span>
+                  <span className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">Risk Management</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* OT Network Visibility & Threat Detection Modernization Program */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1 md:col-span-2" id="ot-network-modernization">
+              <div className="h-64 bg-gradient-to-br from-orange-50 to-red-100 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-orange-500">
+                  <FaNetworkWired className="text-7xl opacity-40" />
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">OT Network Visibility & Threat Detection Modernization Program</h3>
+                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
+                    <FaLightbulb className="mr-2" /> Challenge
+                  </h4>
+                  <p className="text-gray-700">
+                    Legacy network observables across 30+ generation facilities provided insufficient visibility into OT network traffic and limited threat detection capabilities. Organization needed modern network monitoring and intrusion detection systems to enhance cybersecurity posture and meet evolving security requirements.
+                  </p>
+                </div>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCode className="mr-2" /> Solution
+                  </h4>
+                  <p className="text-gray-700">
+                    Led a comprehensive 3-year, $7M infrastructure modernization program replacing legacy network observables with advanced OT intrusion detection systems and Gigamon network visibility solutions. Managed complex technology transitions across diverse generation environments while maintaining continuous network monitoring and operational security.
+                  </p>
+                </div>
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Impact
+                  </h4>
+                  <p className="text-gray-700">
+                    Successfully delivered $7M program across 3-year timeline with enhanced threat detection capabilities, improved network visibility across all OT environments, and modernized cybersecurity infrastructure foundation. Achieved seamless technology transitions without compromising operational monitoring or security posture.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-orange-100 text-orange-800 text-xs font-medium px-3 py-1 rounded-full">Infrastructure Modernization</span>
+                  <span className="bg-orange-100 text-orange-800 text-xs font-medium px-3 py-1 rounded-full">Network Security</span>
+                  <span className="bg-orange-100 text-orange-800 text-xs font-medium px-3 py-1 rounded-full">Threat Detection</span>
+                  <span className="bg-orange-100 text-orange-800 text-xs font-medium px-3 py-1 rounded-full">Technology Migration</span>
+                  <span className="bg-orange-100 text-orange-800 text-xs font-medium px-3 py-1 rounded-full">Program Management</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Existing professional projects continue below */}
             {/* Enterprise Data Unification Initiative */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="enterprise-data-unification">
               <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 relative">
@@ -114,94 +202,6 @@ export default function Projects() {
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Power Platform</span>
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Process Automation</span>
                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Resource Planning</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Technical & Digital Projects */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center mb-12">
-            <FaCode className="text-green-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">Technical, Digital & Learning Projects</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* AIrtisan.net Web Platform Project */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="airtisan-platform">
-              <div className="h-64 bg-gradient-to-br from-green-50 to-green-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-green-500">
-                  <FaCode className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">AI-Enhanced Web Platform & Analytics Learning</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Develop a modern, responsive web platform that showcases analytics, Power Platform, and continuous learning—while implementing cutting-edge technologies and SEO best practices.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Created AIrtisan.net using Next.js and React, leveraging AI collaboration for enhanced development efficiency. Implemented advanced SEO, analytics-focused content, and responsive design to maximize visibility and user engagement.
-                  </p>
-                </div>
-                
-                {/* Add AIrtisan.net Screenshot as a clickable link */}
-                <div className="my-4">
-                  <Link 
-                    href="https://airtisan.net" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block mx-auto w-fit"
-                  >
-                    <Image 
-                      src="/images/projects/web-development/airtisan-platform.png" 
-                      alt="AIrtisan.net web platform showcasing AI-enhanced development techniques" 
-                      width={600} 
-                      height={400} 
-                      className="rounded-lg shadow-md mx-auto hover:opacity-90 transition-opacity cursor-pointer"
-                      unoptimized={true}
-                    />
-                  </Link>
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Delivered a high-performance web platform with analytics-driven content, optimized SEO, and seamless user experience. The AI-assisted process accelerated learning and implementation, supporting my growth in analytics and Power Platform.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Next.js</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">React</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">AI Development</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">SEO Optimization</span>
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Responsive Design</span>
-                </div>
-                
-                <div className="mt-6 flex justify-center">
-                  <a 
-                    href="https://airtisan.net" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-                  >
-                    View Project <span className="ml-2">→</span>
-                  </a>
                 </div>
               </div>
             </div>
@@ -299,335 +299,23 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* AI-Enhanced Solutions */}
-      <section className="py-16 bg-gradient-to-r from-purple-50 to-indigo-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center mb-12">
-            <FaRobot className="text-purple-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">AI-Enhanced Solutions</h2>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 md:mx-auto md:max-w-4xl">
-            {/* AI-Powered Technical Solution Development */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden md:col-span-2 transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="ai-solutions">
-              <div className="h-64 bg-gradient-to-br from-purple-50 to-indigo-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-purple-500">
-                  <FaRobot className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">AI-Powered Technical Solution Development</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Modern technical solutions require expertise across diverse technologies that&apos;s impossible for one person to master, creating bottlenecks in development and implementation.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Pioneered an approach leveraging AI tools to augment technical capabilities across multiple domains, creating a framework for rapid solution development and implementation.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Accelerated development timelines by 40-60%, delivered sophisticated solutions with fewer resources, and expanded capabilities beyond traditional boundaries, enabling faster time-to-market for technical initiatives.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">AI Integration</span>
-                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Technical Versatility</span>
-                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Innovative Problem-Solving</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Technical Infrastructure Projects */}
-      <section className="py-16 bg-gradient-to-r from-cyan-50 to-blue-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center mb-8">
-            <FaNetworkWired className="text-cyan-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">Technical Infrastructure Projects</h2>
-          </div>
-          
-          <p className="text-lg text-center mb-12 max-w-3xl mx-auto">
-            These projects demonstrate how I apply enterprise-level architecture, security, and integration principles in practical implementations, showcasing my technical versatility beyond traditional business environments.
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Enterprise-Grade Home Network */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="home-network">
-              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
-                  <FaNetworkWired className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">Enterprise-Grade Home Network</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Modern home environments require enterprise-level network security, reliability, and performance to support multiple connected systems and devices with redundancy for critical services.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Designed and implemented a semi-commercial network infrastructure using professional-grade Ubiquiti equipment including a UDM-Pro (Iron Curtain), multiple managed switches (24-port and 8-port POE), and dedicated WiFi access points, complemented by additional non-UniFi endpoint switches.
-                  </p>
-                </div>
-                {/* Add the NetworkTraffic GIF here */}
-                <div className="my-4">
-                  <Image 
-                    src="/images/projects/technical-infrastructure/NetworkTraffic.gif"
-                    alt="Live network traffic visualization showing data flow through enterprise-grade home network" 
-                    width={600} 
-                    height={400} 
-                    className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
-                  />
-                </div>
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Created a robust foundation with 1Gbps fiber primary connection and 400Mbps LTE failover, enabling reliable connectivity for home automation, secure remote work, and demonstrating enterprise architecture principles in a residential context.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Network Architecture</span>
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Security Implementation</span>
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Redundancy Planning</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Integrated Smart Home Automation */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1">
-              <div className="h-64 bg-gradient-to-br from-cyan-50 to-cyan-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-cyan-500">
-                  <FaHome className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">Integrated Smart Home Automation</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Creating a truly intelligent home environment requires complex integration between disparate systems and contextual awareness for meaningful automation with advanced security features.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Implemented a comprehensive Home Assistant automation system integrating security cameras, environmental controls, and monitoring with centralized management and advanced conditional logic.
-                  </p>
-                </div>
-                
-                {/* Add the HomeAutomation image here */}
-                <div className="my-4">
-                  <Image 
-                    src="/images/projects/technical-infrastructure/HomeAutomation.png"
-                    alt="Integrated home automation system architecture showing component relationships and data flow" 
-                    width={600} 
-                    height={400} 
-                    className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
-                  />
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Achieved 30% energy savings, enhanced security with multi-layered protection, and demonstrated scalable integration principles applicable to commercial environments.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Systems Integration</span>
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Automation Logic</span>
-                  <span className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">Energy Efficiency</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Personal Workshop Projects */}
-      <section className="py-16 bg-gradient-to-r from-amber-50 to-yellow-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center mb-8">
-            <FaTools className="text-amber-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">Personal Workshop Projects</h2>
-          </div>
-          
-          <p className="text-lg text-center mb-12 max-w-3xl mx-auto">
-            These hands-on projects showcase my practical problem-solving abilities and technical implementation skills, demonstrating how I approach complex challenges with creativity and attention to detail.
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Laundry Room Rebuild */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="laundry-room">
-              <div className="h-64 bg-gradient-to-br from-amber-50 to-amber-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-amber-500">
-                  <FaWrench className="text-7xl opacity-40" />
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">Laundry Room Rebuild</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Outdated laundry room with inefficient layout, inadequate storage, and outdated electrical systems needed complete renovation while maintaining functionality during the rebuild process.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Designed and implemented a complete renovation including custom cabinetry, updated electrical work with dedicated circuits, improved plumbing, and integrated smart home features for monitoring and alerts.
-                  </p>
-                </div>
-                
-                {/* Add the LaundryRoomTransformation GIF here */}
-                <div className="my-4">
-                  <Image 
-                    src="/images/projects/technical-infrastructure/LaundryRoomTransformation.gif"
-                    alt="Before and after transformation of laundry room showing complete renovation" 
-                    width={600} 
-                    height={400} 
-                    className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
-                  />
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Created a highly functional space with improved workflow, ample storage, and integrated technology that enhances safety through leak detection and power monitoring.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Custom Cabinetry</span>
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Electrical Work</span>
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Smart Home Integration</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Garage Workshop Conversion - IN PROGRESS */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="garage-workshop">
-              <div className="h-64 bg-gradient-to-br from-amber-50 to-amber-100 relative">
-                <div className="absolute inset-0 flex items-center justify-center text-amber-500">
-                  <FaTools className="text-7xl opacity-40" />
-                </div>
-                {/* In Progress Badge */}
-                <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  In Progress
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-4">Garage Workshop Conversion</h3>
-                
-                <div className="mb-6 bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                  <h4 className="flex items-center text-red-700 font-semibold mb-2">
-                    <FaLightbulb className="mr-2" /> Challenge
-                  </h4>
-                  <p className="text-gray-700">
-                    Standard garage lacked the infrastructure, organization, and functionality needed for an efficient multi-purpose workshop, requiring significant electrical and storage upgrades.
-                  </p>
-                </div>
-                
-                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
-                    <FaCode className="mr-2" /> Solution
-                  </h4>
-                  <p className="text-gray-700">
-                    Currently transforming the garage into a multi-functional space with enhanced electrical systems, custom storage solutions, and optimized workflow layout while maintaining parking functionality.
-                  </p>
-                </div>
-                
-                {/* Add Garage Workshop Transformation Journey */}
-                <div className="my-4">
-                  <Image 
-                    src="/images/projects/technical-infrastructure/GarageTransformationJourney.png" 
-                    alt="Garage workshop transformation journey showing beginning, current progress, and final vision" 
-                    width={600} 
-                    height={1200} 
-                    className="rounded-lg shadow-md mx-auto"
-                    unoptimized={true}
-                  />
-                </div>
-                
-                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
-                    <FaCheckCircle className="mr-2" /> Impact
-                  </h4>
-                  <p className="text-gray-700">
-                    Creating a versatile space that demonstrates space optimization, systems planning, and the ability to execute multiple functional requirements within physical constraints.
-                  </p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Workshop Design</span>
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Custom Storage</span>
-                  <span className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full">Workflow Optimization</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Call to Action */}
       <section className="py-16 bg-blue-600 text-white text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to Unlock Insights with Analytics?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Discuss Your Portfolio Challenges?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Let’s discuss how data analytics, Power BI, and automation can help you solve business challenges and drive measurable results.
+            $50M+ portfolio management experience across critical infrastructure environments. Expert in concurrent project leadership, business analysis, and complex technical implementation. Let's discuss how this experience can benefit your organization.
           </p>
+          <div className="flex flex-wrap gap-4 justify-center">
           <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
             Get in Touch
           </a>
+            <a href="/hobbies" className="bg-transparent hover:bg-white hover:text-blue-600 text-white px-8 py-3 border border-white rounded-lg font-medium transition duration-300">
+              View Hobbies & Interests
+            </a>
+          </div>
         </div>
       </section>
     </main>
