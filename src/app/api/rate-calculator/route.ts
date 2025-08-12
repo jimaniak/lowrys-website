@@ -699,7 +699,10 @@ export async function GET(request: NextRequest) {
           }
             // Get minor & broad categories for the selected major group
           // Use proper BLS hierarchy logic: Summary type, 4th char != '0', ends with '000' (minor) or '00' (broad)
-          const majorPrefix = majorCodeForMinors.substring(0, 2);          const minorCategoriesResult = await db.execute({
+          
+          // TypeScript null check and string assertion
+          const majorPrefix = majorCodeForMinors!.substring(0, 2);
+          const minorCategoriesResult = await db.execute({
             sql: `SELECT DISTINCT code, name 
                   FROM occupations 
                   WHERE code LIKE ?
