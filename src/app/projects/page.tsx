@@ -10,9 +10,9 @@ export default function Projects() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-6 leading-tight">Enterprise Portfolio Management</h1>
+          <h1 className="text-5xl font-bold mb-6 leading-tight">AI Solutions Architecture & Commercial Platform Development</h1>
           <p className="text-xl max-w-3xl leading-relaxed">
-            $50M+ portfolio management experience across 7 cybersecurity projects (2018-2025) in critical infrastructure environments. Proven ability to manage multiple concurrent projects while serving as both Project Manager and Business Analyst, delivering complex technical solutions that meet business requirements.
+            Three deployed commercial-grade AI platforms demonstrating mastery of strategic AI collaboration, multi-agent architecture, and enterprise-grade development. Built upon $50M+ portfolio management foundation across 7 years of critical infrastructure experience, now applying this expertise to cutting-edge AI solutions that deliver accelerated business outcomes.
           </p>
         </div>
       </section>
@@ -20,19 +20,188 @@ export default function Projects() {
       {/* Project Overview Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">Portfolio Management Excellence</h2>
+          <h2 className="text-3xl font-bold mb-8">AI Solutions Architecture & Enterprise Experience</h2>
           <p className="text-lg mb-12 max-w-3xl mx-auto">
-            Featured projects from a $50M cybersecurity portfolio spanning 7 years of enterprise program management. These showcase concurrent project leadership, business analysis expertise, and the ability to deliver complex technical solutions that bridge stakeholder requirements with operational realities. <a href="/hobbies" className="text-blue-600 underline">Technical interests and personal projects</a> are featured separately.
+            Current commercial AI platforms demonstrate mastery of strategic AI collaboration and multi-agent architecture, while foundational enterprise experience showcases the project management and business analysis expertise that ensures AI solutions deliver measurable business value. Together, they represent a unique combination of cutting-edge AI capabilities with proven enterprise delivery experience.
           </p>
         </div>
       </section>
 
-      {/* Professional Projects */}
+      {/* AI-Integrated Commercial Platforms */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center mb-12">
+            <FaRobot className="text-blue-600 text-3xl mr-4" />
+            <h2 className="text-3xl font-bold text-center">AI-Integrated Commercial Platforms</h2>
+          </div>
+          <div className="grid md:grid-cols-1 gap-12">
+            
+            {/* SEO.Lowrys.org - Multi-Agent AI SEO Platform */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="seo-lowrys-platform">
+              <div className="h-64 bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden">
+                <Image 
+                  src="/images/AISEOStrategies.png" 
+                  alt="SEO.Lowrys.org - Enterprise Multi-Agent AI SEO Platform Dashboard" 
+                  width={600} 
+                  height={256}
+                  className="absolute inset-0 w-full h-full object-cover object-center opacity-90 hover:opacity-100 transition-opacity"
+                  unoptimized={true}
+                />
+                <div className="absolute top-4 right-4">
+                  <a 
+                    href="https://seo.lowrys.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition duration-300 flex items-center gap-2 shadow-lg"
+                  >
+                    <FaExternalLinkAlt className="text-sm" />
+                    Visit Platform
+                  </a>
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">SEO.Lowrys.org - Enterprise Multi-Agent AI SEO Platform</h3>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaRobot className="mr-2" /> AI Architecture
+                  </h4>
+                  <p className="text-gray-700">
+                    5-agent coordinated architecture (Morgan, Alex, Casey, Sam, Nova) implementing Model Context Protocol (MCP) with Anthropic Claude Sonnet and OpenAI GPT-4 Turbo. Features AI workflow orchestration through n8n automation, enterprise security with Google Cloud KMS and AES-256-GCM encryption, and sophisticated business intelligence framework with 65+ encrypted strategic data fields.
+                  </p>
+                </div>
+                <div className="mb-6 bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="flex items-center text-green-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Enterprise Features
+                  </h4>
+                  <p className="text-gray-700">
+                    Professional SEO intelligence APIs (DataForSEO, Google Analytics 4, Search Console), Firebase authentication with multi-factor authentication, role-based access control, distributed edge database (Turso), webhook-based microservices architecture, and intelligent session management for concurrent users. Transformed from basic SEO tools to strategic business consulting platform.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Multi-Agent AI</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">MCP Implementation</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Enterprise Security</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Google Cloud KMS</span>
+                  <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">Next.js 14</span>
+                </div>
+              </div>
+            </div>
+
+            {/* AIrtisan.net - AI Art Authentication Platform */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="airtisan-platform">
+              <div className="h-64 bg-gradient-to-br from-purple-50 to-pink-100 relative overflow-hidden">
+                <Image 
+                  src="/images/AIrtisan.png" 
+                  alt="AIrtisan.net - AI-Powered Art Authentication Platform Interface" 
+                  width={600} 
+                  height={256}
+                  className="absolute inset-0 w-full h-full object-cover object-center opacity-90 hover:opacity-100 transition-opacity"
+                  unoptimized={true}
+                />
+                <div className="absolute top-4 right-4">
+                  <a 
+                    href="https://airtisan.net" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center gap-2 shadow-lg"
+                  >
+                    <FaExternalLinkAlt className="text-sm" />
+                    Visit Platform
+                  </a>
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">AIrtisan.net - AI-Powered Art Authentication Platform</h3>
+                <div className="mb-6 bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <h4 className="flex items-center text-purple-700 font-semibold mb-2">
+                    <FaRobot className="mr-2" /> AI Integration & Business Design
+                  </h4>
+                  <p className="text-gray-700">
+                    Sophisticated React-based web application combining computer vision AI concepts with blockchain certification for art authentication market. Implemented multi-phase rollout strategy with configurable views, comprehensive SEO targeting affluent art collectors, and conversion-optimized landing pages with analytics tracking and performance monitoring.
+                  </p>
+                </div>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaCheckCircle className="mr-2" /> Technical Architecture
+                  </h4>
+                  <p className="text-gray-700">
+                    React 18.2.0 with component-driven architecture, Firebase authentication and Firestore NoSQL database, responsive design with accessibility compliance (ARIA), structured data implementation (Schema.org), Google Analytics 4 integration, and modular codebase following best practices with proper separation of concerns.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">AI Art Authentication</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Blockchain Concepts</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">React 18</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">Firebase</span>
+                  <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full">SEO Strategy</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Lowrys.org - AI-Enhanced Workforce Analytics */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1" id="lowrys-platform">
+              <div className="h-64 bg-gradient-to-br from-blue-50 to-cyan-100 relative overflow-hidden">
+                <Image 
+                  src="/images/Lowrys.org.png" 
+                  alt="Lowrys.org - AI-Enhanced Workforce Analytics Platform Dashboard" 
+                  width={600} 
+                  height={256}
+                  className="absolute inset-0 w-full h-full object-cover object-center opacity-90 hover:opacity-100 transition-opacity"
+                  unoptimized={true}
+                />
+                <div className="absolute top-4 right-4">
+                  <a 
+                    href="/demo" 
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300 flex items-center gap-2 shadow-lg"
+                  >
+                    <FaExternalLinkAlt className="text-sm" />
+                    View Demo
+                  </a>
+                </div>
+              </div>
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-4">Lowrys.org - AI-Enhanced Workforce Analytics Platform</h3>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <FaChartLine className="mr-2" /> Predictive Analytics & Data Intelligence
+                  </h4>
+                  <p className="text-gray-700">
+                    Advanced predictive analytics platform with workforce attrition forecasting models, automated BLS data processing of 50,000+ occupation records, Chart.js and React-Globe.gl data visualizations, and AI-driven user experience with intelligent search and categorization. Features business intelligence dashboards and self-updating trend analysis.
+                  </p>
+                </div>
+                <div className="mb-6 bg-cyan-50 p-4 rounded-lg border-l-4 border-cyan-500">
+                  <h4 className="flex items-center text-cyan-700 font-semibold mb-2">
+                    <FaServer className="mr-2" /> Enterprise Architecture
+                  </h4>
+                  <p className="text-gray-700">
+                    Next.js 15 with TypeScript, Turso/LibSQL distributed database, Firebase ecosystem (Authentication, Firestore, Cloud Functions, Messaging), complex SQL queries with hierarchical data processing, ETL pipelines for government datasets, real-time data synchronization, and Vercel deployment with CI/CD automation.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Predictive Analytics</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">BLS Data Processing</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Next.js 15</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Turso Database</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">Data Visualization</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Enterprise Foundation Projects */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center mb-12">
             <FaChartLine className="text-blue-600 text-3xl mr-4" />
-            <h2 className="text-3xl font-bold text-center">Professional Projects</h2>
+            <h2 className="text-3xl font-bold text-center">Enterprise Foundation Experience</h2>
+          </div>
+          <div className="text-center mb-12">
+            <p className="text-lg max-w-4xl mx-auto text-gray-700">
+              $50M+ portfolio management experience across 7 years in critical infrastructure environments provided the business analysis, stakeholder management, and enterprise delivery expertise that ensures current AI solutions meet real-world business requirements and deliver measurable value. <a href="/hobbies" className="text-blue-600 hover:text-blue-800 underline font-medium">Additional technical interests and personal projects</a> showcase the curiosity and hands-on learning that drive continuous innovation.
+            </p>
           </div>
           <div className="grid md:grid-cols-2 gap-12">
             
@@ -304,16 +473,22 @@ export default function Projects() {
       {/* Call to Action */}
       <section className="py-16 bg-blue-600 text-white text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to Discuss Your Portfolio Challenges?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            $50M+ portfolio management experience across critical infrastructure environments. Expert in concurrent project leadership, business analysis, and complex technical implementation. Let's discuss how this experience can benefit your organization.
+          <h2 className="text-3xl font-bold mb-4">Ready to Leverage AI Solutions Architecture for Your Business?</h2>
+          <p className="text-xl mb-8 max-w-3xl mx-auto">
+            Three commercial-grade AI platforms demonstrating mastery of strategic AI collaboration and multi-agent architecture, backed by $50M+ enterprise portfolio management experience. Expert in translating complex business requirements into accelerated AI solutions that deliver measurable outcomes.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-          <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
-            Get in Touch
-          </a>
-            <a href="/hobbies" className="bg-transparent hover:bg-white hover:text-blue-600 text-white px-8 py-3 border border-white rounded-lg font-medium transition duration-300">
-              View Hobbies & Interests
+            <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
+              Discuss AI Solutions
+            </a>
+            <a href="https://seo.lowrys.org" target="_blank" rel="noopener noreferrer" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition duration-300">
+              Experience AI SEO Platform
+            </a>
+            <a href="/skills" className="bg-transparent hover:bg-white hover:text-blue-600 text-white px-8 py-3 border border-white rounded-lg font-medium transition duration-300">
+              View AI Skills
+            </a>
+            <a href="/hobbies" className="bg-transparent hover:bg-white hover:text-blue-600 text-white px-6 py-2 border border-white rounded-lg font-light text-sm transition duration-300">
+              Technical Interests
             </a>
           </div>
         </div>

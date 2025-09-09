@@ -13,12 +13,12 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Jim Lowry, B.S.</h1>
-              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">Data Analytics, SEO, AI Development & Technical Solutions</h2>
+              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">AI Solutions Architect & Full-Stack Engineer</h2>
               <p className="text-lg mb-8">
-                Versatile technical professional delivering data analytics, SEO optimization, AI-enhanced development, and comprehensive digital solutions—with enterprise project management experience that ensures deep understanding of business requirements and stakeholder needs.
+                Advanced AI solutions architect specializing in multi-agent AI platforms, strategic AI collaboration, and enterprise-grade commercial applications. Currently developing cutting-edge AI-enhanced platforms through innovative human-AI collaboration methodologies.
               </p>
               <p className="text-md mb-6 text-blue-200">
-                <strong>Adaptable Technical Expertise:</strong> Whether it's Power BI dashboards, SEO strategy, modern web development, or AI-enhanced solutions, my enterprise portfolio management background ($50M+ programs) provides unique insight into translating business needs into effective technical implementations.
+                <strong>Commercial AI Platform Developer:</strong> Built three commercial-grade AI platforms including enterprise multi-agent SEO systems and blockchain-certified art authentication. My enterprise portfolio management background ($50M+ programs) ensures AI solutions deliver measurable business value and meet complex stakeholder requirements.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
@@ -50,60 +50,60 @@ export default function Home() {
       {/* Core Competencies Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Core Competencies & Services</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">AI Solutions Architecture & Strategic Collaboration</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaChartLine />
+                <FaRobot />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Power BI & Data Visualization</h3>
+              <h3 className="text-xl font-semibold mb-3">Multi-Agent AI Platforms</h3>
               <p className="text-gray-600">
-                Building interactive dashboards and reports with Power BI and Power Query (M) to turn raw data into actionable insights for real-world business impact.
+                Architecting sophisticated multi-agent AI systems with specialized business intelligence agents, implementing Model Context Protocol (MCP) for enterprise-grade AI collaboration workflows.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
                 <FaLaptopCode />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Automation with Power Platform</h3>
+              <h3 className="text-xl font-semibold mb-3">Strategic AI Collaboration</h3>
               <p className="text-gray-600">
-                Automating workflows and integrating data across systems using Power Automate, Dataverse, and custom connectors—reducing manual work and boosting efficiency.
+                Advanced prompt engineering and human-AI collaboration methodologies to build commercial-grade platforms. Mastered the art of AI partnership to deliver complex technical solutions efficiently.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
                 <FaSearch />
               </div>
-              <h3 className="text-xl font-semibold mb-3">SEO & Digital Marketing</h3>
+              <h3 className="text-xl font-semibold mb-3">Enterprise AI-Enhanced SEO</h3>
               <p className="text-gray-600">
-                Strategic SEO audits, keyword research, and digital marketing campaigns to improve search rankings and drive qualified traffic to your business.
+                SEO.Lowrys.org - Commercial multi-agent SEO platform delivering strategic audits, keyword research, and automated optimization through AI-powered analysis and recommendations.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
                 <FaGlobe />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Website Development</h3>
+              <h3 className="text-xl font-semibold mb-3">AI-Powered Web Development</h3>
               <p className="text-gray-600">
-                Modern, responsive websites built with Next.js, React, and Tailwind CSS—optimized for performance, SEO, and user experience across all devices.
+                Modern full-stack applications built through AI collaboration using Next.js 15, TypeScript, and distributed databases—delivering enterprise-grade solutions with accelerated development cycles.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaRobot />
+                <FaChartLine />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Technical Solutions with Business Insight</h3>
+              <h3 className="text-xl font-semibold mb-3">Predictive Analytics & Data Intelligence</h3>
               <p className="text-gray-600">
-                Delivering comprehensive technical solutions across analytics, development, and SEO with enterprise project management experience that provides deep understanding of stakeholder needs, requirements gathering, and solution delivery—ensuring technical work translates to real business value.
+                AI-enhanced workforce analytics with predictive modeling, automated BLS data processing, and business intelligence dashboards—transforming complex datasets into actionable insights through AI collaboration.
               </p>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaTools />
+                <FaRocket />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Continuous Learning & Growth</h3>
+              <h3 className="text-xl font-semibold mb-3">Commercial Platform Development</h3>
               <p className="text-gray-600">
-                Committed to expanding my analytics toolkit—currently learning advanced SQL, Tableau, and Google Data Studio to deliver even more value for clients and teams.
+                Three commercial-grade AI platforms in production including blockchain art authentication (AIrtisan.net) and enterprise workforce analytics—demonstrating proven ability to deliver AI solutions that create real business value.
               </p>
             </div>
           </div>
@@ -113,13 +113,18 @@ export default function Home() {
       {/* Call to Action Section */}
       <section className="py-16 bg-blue-600 text-white text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Data and Digital Presence?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Leverage AI Solutions Architecture for Your Business?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Whether you need analytics dashboards, SEO optimization, modern web development, or AI-enhanced solutions, let's discuss how technical expertise combined with enterprise project experience can deliver results that truly meet your business needs.
+            Whether you need multi-agent AI platforms, strategic AI collaboration consulting, or enterprise-grade AI-enhanced applications, let's discuss how advanced AI solutions architecture combined with proven commercial platform development can accelerate your business outcomes.
           </p>
-          <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
-            Contact Me
-          </a>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
+              Discuss AI Solutions
+            </a>
+            <a href="https://seo.lowrys.org" target="_blank" rel="noopener noreferrer" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition duration-300">
+              View AI SEO Platform
+            </a>
+          </div>
         </div>
       </section>
     </main>

@@ -26,7 +26,7 @@ const Header = () => {
             height={32} 
             className="mr-2" 
           />
-          Analytics, Science & Automation
+          AI Collaboration Specialist
         </Link>
 
         {/* Desktop Navigation */}

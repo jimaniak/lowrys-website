@@ -14,7 +14,7 @@ export default function About() {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">About Jim Lowry, B.S.</h1>
           <p className="text-xl max-w-3xl">
-            Versatile Technical Professional | From Enterprise Portfolio Management to AI-Enhanced Development
+            AI Solutions Architect & Full-Stack Engineer | Mastering Strategic AI Collaboration Through Continuous Learning
           </p>
         </div>
       </section>
@@ -54,6 +54,27 @@ export default function About() {
                 </p>
               </div>
 
+              <h2 className="text-3xl font-bold mt-12 mb-6">Current Role: AI Solutions Architecture & Commercial Platform Development</h2>
+              <div className="space-y-6">
+                <p className="text-lg">
+                  <strong>AI Solutions Developer & Full-Stack Engineer (2025 – Present)</strong>
+                </p>
+                <p className="text-lg">
+                  Through continuous learning and experimentation, I've mastered strategic AI collaboration—the art of partnering with AI to architect and build commercial-grade platforms. This isn't about using AI as a simple tool, but developing sophisticated human-AI collaboration methodologies that enable rapid development of enterprise-quality solutions.
+                </p>
+                <p className="text-lg">
+                  I've successfully deployed three commercial platforms that demonstrate this AI collaboration mastery:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li className="text-lg"><strong>SEO.Lowrys.org:</strong> Enterprise multi-agent SEO platform with specialized business intelligence agents</li>
+                  <li className="text-lg"><strong>AIrtisan.net:</strong> Blockchain-certified art authentication platform</li>
+                  <li className="text-lg"><strong>Workforce Analytics Platform:</strong> Predictive analytics with automated BLS data processing and business intelligence dashboards</li>
+                </ul>
+                <p className="text-lg">
+                  These platforms represent more than technical achievement—they demonstrate how continuous learning, combined with strategic AI collaboration, can accelerate complex solution development while maintaining enterprise-grade quality and business value.
+                </p>
+              </div>
+
               <h2 className="text-3xl font-bold mt-12 mb-6">Education & Professional Evolution</h2>
               <div className="space-y-6">
                 <p className="text-lg">
@@ -68,23 +89,23 @@ export default function About() {
                 </p>
               </div>
 
-              <h2 className="text-3xl font-bold mt-12 mb-6">Current Technical Focus & Continuous Learning</h2>
+              <h2 className="text-3xl font-bold mt-12 mb-6">How Continuous Learning Led to AI Mastery</h2>
               <div className="space-y-6">
                 <p className="text-lg">
-                  I'm passionate about staying current with emerging technologies while leveraging the business insight gained from enterprise experience. My current areas of focus include:
+                  My commitment to continuous learning—driven by necessity after my railroad injury, reinforced through enterprise portfolio management, and accelerated by the possibilities I saw in AI—is what enabled me to master strategic AI collaboration. This learning journey encompassed:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li className="text-lg"><strong>AI-Enhanced Development:</strong> Exploring how AI tools can accelerate and improve technical solution delivery</li>
-                  <li className="text-lg"><strong>Modern Web Development:</strong> Building with Next.js, React, and modern frameworks</li>
-                  <li className="text-lg"><strong>Data Analytics & Visualization:</strong> Power BI, data transformation, and business intelligence</li>
-                  <li className="text-lg"><strong>SEO & Digital Marketing:</strong> Technical SEO, analytics, and digital presence optimization</li>
-                  <li className="text-lg"><strong>Business Analysis:</strong> Requirements gathering, stakeholder management, and solution design</li>
+                  <li className="text-lg"><strong>Strategic AI Collaboration:</strong> Mastered advanced prompt engineering and human-AI partnership methodologies to build commercial-grade platforms</li>
+                  <li className="text-lg"><strong>Multi-Agent AI Architecture:</strong> Implemented sophisticated AI systems with specialized agents for business intelligence and automation</li>
+                  <li className="text-lg"><strong>Modern Full-Stack Development:</strong> Built enterprise applications using Next.js 15, TypeScript, React, and distributed databases through AI collaboration</li>
+                  <li className="text-lg"><strong>Predictive Analytics & Data Intelligence:</strong> Developed AI-enhanced workforce analytics with automated BLS data processing and machine learning models</li>
+                  <li className="text-lg"><strong>Enterprise-Grade Security & Infrastructure:</strong> Implemented Google Cloud KMS, AES-256-GCM encryption, and scalable cloud architectures</li>
                 </ul>
                 <p className="text-lg">
-                  My approach combines technical implementation with deep understanding of business requirements—ensuring solutions don't just work technically, but deliver real value to stakeholders and end users.
+                  <strong>The Continuous Learning Advantage:</strong> Unlike traditional developers who master specific technologies, I mastered the meta-skill of AI collaboration itself. This enables me to rapidly architect and deploy complex solutions across diverse domains—from SEO platforms to blockchain authentication to workforce analytics.
                 </p>
                 <p className="text-lg">
-                  <strong>Philosophy:</strong> Technology should solve real problems. My diverse background—from blue-collar work ethic to enterprise project leadership—helps me build solutions that are both technically sound and practically valuable.
+                  <strong>Philosophy:</strong> Continuous learning + AI collaboration = accelerated innovation. My diverse background—from blue-collar work ethic to enterprise project leadership—combined with strategic AI partnership enables me to build solutions that are technically sophisticated, business-focused, and rapidly deployable.
                 </p>
               </div>
             </div>
@@ -103,8 +124,8 @@ export default function About() {
                   />
                 </div>
                 <h3 className="text-xl font-bold mb-4 text-center">Jim Lowry, B.S.</h3>
-                <p className="text-center mb-6">Versatile Technical Professional<br />
-                <span className="text-sm text-gray-600">Enterprise Portfolio Management • AI Development • Analytics</span></p>
+                <p className="text-center mb-6">AI Solutions Architect & Full-Stack Engineer<br />
+                <span className="text-sm text-gray-600">Multi-Agent AI Platforms • Strategic AI Collaboration • Commercial Platform Development</span></p>
                 <div className="space-y-4">
                   <a 
                     href="https://www.linkedin.com/in/jimsitsecurity" 
