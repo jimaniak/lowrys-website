@@ -51,6 +51,27 @@ export async function storeRequest(requestId, requestData) {
   return requestId;
 }
 
+// Persist general contact form submissions
+export async function storeContactMessage(messageData) {
+  const { name, email, company, message } = messageData;
+  const normalizedEmail = (email || '').toLowerCase();
+  const messageId = typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : generateRequestId();
+
+  await admin.firestore().collection('contactMessages').doc(messageId).set({
+    id: messageId,
+    name,
+    email: normalizedEmail,
+    company: company || null,
+    message: message || '',
+    status: 'new',
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+  return messageId;
+}
+
 // Send FCM notification
 export async function sendNotification(requestId, name, email, company, reason, message) {
   try {

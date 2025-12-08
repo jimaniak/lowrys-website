@@ -59,7 +59,8 @@ export default function Contact() {
     company: '',
     reason: '',
     requestResume: false,
-    category: 'resume' // Default category
+    category: 'resume', // Default category
+    website: '' // Honeypot field - bots will fill this, humans won't see it
   };
 
   // Use our custom form validation hook
@@ -80,6 +81,39 @@ export default function Contact() {
   const [status, setStatus] = useState('idle');
   const [apiError, setApiError] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [lastSubmissionWasResume, setLastSubmissionWasResume] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
+  const [turnstileSiteKey] = useState<string | undefined>(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+
+  // Initialize Turnstile widget
+  useEffect(() => {
+    if (!turnstileSiteKey) return; // Don't initialize if no site key
+    
+    const initTurnstile = () => {
+      if (typeof window !== 'undefined' && (window as any).turnstile) {
+        const turnstile = (window as any).turnstile;
+        const widgetId = turnstile.render('.cf-turnstile', {
+          sitekey: turnstileSiteKey,
+          callback: (token: string) => {
+            setTurnstileToken(token);
+          },
+          'expired-callback': () => {
+            setTurnstileToken(null);
+          },
+          'error-callback': () => {
+            setTurnstileToken(null);
+          },
+        });
+        setTurnstileWidgetId(widgetId);
+      } else {
+        // Retry if script hasn't loaded yet
+        setTimeout(initTurnstile, 100);
+      }
+    };
+
+    initTurnstile();
+  }, [turnstileSiteKey]);
 
   // Effect to conditionally validate company and reason fields based on requestResume
   useEffect(() => {
@@ -98,113 +132,90 @@ export default function Contact() {
 
   // Handle form submission
   const submitForm = async () => {
+    // Honeypot check - if this field is filled, it's a bot
+    if (values.website) {
+      console.log('Bot detected via honeypot');
+      setApiError('Invalid submission detected.');
+      setStatus('error');
+      return;
+    }
+
+    // Check for Turnstile token (only if site key is configured)
+    if (turnstileSiteKey && !turnstileToken) {
+      setApiError('Please complete the security verification.');
+      setStatus('error');
+      return;
+    }
+
     setStatus('submitting');
     setApiError('');
     setFormSubmitted(false);
 
+    const isResumeRequest = values.requestResume;
+    const requestBody = isResumeRequest
+      ? {
+          name: values.name,
+          email: values.email,
+          company: values.company,
+          message: values.message,
+          reason: values.reason,
+          requestResume: true,
+          category: values.category,
+          turnstileToken: turnstileToken
+        }
+      : {
+          name: values.name,
+          email: values.email,
+          company: values.company,
+          message: values.message,
+          requestResume: false,
+          turnstileToken: turnstileToken
+        };
+
     try {
-      let resourceRequestSuccess = true;
-      // If resume was requested, send to API first
-      if (values.requestResume) {
-        try {
-          const resumeResponse = await fetch('/api/request-resume-access', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: values.name,
-              email: values.email,
-              company: values.company,
-              message: values.message,
-              reason: values.reason,
-              requestResume: true, // Explicitly set requestResume flag
-              category: values.category // Include the selected category
-            })
-          });
+      const response = await fetch('/api/request-resume-access', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
 
-          // Always parse as JSON, even for errors
-          let responseData = await resumeResponse.json();
-
-          if (!resumeResponse.ok) {
-            resourceRequestSuccess = false;
-            // If the backend provided a structured error, show it nicely
-            if (responseData && responseData.message) {
-              let msg = responseData.message;
-              if (responseData.remaining || responseData.expiresAt) {
-                msg += `\nExpires: ${responseData.expiresAt ? new Date(responseData.expiresAt).toLocaleString() : ''}`;
-                if (responseData.remaining) msg += ` (in ${responseData.remaining})`;
-              }
-              setApiError(msg);
-            } else {
-              setApiError(`Resource request error: ${responseData && responseData.message ? responseData.message : 'Unknown error'}`);
-            }
-            setStatus('error');
-            return;
-          }
-        } catch (err) {
-          resourceRequestSuccess = false;
-          setApiError(`Resource request error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-          setStatus('error');
-          return;
-        }
-      } else {
-        // If not a resource request, still send to our API for regular message processing
-        try {
-          const messageResponse = await fetch('/api/request-resume-access', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: values.name,
-              email: values.email,
-              company: values.company,
-              message: values.message,
-              requestResume: false // Explicitly set requestResume flag to false
-            })
-          });
-
-          if (!messageResponse.ok) {
-            const errorText = await messageResponse.text();
-            throw new Error(errorText || 'Failed to send message');
-          }
-          await messageResponse.json();
-        } catch (err) {
-          setApiError(`Message error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-          setStatus('error');
-          return;
-        }
+      let responseData: any = null;
+      try {
+        responseData = await response.json();
+      } catch {
+        // Ignore JSON parse errors; handled via status code.
       }
 
-      // Only submit to Formspree and reset form if resource request succeeded (or not a resource request)
-      if (resourceRequestSuccess) {
-        const formspreeResponse = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: values.name,
-            email: values.email,
-            message: values.message,
-            requestResume: values.requestResume,
-            category: values.requestResume ? values.category : 'N/A',
-            company: values.requestResume ? values.company : 'N/A',
-            reason: values.requestResume ? values.reason : 'N/A'
-          })
-        });
-
-        if (!formspreeResponse.ok) {
-          throw new Error('Failed to submit form');
+      if (!response.ok || !(responseData && responseData.success)) {
+        if (responseData && responseData.message) {
+          let msg = responseData.message;
+          if (responseData.remaining || responseData.expiresAt) {
+            msg += `\nExpires: ${responseData.expiresAt ? new Date(responseData.expiresAt).toLocaleString() : ''}`;
+            if (responseData.remaining) {
+              msg += ` (in ${responseData.remaining})`;
+            }
+          }
+          setApiError(msg);
+        } else {
+          setApiError('Failed to submit the form. Please try again.');
         }
+        setStatus('error');
+        return;
+      }
 
-        setStatus('success');
-        setFormSubmitted(true);
-        resetForm();
+      setStatus('success');
+      setLastSubmissionWasResume(isResumeRequest);
+      setFormSubmitted(true);
+      resetForm();
+      setTurnstileToken(null);
+      // Reset Turnstile widget
+      if (turnstileWidgetId && typeof window !== 'undefined' && (window as any).turnstile) {
+        (window as any).turnstile.reset(turnstileWidgetId);
       }
     } catch (err) {
-      setApiError('An error occurred. Please try again.');
+      setApiError(`An error occurred. ${err instanceof Error ? err.message : 'Please try again.'}`);
       setStatus('error');
     }
   };
@@ -496,6 +507,27 @@ export default function Contact() {
                   </>
                 )}
                 
+                {/* Honeypot field - hidden from humans, bots will fill it */}
+                <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+                  <label htmlFor="website">Website (leave blank)</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={values.website}
+                    onChange={(e) => handleChange('website', e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
+                {/* Cloudflare Turnstile - only show if configured */}
+                {turnstileSiteKey && (
+                  <div className="flex justify-center my-4">
+                    <div className="cf-turnstile" />
+                  </div>
+                )}
+
                 {apiError && (
                   <div className="bg-red-50 border-l-4 border-red-500 p-4">
                     <p className="text-red-700">{apiError}</p>
@@ -503,7 +535,7 @@ export default function Contact() {
                 )}
                 
                 {formSubmitted && (
-                  <ContactFormMessage isResumeRequest={values.requestResume} />
+                  <ContactFormMessage isResumeRequest={lastSubmissionWasResume} />
                 )}
                 
                 <button

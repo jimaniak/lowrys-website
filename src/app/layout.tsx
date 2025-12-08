@@ -3,6 +3,7 @@
 import '@/app/globals.css'
 import { Inter } from 'next/font/google'
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import Header from '@/components/Header'
 import { ResumeAccessProvider } from '@/components/ResumeAccessContext'
 
@@ -38,6 +39,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="lazyOnload"
+        />
         <ResumeAccessProvider>
           <Header />
           {children}

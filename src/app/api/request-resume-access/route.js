@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { 
   generateRequestId,
   storeRequest,
+  storeContactMessage,
   sendNotification,
   sendAuditEmail,
   sendRegularMessage,
@@ -16,8 +17,71 @@ export async function POST(request) {
   try {
     const body = await request.json();
     // Always normalize email to lowercase for duplicate checks and storage
-    const { name, company, message, requestResume, category = 'resume', reason } = body;
+    const { name, company, message, requestResume, category = 'resume', reason, website, turnstileToken } = body;
     const email = body.email ? body.email.toLowerCase() : '';
+    
+    // Honeypot check - if website field is filled, it's a bot
+    if (website && website.trim() !== '') {
+      console.log('[BOT DETECTED] Honeypot field filled');
+      return NextResponse.json(
+        { 
+          success: false,
+          message: 'Invalid submission'
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate and verify Turnstile token (only if configured)
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        return NextResponse.json(
+          { 
+            success: false,
+            message: 'Security verification required'
+          },
+          { status: 400 }
+        );
+      }
+
+      // Verify Turnstile token with Cloudflare
+      try {
+        const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            secret: process.env.TURNSTILE_SECRET_KEY,
+            response: turnstileToken,
+            remoteip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+          })
+        });
+
+        const turnstileData = await turnstileResponse.json();
+        
+        if (!turnstileData.success) {
+          console.log('[BOT DETECTED] Turnstile verification failed:', turnstileData);
+          return NextResponse.json(
+            { 
+              success: false,
+              message: 'Security verification failed. Please try again.'
+            },
+            { status: 400 }
+          );
+        }
+      } catch (turnstileError) {
+        console.error('Turnstile verification error:', turnstileError);
+        return NextResponse.json(
+          { 
+            success: false,
+            message: 'Security verification error. Please try again.'
+          },
+          { status: 500 }
+        );
+      }
+    }
+
     // DEBUG: Log start of duplicate check
     console.log(`[DEBUG] Checking for active requests for email=${email}, category=${category}`);
 
@@ -262,7 +326,26 @@ export async function POST(request) {
     // If this is just a regular message (not a resume request)
     else {
       console.log('Processing regular message from:', email); // Debug log
-      
+
+      // Persist the message for auditing
+      try {
+        await storeContactMessage({
+          name,
+          email,
+          company,
+          message
+        });
+      } catch (storageError) {
+        console.error('Message storage error:', storageError);
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Failed to store message: ${storageError.message}`
+          },
+          { status: 500 }
+        );
+      }
+
       // Send regular message email
       try {
         console.log('Sending regular message email'); // Debug log
