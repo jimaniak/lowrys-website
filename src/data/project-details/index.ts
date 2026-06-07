@@ -7,6 +7,7 @@ import { seoLowrysDetail } from './seo-lowrys';
 import { pmWorkaideDetail } from './pm-workaide';
 import { airtisanDetail } from './airtisan';
 import { lowrysAnalyticsDetail } from './lowrys-analytics';
+import { ctHomeDetail } from './ct-home';
 
 const projectDetails: Record<string, ProjectDetail> = {
   'workaide-jobs': workaideJobsDetail,
@@ -17,6 +18,7 @@ const projectDetails: Record<string, ProjectDetail> = {
   'pm-workaide': pmWorkaideDetail,
   'airtisan': airtisanDetail,
   'lowrys-analytics': lowrysAnalyticsDetail,
+  'ct-home': ctHomeDetail,
 };
 
 export function getProjectDetail(id: string): ProjectDetail | undefined {
