@@ -8,6 +8,7 @@ import { pmWorkaideDetail } from './pm-workaide';
 import { airtisanDetail } from './airtisan';
 import { lowrysAnalyticsDetail } from './lowrys-analytics';
 import { ctHomeDetail } from './ct-home';
+import { nikeIiotDetail } from './nike-iiot';
 
 const projectDetails: Record<string, ProjectDetail> = {
   'workaide-jobs': workaideJobsDetail,
@@ -19,6 +20,7 @@ const projectDetails: Record<string, ProjectDetail> = {
   'airtisan': airtisanDetail,
   'lowrys-analytics': lowrysAnalyticsDetail,
   'ct-home': ctHomeDetail,
+  'nike-iiot': nikeIiotDetail,
 };
 
 export function getProjectDetail(id: string): ProjectDetail | undefined {
