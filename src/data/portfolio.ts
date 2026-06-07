@@ -233,3 +233,7 @@ export const featuredProjectIds = [
   'seo-lowrys',
   'pm-workaide',
 ];
+
+export function getProjectById(id: string): PortfolioProject | undefined {
+  return portfolioProjects.find((p) => p.id === id);
+}

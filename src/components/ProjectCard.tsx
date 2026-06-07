@@ -1,6 +1,8 @@
 import Image from 'next/image';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaExternalLinkAlt, FaArrowRight } from 'react-icons/fa';
 import type { PortfolioProject } from '@/data/portfolio';
+import { hasProjectDetail } from '@/data/project-details';
 
 interface ProjectCardProps {
   project: PortfolioProject;
@@ -81,15 +83,35 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
           ))}
         </div>
         {project.url && (
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px]"
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+            {hasProjectDetail(project.id) && (
+              <Link
+                href={`/projects/${project.id}`}
+                className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px]"
+              >
+                <FaArrowRight className="text-sm" />
+                Case study
+              </Link>
+            )}
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px]"
+            >
+              <FaExternalLinkAlt className="text-sm" />
+              Visit {project.name}
+            </a>
+          </div>
+        )}
+        {!project.url && hasProjectDetail(project.id) && (
+          <Link
+            href={`/projects/${project.id}`}
+            className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px]"
           >
-            <FaExternalLinkAlt className="text-sm" />
-            Visit {project.name}
-          </a>
+            <FaArrowRight className="text-sm" />
+            Case study
+          </Link>
         )}
       </div>
     </div>
