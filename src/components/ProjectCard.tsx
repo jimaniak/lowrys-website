@@ -83,11 +83,17 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
           ))}
         </div>
         {project.url && (
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+          <div
+            className={`flex w-full gap-3 ${
+              hasProjectDetail(project.id)
+                ? 'flex-row items-center justify-between'
+                : 'flex-col sm:flex-row'
+            }`}
+          >
             {hasProjectDetail(project.id) && (
               <Link
                 href={`/projects/${project.id}`}
-                className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px]"
+                className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px] shrink-0"
               >
                 <FaArrowRight className="text-sm" />
                 Case study
@@ -97,7 +103,9 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px]"
+              className={`inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px] ${
+                hasProjectDetail(project.id) ? 'shrink-0 sm:text-right' : ''
+              }`}
             >
               <FaExternalLinkAlt className="text-sm" />
               Visit {project.name}
