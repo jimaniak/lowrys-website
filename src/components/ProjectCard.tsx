@@ -24,7 +24,7 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
   const letterbox = imageFit === 'contain';
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 md:hover:shadow-xl md:hover:-translate-y-1">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 md:hover:shadow-xl md:hover:-translate-y-1 flex flex-col h-full">
       {showImage && project.image && (
         <div
           className={`h-44 sm:h-56 relative overflow-hidden ${
@@ -53,7 +53,7 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
           <span className="text-white font-bold text-lg sm:text-xl drop-shadow-sm">{project.name}</span>
         </div>
       )}
-      <div className="card-padding">
+      <div className="card-padding flex flex-col flex-1">
         <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-start sm:justify-between gap-2 mb-3">
           <h3 className="text-xl sm:text-2xl font-bold">{project.name}</h3>
           <span className={`text-xs font-medium px-3 py-1 rounded-full shrink-0 ${statusColors[project.status]}`}>
@@ -72,7 +72,7 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
             </li>
           ))}
         </ul>
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2">
           {project.stack.map((tag) => (
             <span
               key={tag}
@@ -82,10 +82,10 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
             </span>
           ))}
         </div>
-        {project.url && (
+        {(project.url || hasProjectDetail(project.id)) && (
           <div
-            className={`flex w-full gap-3 ${
-              hasProjectDetail(project.id)
+            className={`mt-auto pt-6 flex w-full gap-3 ${
+              project.url && hasProjectDetail(project.id)
                 ? 'flex-row items-center justify-between'
                 : 'flex-col sm:flex-row'
             }`}
@@ -99,27 +99,20 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
                 Case study
               </Link>
             )}
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px] ${
-                hasProjectDetail(project.id) ? 'shrink-0 sm:text-right' : ''
-              }`}
-            >
-              <FaExternalLinkAlt className="text-sm" />
-              Visit {project.name}
-            </a>
+            {project.url && (
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px] ${
+                  hasProjectDetail(project.id) ? 'shrink-0 sm:text-right sm:ml-auto' : ''
+                }`}
+              >
+                <FaExternalLinkAlt className="text-sm" />
+                Visit {project.name}
+              </a>
+            )}
           </div>
-        )}
-        {!project.url && hasProjectDetail(project.id) && (
-          <Link
-            href={`/projects/${project.id}`}
-            className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px]"
-          >
-            <FaArrowRight className="text-sm" />
-            Case study
-          </Link>
         )}
       </div>
     </div>
