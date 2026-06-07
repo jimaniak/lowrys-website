@@ -96,13 +96,13 @@ export default function Skills() {
 
       <section className="page-section">
         <div className="page-container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 gap-5 sm:gap-8 md:grid-cols-2 max-w-5xl mx-auto">
             {skillGroups.map((group) => (
               <div key={group.title} className="bg-white card-padding rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold mb-4 text-blue-800">{group.title}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold mb-4 text-blue-800">{group.title}</h2>
                 <ul className="space-y-2">
                   {group.items.map((item) => (
-                    <li key={item} className="flex items-start text-sm">
+                    <li key={item} className="flex items-start text-sm sm:text-base">
                       <FaCheck className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
                       <span className="text-gray-700">{item}</span>
                     </li>

@@ -16,7 +16,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white shadow-md sticky top-0 z-40">
+    <header className="bg-gray-800 text-white shadow-md sticky top-0 z-40 safe-top">
       <div className="page-container py-3 sm:py-4 flex justify-between items-center gap-3">
         <Link href="/" className="flex items-center min-w-0 flex-1 md:flex-initial gap-2 sm:gap-3">
           <Image

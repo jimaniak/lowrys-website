@@ -84,18 +84,16 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
         </div>
         {(project.url || hasProjectDetail(project.id)) && (
           <div
-            className={`mt-auto pt-6 flex w-full gap-3 ${
-              project.url && hasProjectDetail(project.id)
-                ? 'flex-row items-center justify-between'
-                : 'flex-col sm:flex-row'
-            }`}
+            className={
+              project.url && hasProjectDetail(project.id) ? 'card-actions-split' : 'card-actions'
+            }
           >
             {hasProjectDetail(project.id) && (
               <Link
                 href={`/projects/${project.id}`}
-                className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-medium transition min-h-[44px] shrink-0"
+                className="link-touch-block text-violet-600 hover:text-violet-800 text-sm sm:text-base"
               >
-                <FaArrowRight className="text-sm" />
+                <FaArrowRight className="text-sm shrink-0" />
                 Case study
               </Link>
             )}
@@ -104,12 +102,12 @@ export default function ProjectCard({ project, showImage = true }: ProjectCardPr
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition min-h-[44px] ${
-                  hasProjectDetail(project.id) ? 'shrink-0 sm:text-right sm:ml-auto' : ''
+                className={`link-touch-block text-blue-600 hover:text-blue-800 text-sm sm:text-base min-w-0 ${
+                  hasProjectDetail(project.id) ? 'sm:justify-end sm:text-right' : ''
                 }`}
               >
-                <FaExternalLinkAlt className="text-sm" />
-                Visit {project.name}
+                <FaExternalLinkAlt className="text-sm shrink-0" />
+                <span className="truncate sm:whitespace-normal">Visit {project.name}</span>
               </a>
             )}
           </div>

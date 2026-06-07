@@ -64,7 +64,7 @@ export default function Home() {
             Production SaaS across voice AI, job-search tech, agency ops, marketplaces, and multi-agent platforms —
             output comparable to a small product team, as one accountable engineer.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+          <div className="card-grid-3">
             {[
               { icon: FaBriefcase, title: 'B2C SaaS Velocity', text: 'WorkAide Jobs — career-workflow SaaS with multi-board inbox, AI scoring and drafts, resume export, and Stripe Pro. Solo build from concept to production launch in ~48 hours.' },
               { icon: FaMicrophone, title: 'Agentic Voice AI', text: 'EZ Voice — real-time Vapi/Twilio tool-calling for booking and SMS on NestJS, Prisma, and Neon. Flagship product with its own architecture, separate from EZWeb.work.' },
@@ -98,7 +98,7 @@ export default function Home() {
               View full portfolio →
             </Link>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          <div className="card-grid-2">
             {featuredProjects.map((project) =>
               project ? <ProjectCard key={project.id} project={project} /> : null
             )}

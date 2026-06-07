@@ -19,7 +19,7 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
         <div className="page-container">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-6 min-h-[44px] text-sm font-medium"
+            className="link-touch text-gray-300 hover:text-white mb-6 text-sm sm:text-base"
           >
             <FaArrowLeft className="text-xs" />
             All projects
@@ -38,7 +38,7 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg min-h-[44px] shrink-0"
+                className="btn-touch-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 shrink-0 gap-2"
               >
                 <FaExternalLinkAlt className="text-sm" />
                 Visit live product
@@ -74,10 +74,10 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
 
       <section className="page-section bg-white">
         <div className="page-container max-w-4xl">
-          <h2 className="text-2xl font-bold mb-4">Overview</h2>
+          <h2 className="section-title mb-4">Overview</h2>
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-6">{detail.overview}</p>
           {detail.velocity && (
-            <div className="bg-violet-50 border border-violet-100 rounded-lg p-5 mb-8">
+            <div className="bg-violet-50 border border-violet-100 rounded-lg p-4 sm:p-5 mb-8">
               <h3 className="font-semibold text-violet-900 mb-2">Delivery velocity</h3>
               <p className="text-violet-950 text-sm sm:text-base leading-relaxed">{detail.velocity}</p>
             </div>
@@ -94,10 +94,10 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
             ))}
           </div>
 
-          <h2 className="text-2xl font-bold mb-6">Architecture</h2>
-          <div className="grid gap-6 sm:grid-cols-2 mb-10">
+          <h2 className="section-title mb-6">Architecture</h2>
+          <div className="grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 mb-10">
             {detail.architecture.map((section) => (
-              <div key={section.title} className="bg-gray-50 rounded-lg p-5 border border-gray-100">
+              <div key={section.title} className="bg-gray-50 rounded-lg p-4 sm:p-5 border border-gray-100">
                 <h3 className="font-semibold text-gray-900 mb-3">{section.title}</h3>
                 <ul className="space-y-2">
                   {section.items.map((item) => (
@@ -111,7 +111,7 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
             ))}
           </div>
 
-          <h2 className="text-2xl font-bold mb-4">What shipped</h2>
+          <h2 className="section-title mb-4">What shipped</h2>
           <ul className="space-y-3 mb-10">
             {detail.shipped.map((item) => (
               <li key={item} className="text-gray-700 flex gap-3">
@@ -122,7 +122,7 @@ export default function ProjectDetailView({ project, detail }: ProjectDetailView
           </ul>
 
           {detail.distinctFrom && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-6">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-5 mb-6">
               <h3 className="font-semibold text-gray-900 mb-2">Related products</h3>
               <p className="text-gray-600 text-sm sm:text-base">{detail.distinctFrom}</p>
             </div>

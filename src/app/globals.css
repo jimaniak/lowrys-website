@@ -47,10 +47,41 @@
   .card-padding {
     @apply p-5 sm:p-6 md:p-8;
   }
+
+  /* Project cards & grids — single column by default, equal-height tiles */
+  .card-grid {
+    @apply grid grid-cols-1 gap-6 sm:gap-8 items-stretch;
+  }
+
+  .card-grid-2 {
+    @apply card-grid lg:grid-cols-2;
+  }
+
+  .card-grid-3 {
+    @apply card-grid sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  /* Card footer links: stack on mobile, row on sm+ */
+  .card-actions {
+    @apply mt-auto pt-6 flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3;
+  }
+
+  .card-actions-split {
+    @apply card-actions sm:justify-between;
+  }
+
+  .link-touch {
+    @apply min-h-[44px] inline-flex items-center gap-2 font-medium transition;
+  }
+
+  .link-touch-block {
+    @apply link-touch w-full sm:w-auto;
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    @apply bg-gray-900 text-gray-100;
+/* Safe-area padding for notched phones (sticky header / footer use these inline too) */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
   }
 }

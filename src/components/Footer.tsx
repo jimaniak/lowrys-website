@@ -19,18 +19,18 @@ export default function Footer() {
             Visit EZ Web →
           </a>
         </p>
-        <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm">
-          <Link href="/projects" className="text-gray-400 hover:text-white transition">
+        <div className="mt-4 flex flex-col sm:flex-row flex-wrap justify-center gap-1 sm:gap-4 text-sm">
+          <Link href="/projects" className="link-touch justify-center text-gray-400 hover:text-white">
             Projects
           </Link>
-          <Link href="/contact" className="text-gray-400 hover:text-white transition">
+          <Link href="/contact" className="link-touch justify-center text-gray-400 hover:text-white">
             Contact
           </Link>
           <a
             href="https://www.linkedin.com/in/jimsitsecurity"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition"
+            className="link-touch justify-center text-gray-400 hover:text-white"
           >
             LinkedIn
           </a>
@@ -38,7 +38,7 @@ export default function Footer() {
             href="https://github.com/jimaniak"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition"
+            className="link-touch justify-center text-gray-400 hover:text-white"
           >
             GitHub
           </a>

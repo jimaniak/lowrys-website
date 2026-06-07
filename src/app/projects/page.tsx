@@ -50,7 +50,7 @@ export default function Projects() {
                 </p>
               )}
               {!tierIntros[tier] && <div className="mb-8" />}
-              <div className={`grid gap-6 sm:gap-8 ${tier === 'flagship' || tier === 'solo' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+              <div className={`card-grid ${tier === 'flagship' || tier === 'solo' ? 'lg:grid-cols-2' : ''}`}>
                 {projects.map((project) => (
                   <ProjectCard key={project.id} project={project} />
                 ))}
@@ -67,7 +67,7 @@ export default function Projects() {
             May 2016 – March 2025 (~9 years, one employer) — Project Manager, Power Platform Architect,
             and Project Controls across $50M+ in IT/cybersecurity programs at 27 power generation facilities.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+          <div className="card-grid-3">
             <div className="bg-white rounded-lg shadow-lg card-padding">
               <FaShieldAlt className="text-red-500 text-4xl mb-4" />
               <h3 className="text-lg sm:text-xl font-bold mb-3">OT Cybersecurity Program</h3>
