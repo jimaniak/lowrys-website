@@ -5,14 +5,16 @@ import { Inter } from 'next/font/google'
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import { ResumeAccessProvider } from '@/components/ResumeAccessContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Jim Lowry | AI Collaboration Specialist',
-  description: 'Portfolio of Jim Lowry, AI Solutions Architect specializing in strategic AI collaboration, multi-agent platforms, predictive analytics, and enterprise automation. Delivering commercial-grade AI solutions through advanced human-AI partnership methodologies.',
-  keywords: 'AI Solutions Architect, strategic AI collaboration, multi-agent AI platforms, predictive analytics, automation, Next.js, TypeScript, enterprise AI, commercial AI development, business intelligence, data science, Jim Lowry',
+  title: 'Jim Lowry | AI-Native Product Engineer',
+  description: 'Portfolio of Jim Lowry — AI-native product engineer shipping production SaaS (WorkAide Jobs, EZ Voice, EZWeb.work). Lead Developer on Autoshops.com. ~9 years enterprise experience at Ameren. Remote US.',
+  keywords: 'AI-Native Product Engineer, full-stack developer, WorkAide Jobs, EZ Voice, agentic AI, Next.js, TypeScript, NestJS, Supabase, Stripe, SaaS, Jim Lowry, remote developer',
+  metadataBase: new URL('https://www.lowrys.org'),
   icons: {
     icon: [
       { url: '/favicon/favicon.ico' },
@@ -31,6 +33,12 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -44,8 +52,11 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
         <ResumeAccessProvider>
-          <Header />
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
         </ResumeAccessProvider>
       </body>
     </html>

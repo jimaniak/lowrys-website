@@ -12,7 +12,7 @@ export default function Hobbies() {
         <div className="container mx-auto px-4">
           <h1 className="text-5xl font-bold mb-6 leading-tight">Technical Interests & Learning Journey</h1>
           <p className="text-xl max-w-3xl leading-relaxed">
-            The personal exploration and hands-on experimentation that shaped my technical evolution. From AI collaboration discovery to home technology projects and workshop builds, these endeavors showcase the curiosity-driven learning that became the foundation for professional AI Solutions Architecture expertise.
+            The personal exploration and hands-on experimentation behind my technical path — from structured AI-assisted development to home lab projects and workshop builds. Curiosity-driven learning that feeds into production SaaS delivery today.
           </p>
         </div>
       </section>
@@ -20,9 +20,9 @@ export default function Hobbies() {
       {/* Overview Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">The Foundation Behind AI Solutions Architecture</h2>
+          <h2 className="text-3xl font-bold mb-8">The Foundation Behind Production Engineering</h2>
           <p className="text-lg mb-12 max-w-3xl mx-auto">
-            Personal exploration across diverse technical domains—from AI collaboration discovery to enterprise-grade home networking to hands-on workshop projects. These learning endeavors demonstrate the curiosity, experimentation, and continuous improvement mindset that evolved into commercial AI expertise and professional Solutions Architecture capabilities.
+            Personal exploration across AI-assisted development, home networking, and hands-on builds — the same continuous-learning mindset applied to shipping WorkAide Jobs, EZ Voice, and EZWeb.work in production.
           </p>
         </div>
       </section>
@@ -71,29 +71,29 @@ export default function Hobbies() {
                     <FaCheckCircle className="mr-2" /> Commercial Evolution
                   </h4>
                   <p className="text-gray-700">
-                    Personal exploration matured into commercial expertise, enabling deployment of three enterprise-grade AI platforms. The continuous learning approach that began as hobby investigation became the foundation for professional AI Solutions Architecture capabilities, demonstrating how curiosity-driven experimentation can evolve into market-ready expertise.
+                    Personal exploration matured into production SaaS — WorkAide Jobs, EZ Voice, EZWeb.work, and more. The continuous learning that started as hobby investigation now supports structured AI-native delivery with documented context in every repository.
                   </p>
                 </div>
                 
                 <div className="bg-gradient-to-r from-purple-100 to-indigo-100 p-6 rounded-lg mb-6">
-                  <h4 className="font-semibold text-purple-800 mb-3">Current Commercial Platforms Born from Personal Exploration:</h4>
+                  <h4 className="font-semibold text-purple-800 mb-3">Production platforms from this learning path:</h4>
                   <div className="grid md:grid-cols-3 gap-4 text-sm">
                     <div className="text-center">
+                      <div className="font-medium text-purple-700">WorkAide Jobs</div>
+                      <div className="text-purple-600">AI Job Search SaaS</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium text-purple-700">EZ Voice</div>
+                      <div className="text-purple-600">Agentic Phone SaaS</div>
+                    </div>
+                    <div className="text-center">
                       <div className="font-medium text-purple-700">SEO.Lowrys.org</div>
-                      <div className="text-purple-600">Multi-Agent AI SEO</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-medium text-purple-700">AIrtisan.net</div>
-                      <div className="text-purple-600">AI Art Authentication</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-medium text-purple-700">Lowrys.org</div>
-                      <div className="text-purple-600">Workforce Analytics</div>
+                      <div className="text-purple-600">Multi-Agent SEO</div>
                     </div>
                   </div>
                   <div className="text-center mt-4">
                     <Link href="/projects" className="text-purple-600 hover:text-purple-800 underline font-medium">
-                      View Commercial AI Platforms →
+                      View full portfolio →
                     </Link>
                   </div>
                 </div>

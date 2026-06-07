@@ -2,129 +2,120 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaChartLine, FaLaptopCode, FaTools, FaSearch, FaGlobe, FaRocket, FaRobot } from 'react-icons/fa';
+import { FaRobot, FaLaptopCode, FaRocket, FaMicrophone, FaBriefcase, FaCogs } from 'react-icons/fa';
+import HomeHeroActions from '@/components/HomeHeroActions';
+import HomeCtaActions from '@/components/HomeCtaActions';
+import ProjectCard from '@/components/ProjectCard';
+import { featuredProjectIds, portfolioProjects } from '@/data/portfolio';
+
+const featuredProjects = featuredProjectIds
+  .map((id) => portfolioProjects.find((p) => p.id === id))
+  .filter(Boolean);
 
 export default function Home() {
   return (
     <main>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Jim Lowry, B.S.</h1>
-              <h2 className="text-2xl md:text-3xl text-blue-400 mb-6">AI Solutions Architect & Full-Stack Engineer</h2>
-              <p className="text-lg mb-8">
-                Advanced AI solutions architect specializing in multi-agent AI platforms, strategic AI collaboration, and enterprise-grade commercial applications. Currently developing cutting-edge AI-enhanced platforms through innovative human-AI collaboration methodologies.
-              </p>
-              <p className="text-md mb-6 text-blue-200">
-                <strong>Commercial AI Platform Developer:</strong> Built three commercial-grade AI platforms including enterprise multi-agent SEO systems and blockchain-certified art authentication. My enterprise portfolio management background ($50M+ programs) ensures AI solutions deliver measurable business value and meet complex stakeholder requirements.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
-                  Get in Touch
-                </Link>
-                <a href="https://seo.lowrys.org" target="_blank" rel="noopener noreferrer" className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition duration-300">
-                  SEO Consultation
-                </a>
-                <Link href="/projects" className="bg-transparent hover:bg-white hover:text-gray-900 text-white px-6 py-3 border border-white rounded-lg transition duration-300">
-                  View Projects
-                </Link>
-              </div>
-            </div>
-            <div className="md:w-1/2 flex justify-center">
-              <div className="w-64 h-64 overflow-hidden rounded-full border-4 border-blue-400">
-                <Image 
+      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white page-section">
+        <div className="page-container">
+          <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
+            {/* Photo first on mobile for immediate personal connection */}
+            <div className="flex justify-center order-1 md:order-2 md:w-1/2 shrink-0">
+              <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 overflow-hidden rounded-full border-4 border-blue-400">
+                <Image
                   src="/images/jim-lowry-profile.jpg"
-                  alt="Jim Lowry, Data Analytics, SEO & Website Development Specialist"
+                  alt="Jim Lowry, AI-Native Product Engineer"
                   width={256}
                   height={256}
                   className="object-cover w-full h-full object-[center_top]"
+                  priority
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Core Competencies Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">AI Solutions Architecture & Strategic Collaboration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaRobot />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Multi-Agent AI Platforms</h3>
-              <p className="text-gray-600">
-                Architecting sophisticated multi-agent AI systems with specialized business intelligence agents, implementing Model Context Protocol (MCP) for enterprise-grade AI collaboration workflows.
+            <div className="order-2 md:order-1 md:w-1/2 min-w-0">
+              <p className="text-blue-300 text-xs sm:text-sm font-medium uppercase tracking-wide mb-3">
+                Owner-Developer · EZ Web LLC · Remote US
               </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaLaptopCode />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Strategic AI Collaboration</h3>
-              <p className="text-gray-600">
-                Advanced prompt engineering and human-AI collaboration methodologies to build commercial-grade platforms. Mastered the art of AI partnership to deliver complex technical solutions efficiently.
+              <h1 className="page-hero-title mb-3">Jim Lowry, B.S.</h1>
+              <h2 className="text-xl sm:text-2xl md:text-3xl text-blue-400 mb-5">AI-Native Product Engineer</h2>
+              <p className="text-base sm:text-lg mb-5 leading-relaxed">
+                I ship production SaaS end-to-end — architecture, data model, APIs, payments, admin, and deploy —
+                using structured AI-assisted delivery with Cursor. Human-owned architecture, security, and production fixes;
+                AI accelerates implementation.
               </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaSearch />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Enterprise AI-Enhanced SEO</h3>
-              <p className="text-gray-600">
-                SEO.Lowrys.org - Commercial multi-agent SEO platform delivering strategic audits, keyword research, and automated optimization through AI-powered analysis and recommendations.
+              <p className="text-sm sm:text-base mb-6 text-blue-200 leading-relaxed">
+                <strong>Recent proof:</strong> WorkAide Jobs (jobs.workaide.ai) from build to production launch in ~48 hours;
+                EZ Voice agentic phone SaaS (voice.ezweb.work); Lead Developer on Autoshops.com — backed by ~9 years at Ameren
+                managing $50M+ in critical infrastructure programs.
               </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaGlobe />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">AI-Powered Web Development</h3>
-              <p className="text-gray-600">
-                Modern full-stack applications built through AI collaboration using Next.js 15, TypeScript, and distributed databases—delivering enterprise-grade solutions with accelerated development cycles.
+              <p className="text-xs sm:text-sm text-gray-400 mb-5">
+                Request resume access below — I&apos;ll send a one-time code to your email. No public resume link.
               </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaChartLine />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Predictive Analytics & Data Intelligence</h3>
-              <p className="text-gray-600">
-                AI-enhanced workforce analytics with predictive modeling, automated BLS data processing, and business intelligence dashboards—transforming complex datasets into actionable insights through AI collaboration.
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-              <div className="text-blue-600 text-4xl mb-4 flex justify-center">
-                <FaRocket />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Commercial Platform Development</h3>
-              <p className="text-gray-600">
-                Three commercial-grade AI platforms in production including blockchain art authentication (AIrtisan.net) and enterprise workforce analytics—demonstrating proven ability to deliver AI solutions that create real business value.
-              </p>
+              <HomeHeroActions />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="py-16 bg-blue-600 text-white text-center">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to Leverage AI Solutions Architecture for Your Business?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Whether you need multi-agent AI platforms, strategic AI collaboration consulting, or enterprise-grade AI-enhanced applications, let's discuss how advanced AI solutions architecture combined with proven commercial platform development can accelerate your business outcomes.
+      <section className="page-section bg-gray-50">
+        <div className="page-container">
+          <h2 className="section-title text-center mb-4">What I Build</h2>
+          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10 text-sm sm:text-base">
+            Production SaaS across voice AI, job-search tech, agency ops, marketplaces, and multi-agent platforms —
+            output comparable to a small product team, as one accountable engineer.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a href="/contact" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition duration-300">
-              Discuss AI Solutions
-            </a>
-            <a href="https://seo.lowrys.org" target="_blank" rel="noopener noreferrer" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition duration-300">
-              View AI SEO Platform
-            </a>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+            {[
+              { icon: FaBriefcase, title: 'B2C SaaS Velocity', text: 'WorkAide Jobs — career-workflow SaaS with multi-board inbox, AI scoring and drafts, resume export, and Stripe Pro. Solo build from concept to production launch in ~48 hours.' },
+              { icon: FaMicrophone, title: 'Agentic Voice AI', text: 'EZ Voice — real-time Vapi/Twilio tool-calling for booking and SMS on NestJS, Prisma, and Neon. Flagship product with its own architecture, separate from EZWeb.work.' },
+              { icon: FaCogs, title: 'Multi-Agent Pipelines', text: 'EZWeb.work and SEO.Lowrys.org — batch agentic workflows, MCP, n8n, multi-model routers, and enterprise-grade security (KMS, Turso, Supabase RLS).' },
+              { icon: FaLaptopCode, title: 'Marketplace Engineering', text: 'Lead Developer on Autoshops.com — Stripe subscriptions, Google Maps Platform, Firebase Auth, admin RBAC, and Vercel migration from legacy hosting.' },
+              { icon: FaRobot, title: 'Structured AI Delivery', text: 'Canonical docs, session handoffs, and completion checklists in every repo so AI coding sessions resume with full product context — not prompt-only development.' },
+              { icon: FaRocket, title: 'Enterprise Foundation', text: '~9 years at Ameren — $50M+ portfolio management, OT cybersecurity across 27 facilities, Power Platform and Dataverse consolidation. Nike IIoT contract (Kepware, ThingWorx, Azure).' },
+            ].map(({ icon: Icon, title, text }) => (
+              <div key={title} className="bg-white card-padding rounded-lg shadow-md">
+                <div className="text-blue-600 text-3xl sm:text-4xl mb-4 flex justify-center">
+                  <Icon />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-center">{title}</h3>
+                <p className="text-gray-600 text-center text-sm sm:text-base">{text}</p>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      <section className="page-section">
+        <div className="page-container">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8 sm:mb-12">
+            <div>
+              <h2 className="section-title mb-2">Featured Production Work</h2>
+              <p className="text-gray-600 max-w-2xl text-sm sm:text-base">
+                Live platforms you can visit — each with distinct architecture and stack choices.
+              </p>
+            </div>
+            <Link href="/projects" className="text-blue-600 hover:text-blue-800 font-medium min-h-[44px] inline-flex items-center">
+              View full portfolio →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            {featuredProjects.map((project) =>
+              project ? <ProjectCard key={project.id} project={project} /> : null
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="page-section bg-blue-600 text-white text-center">
+        <div className="page-container">
+          <h2 className="section-title mb-4">Interested in Working Together?</h2>
+          <p className="text-base sm:text-xl mb-4 max-w-2xl mx-auto leading-relaxed">
+            Open to AI product engineering, full-stack, and technical lead roles — remote US or hybrid near St. Louis, MO.
+          </p>
+          <p className="text-blue-100 mb-8 max-w-xl mx-auto text-xs sm:text-sm">
+            Resume access is gated — submit a request and I&apos;ll email you a one-time passcode after review.
+          </p>
+          <HomeCtaActions />
         </div>
       </section>
     </main>

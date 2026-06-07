@@ -225,7 +225,7 @@ export default function Contact() {
 
   // Function to get input class based on validation state
   const getInputClass = (field: string) => {
-    const baseClass = "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2";
+    const baseClass = "w-full px-4 py-3 text-base border rounded-md focus:outline-none focus:ring-2";
     
     if (hasError(field)) {
       return `${baseClass} border-red-500 focus:ring-red-500`;
@@ -247,24 +247,39 @@ export default function Contact() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-6 leading-tight">Contact Me</h1>
-          <p className="text-xl max-w-3xl leading-relaxed">
-            Have a business challenge that needs solving? I&apos;d love to discuss how my cross-domain expertise can help transform your processes and implement effective solutions.
+      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white page-section">
+        <div className="page-container">
+          <h1 className="page-hero-title mb-6">Contact</h1>
+          <p className="page-hero-subtitle max-w-3xl">
+            Recruiters and hiring managers — request resume access below. I&apos;ll review your request and email a
+            one-time passcode. No public resume link; your email stays private until you submit the form.
+          </p>
+        </div>
+      </section>
+
+      {/* Resume access callout */}
+      <section className="py-6 sm:py-8 bg-blue-50 border-b border-blue-100">
+        <div className="page-container max-w-3xl text-center">
+          <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">How resume access works</h2>
+          <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">
+            1. Submit the form with &quot;Request access to resources&quot; checked ·
+            2. I review and approve ·
+            3. You receive a 6-character passcode by email ·
+            4. Enter it via &quot;Access Resume&quot; anywhere on the site
           </p>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12">
+      <section className="page-section">
+        <div className="page-container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12">
             {/* Contact Info */}
             <div>
-              <h2 className="text-3xl font-bold mb-8">Get In Touch</h2>
-              <p className="text-lg text-gray-600 mb-8">
-                I&apos;m available for consulting engagements, project work, and discussions about business process optimization and technical implementation challenges.
+              <h2 className="section-title mb-6 sm:mb-8">Connect</h2>
+              <p className="text-base sm:text-lg text-gray-600 mb-8">
+                Open to AI product engineering, full-stack, and technical lead roles — remote US or hybrid near St. Louis, MO.
+                For employment inquiries, check &quot;Request access to resources&quot; on the form.
               </p>
               
               <div className="space-y-6">
@@ -274,7 +289,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Email</h3>
-                    <p className="text-gray-600">business@lowrys.org</p>
+                    <p className="text-gray-600">Please use the contact form — not listed publicly</p>
                   </div>
                 </div>
                 
@@ -298,38 +313,39 @@ export default function Contact() {
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <FaLinkedin className="text-blue-600 text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">LinkedIn</h3>
-                    <a href="https://www.linkedin.com/in/jimsitsecurity" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">linkedin.com/in/MyLinkedIn
-          </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <FaGithub className="text-blue-600 text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">GitHub</h3>
-                    <a href="https://github.com/jimaniak" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">github.com/MyGitHub</a>
-                  </div>
-                </div>
-                
-                {/* Added Resume Access Button */}
+                <a
+                  href="https://www.linkedin.com/in/jimsitsecurity"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-blue-600 hover:text-blue-800 transition min-h-[44px]"
+                >
+                  <FaLinkedin className="text-blue-600 text-xl shrink-0" />
+                  <span>linkedin.com/in/jimsitsecurity</span>
+                </a>
+
+                <a
+                  href="https://github.com/jimaniak"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-blue-600 hover:text-blue-800 transition min-h-[44px]"
+                >
+                  <FaGithub className="text-blue-600 text-xl shrink-0" />
+                  <span>github.com/jimaniak</span>
+                </a>
+
                 <div className="mt-8 pt-4 border-t border-gray-200">
-                  <h3 className="font-semibold text-lg mb-2">Already have an access code?</h3>
-                  <ResumeAccessButton variant="secondary" />
+                  <h3 className="font-semibold text-base sm:text-lg mb-3">Already have an access code?</h3>
+                  <ResumeAccessButton variant="secondary" className="min-h-[44px]" />
                 </div>
               </div>
             </div>
             
             {/* Contact Form */}
             <div>
-              <h2 className="text-3xl font-bold mb-8">Send a Message</h2>
+              <h2 className="section-title mb-2">Send a Message</h2>
+              <p className="text-gray-600 mb-8 text-sm">
+                Hiring? Check &quot;Request access to resources&quot; and select Resume — include your company and why you need access.
+              </p>
               
               <form onSubmit={(e) => {
                 e.preventDefault();
@@ -418,7 +434,7 @@ export default function Contact() {
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="requestResume" className="ml-2 block text-sm text-gray-700">
-                    Request access to resources
+                    Request access to resources (resume)
                   </label>
                 </div>
                 
@@ -541,7 +557,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting || status === 'submitting'}
-                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ${
+                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 min-h-[48px] text-base ${
                     (isSubmitting || status === 'submitting') ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >

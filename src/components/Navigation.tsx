@@ -30,8 +30,8 @@ const Navigation = () => {
             key={item.path}
             href={item.path}
             onClick={() => handleClick(item.path)}
-            className={`text-sm font-medium transition-colors hover:text-blue-500 ${
-              isActive ? 'text-blue-600' : 'text-gray-100'
+            className={`text-sm font-medium transition-colors hover:text-blue-400 min-h-[44px] inline-flex items-center ${
+              isActive ? 'text-blue-400' : 'text-gray-100'
             }`}
             prefetch={true}
           >

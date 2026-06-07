@@ -1,11 +1,11 @@
-// src/components/ResumeAccessModal.tsx
+// src/components/CodeAccessModal.tsx
 'use client';
 
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
-import { FaFileAlt, FaLock, FaTimes, FaCheck, FaExclamationCircle } from 'react-icons/fa';
+import { FaFileArchive, FaLock, FaTimes, FaCheck, FaExclamationCircle, FaCode } from 'react-icons/fa';
 import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
 
-interface ResumeAccessModalProps {
+interface CodeAccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -13,7 +13,7 @@ interface ResumeAccessModalProps {
 // Passcode validation regex (alphanumeric, exactly 6 characters)
 const PASSCODE_REGEX = /^[A-Z0-9]{6}$/;
 
-export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModalProps) {
+export default function CodeAccessModal({ isOpen, onClose }: CodeAccessModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -101,24 +101,26 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
     setApiError('');
     
     try {
-      const response = await fetch('/api/validate-passcode', {
+      // First validate the passcode
+      const validateResponse = await fetch('/api/validate-passcode', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 
-          email: '', // This could be added as a field if needed
-          passcode: values.passcode 
+          email: '', 
+          passcode: values.passcode,
+          category: 'code'
         })
       });
       
-      const data = await response.json();
+      const validateData = await validateResponse.json();
       
-      if (response.ok && data.success) {
+      if (validateResponse.ok && validateData.success) {
         setStatus('success');
       } else {
         setStatus('error');
-        setApiError(data.message || 'Invalid passcode');
+        setApiError(validateData.message || 'Invalid passcode');
       }
     } catch (err) {
       console.error('Error validating passcode:', err);
@@ -128,8 +130,46 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
   };
 
   // Handle download click
-  const handleDownload = () => {
-    setStatus('downloaded');
+  const handleDownload = async () => {
+    try {
+      const response = await fetch('/api/download-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          passcode: values.passcode,
+          category: 'code'
+        })
+      });
+
+      if (response.ok) {
+        // Create blob from response
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        // Create temporary download link
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'code-samples.zip';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        setStatus('downloaded');
+      } else {
+        const errorData = await response.json();
+        setStatus('error');
+        setApiError(errorData.message || 'Download failed');
+      }
+    } catch (err) {
+      console.error('Error downloading file:', err);
+      setStatus('error');
+      setApiError('Download failed. Please try again.');
+    }
   };
   
   // Function to determine if a field has an error - returns a boolean
@@ -155,10 +195,10 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
   if (!isOpen) return null;
   
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
-      <div
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div 
         ref={modalRef}
-        className="bg-white rounded-t-2xl sm:rounded-lg shadow-xl w-full sm:max-w-md sm:mx-4 p-5 sm:p-6 relative max-h-[90dvh] overflow-y-auto"
+        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6 relative"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -173,23 +213,19 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
         
         <h2 id="modal-title" className="text-xl font-semibold mb-4 flex items-center gap-2">
           <FaLock className="text-blue-600" />
-          <span>Resume Access</span>
+          <span>Code Access</span>
         </h2>
         
         {status === 'success' && (
           <div className="text-center py-4">
             <p className="text-green-600 mb-4">Passcode validated successfully!</p>
-            <a
-              href="/documents/jim-lowry-resume.pdf"
-              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition mb-4"
-              target="_blank"
-              rel="noopener noreferrer"
-              download
+            <button
               onClick={handleDownload}
+              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition mb-4"
             >
-              <FaFileAlt size={20} />
-              <span>Download Resume</span>
-            </a>
+              <FaFileArchive size={20} />
+              <span>Download Code Samples</span>
+            </button>
             <button
               onClick={onClose}
               className="block w-full text-gray-600 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 px-4 py-2 rounded border border-gray-300 transition mt-2"
@@ -203,19 +239,10 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
           <div className="text-center py-4">
             <div className="flex items-center justify-center text-green-600 mb-2">
               <FaCheck size={24} className="mr-2" />
-              <p className="text-lg font-medium">Download initiated!</p>
+              <p className="text-lg font-medium">Download completed!</p>
             </div>
             <p className="text-gray-600 dark:text-gray-200 mb-4">
-              Your download has started. If it doesn't begin automatically, 
-              <a 
-                href="/documents/jim-lowry-resume.pdf" 
-                className="text-blue-600 hover:underline ml-1"
-                target="_blank"
-                rel="noopener noreferrer"
-                download
-              >
-                click here
-              </a>.
+              Your code samples have been downloaded successfully.
             </p>
             <button
               onClick={onClose}
@@ -229,7 +256,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
         {(status === 'idle' || status === 'loading' || status === 'error') && (
           <>
             <p className="text-gray-600 dark:text-gray-200 mb-4">
-              Enter your access code to view and download Jim Lowry's resume.
+              Enter your access code to download the code samples archive.
             </p>
             
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -267,11 +294,11 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
                 <p className="text-red-600 text-sm">{apiError}</p>
               )}
               
-              <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <div className="flex space-x-3">
                 <button
                   type="submit"
                   disabled={status === 'loading' || hasError('passcode')}
-                  className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded transition flex-1 min-h-[44px] ${
+                  className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition flex-1 ${
                     (status === 'loading' || hasError('passcode')) 
                       ? 'opacity-70 cursor-not-allowed' 
                       : ''
@@ -283,7 +310,7 @@ export default function ResumeAccessModal({ isOpen, onClose }: ResumeAccessModal
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-gray-600 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 px-4 py-3 rounded border border-gray-300 transition min-h-[44px] sm:flex-initial"
+                  className="text-gray-600 hover:text-gray-800 dark:text-gray-200 dark:hover:text-gray-100 px-4 py-2 rounded border border-gray-300 transition"
                 >
                   Cancel
                 </button>

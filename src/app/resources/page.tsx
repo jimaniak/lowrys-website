@@ -6,8 +6,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { 
   FaFileExcel, FaGoogleDrive, FaDownload, FaLock, FaFileAlt, FaChartBar, FaTools, 
-  FaClipboardCheck, FaArrowRight, FaEnvelope, FaCheckCircle, FaClock 
+  FaClipboardCheck, FaArrowRight, FaEnvelope, FaCheckCircle, FaClock, FaCode, FaFileArchive 
 } from 'react-icons/fa';
+import CodeAccessModal from '@/components/CodeAccessModal';
 
 // SEO metadata component
 const ResourcesMetadata = () => {
