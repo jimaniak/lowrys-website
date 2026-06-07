@@ -3,12 +3,16 @@ import { workaideJobsDetail } from './workaide-jobs';
 import { ezVoiceDetail } from './ez-voice';
 import { ezwebDetail } from './ezweb';
 import { autoshopsDetail } from './autoshops';
+import { seoLowrysDetail } from './seo-lowrys';
+import { pmWorkaideDetail } from './pm-workaide';
 
 const projectDetails: Record<string, ProjectDetail> = {
   'workaide-jobs': workaideJobsDetail,
   'ez-voice': ezVoiceDetail,
   'ezweb': ezwebDetail,
   'autoshops': autoshopsDetail,
+  'seo-lowrys': seoLowrysDetail,
+  'pm-workaide': pmWorkaideDetail,
 };
 
 export function getProjectDetail(id: string): ProjectDetail | undefined {
