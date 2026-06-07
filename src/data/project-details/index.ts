@@ -5,6 +5,8 @@ import { ezwebDetail } from './ezweb';
 import { autoshopsDetail } from './autoshops';
 import { seoLowrysDetail } from './seo-lowrys';
 import { pmWorkaideDetail } from './pm-workaide';
+import { airtisanDetail } from './airtisan';
+import { lowrysAnalyticsDetail } from './lowrys-analytics';
 
 const projectDetails: Record<string, ProjectDetail> = {
   'workaide-jobs': workaideJobsDetail,
@@ -13,6 +15,8 @@ const projectDetails: Record<string, ProjectDetail> = {
   'autoshops': autoshopsDetail,
   'seo-lowrys': seoLowrysDetail,
   'pm-workaide': pmWorkaideDetail,
+  'airtisan': airtisanDetail,
+  'lowrys-analytics': lowrysAnalyticsDetail,
 };
 
 export function getProjectDetail(id: string): ProjectDetail | undefined {
