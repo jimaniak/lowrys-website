@@ -1,8 +1,10 @@
 import type { ProjectDetail } from './types';
 import { workaideJobsDetail } from './workaide-jobs';
+import { ezVoiceDetail } from './ez-voice';
 
 const projectDetails: Record<string, ProjectDetail> = {
   'workaide-jobs': workaideJobsDetail,
+  'ez-voice': ezVoiceDetail,
 };
 
 export function getProjectDetail(id: string): ProjectDetail | undefined {
