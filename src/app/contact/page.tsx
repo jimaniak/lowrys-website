@@ -1,9 +1,9 @@
 // src/app/contact/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaExclamationCircle } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaGithub, FaExclamationCircle, FaSpinner } from 'react-icons/fa';
 import ResumeAccessButton from '@/components/ResumeAccessButton';
 import ContactFormMessage from '@/components/ContactFormMessage';
 import { useFormValidation, FieldValidationRules } from '@/hooks/useFormValidation';
@@ -18,39 +18,64 @@ const RESOURCE_CATEGORIES = [
   { value: 'portfolio', label: 'Portfolio' }
 ];
 
-export default function Contact() {
-  // Define validation rules for form fields
-  const validationRules: FieldValidationRules = {
+function buildValidationRules(requestResume: boolean): FieldValidationRules {
+  const rules: FieldValidationRules = {
     name: {
       required: true,
       minLength: 2,
-      errorMessage: 'Please enter your full name (minimum 2 characters)'
+      errorMessage: 'Please enter your full name (minimum 2 characters)',
     },
     email: {
       required: true,
       pattern: EMAIL_REGEX,
-      errorMessage: 'Please enter a valid email address'
+      errorMessage: 'Please enter a valid email address',
     },
-    message: {
-      minLength: 10,
-      errorMessage: 'Message should be at least 10 characters'
-    },
-    company: {
-      required: true,
-      minLength: 2,
-      errorMessage: 'Please enter your company or organization name'
-    },
-    reason: {
-      required: true,
-      minLength: 20,
-      errorMessage: 'Please provide a detailed reason for requesting access (minimum 20 characters)'
-    },
-    category: {
-      required: true,
-      errorMessage: 'Please select a resource category'
-    }
   };
 
+  if (requestResume) {
+    rules.message = {
+      minLength: 10,
+      errorMessage: 'Message should be at least 10 characters',
+    };
+    rules.company = {
+      required: true,
+      minLength: 2,
+      errorMessage: 'Please enter your company or organization name',
+    };
+    rules.reason = {
+      required: true,
+      minLength: 20,
+      errorMessage: 'Please share your hiring context (minimum 20 characters)',
+    };
+    rules.category = {
+      required: true,
+      errorMessage: 'Please select a resource category',
+    };
+  } else {
+    rules.message = {
+      required: true,
+      minLength: 10,
+      errorMessage: 'Please enter a message (at least 10 characters)',
+    };
+  }
+
+  return rules;
+}
+
+function getReasonLabel(category: string): string {
+  switch (category) {
+    case 'resume':
+      return 'Briefly describe the role and why you\'re requesting resume access *';
+    case 'portfolio':
+      return 'Briefly describe why you need portfolio access *';
+    case 'free_item':
+      return 'Briefly describe why you need this free resource *';
+    default:
+      return 'Briefly describe your purpose for this request *';
+  }
+}
+
+export default function Contact() {
   // Initial form values
   const initialValues = {
     name: '',
@@ -60,7 +85,7 @@ export default function Contact() {
     reason: '',
     requestResume: false,
     category: 'resume', // Default category
-    website: '' // Honeypot field - bots will fill this, humans won't see it
+    bot_trap: '' // Honeypot - bots fill this; kept off common autofill field names
   };
 
   // Use our custom form validation hook
@@ -75,7 +100,7 @@ export default function Contact() {
     handleSubmit,
     resetForm,
     validateForm
-  } = useFormValidation(initialValues, validationRules);
+  } = useFormValidation(initialValues, (formValues) => buildValidationRules(formValues.requestResume));
 
   // Additional state for form submission status
   const [status, setStatus] = useState('idle');
@@ -115,26 +140,25 @@ export default function Contact() {
     initTurnstile();
   }, [turnstileSiteKey]);
 
-  // Effect to conditionally validate company and reason fields based on requestResume
+  const skipResumeRevalidate = useRef(true);
   useEffect(() => {
-    // No need to validate company, reason, and category if not requesting resume
-    if (!values.requestResume) {
-      // Clear any existing errors for these fields
-      const updatedErrors = { ...errors };
-      delete updatedErrors.company;
-      delete updatedErrors.reason;
-      delete updatedErrors.category;
-      
-      // Force validation update
-      validateForm();
+    if (skipResumeRevalidate.current) {
+      skipResumeRevalidate.current = false;
+      return;
     }
+    validateForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.requestResume]);
 
+  const handleValidationError = () => {
+    setApiError('Please complete all required fields below.');
+    setStatus('idle');
+  };
+
   // Handle form submission
-  const submitForm = async () => {
+  const submitForm = async (formValues: typeof initialValues) => {
     // Honeypot check - if this field is filled, it's a bot
-    if (values.website) {
-      console.log('Bot detected via honeypot');
+    if (formValues.bot_trap?.trim()) {
       setApiError('Invalid submission detected.');
       setStatus('error');
       return;
@@ -142,7 +166,7 @@ export default function Contact() {
 
     // Check for Turnstile token (only if site key is configured)
     if (turnstileSiteKey && !turnstileToken) {
-      setApiError('Please complete the security verification.');
+      setApiError('Please complete the security verification below the form.');
       setStatus('error');
       return;
     }
@@ -151,23 +175,22 @@ export default function Contact() {
     setApiError('');
     setFormSubmitted(false);
 
-    const isResumeRequest = values.requestResume;
+    const isResumeRequest = formValues.requestResume;
     const requestBody = isResumeRequest
       ? {
-          name: values.name,
-          email: values.email,
-          company: values.company,
-          message: values.message,
-          reason: values.reason,
+          name: formValues.name.trim(),
+          email: formValues.email.trim(),
+          company: formValues.company.trim(),
+          message: formValues.message.trim(),
+          reason: formValues.reason.trim(),
           requestResume: true,
-          category: values.category,
+          category: formValues.category,
           turnstileToken: turnstileToken
         }
       : {
-          name: values.name,
-          email: values.email,
-          company: values.company,
-          message: values.message,
+          name: formValues.name.trim(),
+          email: formValues.email.trim(),
+          message: formValues.message.trim(),
           requestResume: false,
           turnstileToken: turnstileToken
         };
@@ -238,11 +261,7 @@ export default function Contact() {
     return `${baseClass} border-gray-300 focus:ring-blue-500`;
   };
 
-  // Get category label from value
-  const getCategoryLabel = (value: string) => {
-    const category = RESOURCE_CATEGORIES.find(cat => cat.value === value);
-    return category ? category.label : value;
-  };
+  const isSending = isSubmitting || status === 'submitting';
 
   return (
     <>
@@ -251,8 +270,8 @@ export default function Contact() {
         <div className="page-container">
           <h1 className="page-hero-title mb-6">Contact</h1>
           <p className="page-hero-subtitle max-w-3xl">
-            Recruiters and hiring managers — request resume access below. I&apos;ll review your request and email a
-            one-time passcode. No public resume link; your email stays private until you submit the form.
+            Send a general message, or check &quot;Request access to resources&quot; for gated resume access. I&apos;ll
+            review resume requests and email a one-time passcode. No public resume link.
           </p>
         </div>
       </section>
@@ -279,7 +298,7 @@ export default function Contact() {
               <h2 className="section-title mb-6 sm:mb-8">Connect</h2>
               <p className="text-base sm:text-lg text-gray-600 mb-8">
                 Open to AI product engineering, full-stack, and technical lead roles — remote US or hybrid near St. Louis, MO.
-                For employment inquiries, check &quot;Request access to resources&quot; on the form.
+                Use the form for any inquiry. For resume access, check the box on the form and include your company.
               </p>
               
               <div className="space-y-6">
@@ -344,13 +363,19 @@ export default function Contact() {
             <div>
               <h2 className="section-title mb-2">Send a Message</h2>
               <p className="text-gray-600 mb-8 text-sm">
-                Hiring? Check &quot;Request access to resources&quot; and select Resume — include your company and why you need access.
+                Name, email, and message are required. Check &quot;Request access to resources&quot; only if you need resume
+                access — that adds company and reason fields for review.
               </p>
               
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit(submitForm);
-              }} className="space-y-6">
+              <form
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setApiError('');
+                  handleSubmit(submitForm, handleValidationError);
+                }}
+                className="space-y-6"
+              >
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Name *
@@ -363,7 +388,6 @@ export default function Contact() {
                       onChange={(e) => handleChange('name', e.target.value)}
                       onBlur={() => handleBlur('name')}
                       className={getInputClass('name')}
-                      required
                     />
                     {hasError('name') && (
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -388,7 +412,6 @@ export default function Contact() {
                       onChange={(e) => handleChange('email', e.target.value)}
                       onBlur={() => handleBlur('email')}
                       className={getInputClass('email')}
-                      required
                     />
                     {hasError('email') && (
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -403,7 +426,7 @@ export default function Contact() {
                 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                    Message
+                    Message {values.requestResume ? '' : '*'}
                   </label>
                   <div className="relative">
                     <textarea
@@ -413,6 +436,7 @@ export default function Contact() {
                       onBlur={() => handleBlur('message')}
                       rows={5}
                       className={getInputClass('message')}
+                      required={!values.requestResume}
                     />
                     {hasError('message') && (
                       <div className="absolute top-2 right-2 pointer-events-none">
@@ -498,7 +522,7 @@ export default function Contact() {
                     
                     <div>
                       <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
-                        Why do you need access to the {getCategoryLabel(values.category)}? *
+                        {getReasonLabel(values.category)}
                       </label>
                       <div className="relative">
                         <textarea
@@ -525,15 +549,15 @@ export default function Contact() {
                 
                 {/* Honeypot field - hidden from humans, bots will fill it */}
                 <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
-                  <label htmlFor="website">Website (leave blank)</label>
+                  <label htmlFor="bot_trap">Leave blank</label>
                   <input
                     type="text"
-                    id="website"
-                    name="website"
-                    value={values.website}
-                    onChange={(e) => handleChange('website', e.target.value)}
+                    id="bot_trap"
+                    name="bot_trap"
+                    value={values.bot_trap}
+                    onChange={(e) => handleChange('bot_trap', e.target.value)}
                     tabIndex={-1}
-                    autoComplete="off"
+                    autoComplete="nope"
                   />
                 </div>
 
@@ -544,24 +568,45 @@ export default function Contact() {
                   </div>
                 )}
 
+                {isSending && (
+                  <div
+                    className="bg-blue-50 border-l-4 border-blue-500 p-4"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <div className="flex items-center text-blue-800">
+                      <FaSpinner className="animate-spin mr-3 shrink-0 text-lg" aria-hidden="true" />
+                      <p className="text-sm font-medium">Sending your message, please wait...</p>
+                    </div>
+                  </div>
+                )}
+
                 {apiError && (
-                  <div className="bg-red-50 border-l-4 border-red-500 p-4">
-                    <p className="text-red-700">{apiError}</p>
+                  <div className="bg-red-50 border-l-4 border-red-500 p-4" role="alert">
+                    <p className="text-red-700 whitespace-pre-line">{apiError}</p>
                   </div>
                 )}
                 
-                {formSubmitted && (
+                {formSubmitted && !isSending && (
                   <ContactFormMessage isResumeRequest={lastSubmissionWasResume} />
                 )}
                 
                 <button
                   type="submit"
-                  disabled={isSubmitting || status === 'submitting'}
-                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 min-h-[48px] text-base ${
-                    (isSubmitting || status === 'submitting') ? 'opacity-70 cursor-not-allowed' : ''
+                  disabled={isSending}
+                  aria-busy={isSending}
+                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 min-h-[48px] text-base flex items-center justify-center gap-2 ${
+                    isSending ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
-                  {(isSubmitting || status === 'submitting') ? 'Sending...' : 'Send Message'}
+                  {isSending ? (
+                    <>
+                      <FaSpinner className="animate-spin text-lg" aria-hidden="true" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    'Send Message'
+                  )}
                 </button>
               </form>
             </div>

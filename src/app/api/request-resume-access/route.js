@@ -327,6 +327,16 @@ export async function POST(request) {
     else {
       console.log('Processing regular message from:', email); // Debug log
 
+      if (!message || String(message).trim().length < 10) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Please include a message (at least 10 characters)',
+          },
+          { status: 400 }
+        );
+      }
+
       // Persist the message for auditing
       try {
         await storeContactMessage({

@@ -20,59 +20,67 @@ interface ValidationRules {
 
 // Define validation rules for each field
 export type FieldValidationRules = Record<string, ValidationRules>;
+export type ValidationRulesInput<T> = FieldValidationRules | ((values: T) => FieldValidationRules);
+
+function resolveRules<T>(input: ValidationRulesInput<T>, values: T): FieldValidationRules {
+  return typeof input === 'function' ? input(values) : input;
+}
+
+export function validateFieldValue(name: string, value: any, rules: FieldValidationRules): ValidationError {
+  const fieldRules = rules[name];
+  if (!fieldRules) return null;
+
+  const normalized =
+    typeof value === 'string' ? value.trim() : value;
+
+  if (fieldRules.required && (normalized === '' || normalized === null || normalized === undefined)) {
+    return fieldRules.errorMessage || 'This field is required';
+  }
+
+  const valueLength = String(normalized ?? '').length;
+
+  if (fieldRules.minLength && valueLength > 0 && valueLength < fieldRules.minLength) {
+    return fieldRules.errorMessage || `Must be at least ${fieldRules.minLength} characters`;
+  }
+
+  if (fieldRules.maxLength && valueLength > fieldRules.maxLength) {
+    return fieldRules.errorMessage || `Must be no more than ${fieldRules.maxLength} characters`;
+  }
+
+  if (fieldRules.pattern && valueLength > 0 && !fieldRules.pattern.test(String(normalized))) {
+    return fieldRules.errorMessage || 'Invalid format';
+  }
+
+  if (fieldRules.custom && !fieldRules.custom(normalized)) {
+    return fieldRules.errorMessage || 'Invalid value';
+  }
+
+  return null;
+}
 
 export function useFormValidation<T extends Record<string, any>>(
   initialValues: T,
-  validationRules: FieldValidationRules
+  validationRulesInput: ValidationRulesInput<T>
 ) {
-  // State for form values, errors, touched fields, and form validity
   const [values, setValues] = useState<T>(initialValues);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<TouchedFields>({});
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Validate a single field
-  const validateField = (name: string, value: any): ValidationError => {
-    const rules = validationRules[name];
-    if (!rules) return null;
+  const getRules = (formValues: T = values) => resolveRules(validationRulesInput, formValues);
 
-    // Check if field is required and empty
-    if (rules.required && (value === '' || value === null || value === undefined)) {
-      return rules.errorMessage || 'This field is required';
-    }
-
-    // Check minimum length
-    if (rules.minLength && value.length < rules.minLength) {
-      return rules.errorMessage || `Must be at least ${rules.minLength} characters`;
-    }
-
-    // Check maximum length
-    if (rules.maxLength && value.length > rules.maxLength) {
-      return rules.errorMessage || `Must be no more than ${rules.maxLength} characters`;
-    }
-
-    // Check pattern (regex)
-    if (rules.pattern && !rules.pattern.test(value)) {
-      return rules.errorMessage || 'Invalid format';
-    }
-
-    // Custom validation
-    if (rules.custom && !rules.custom(value)) {
-      return rules.errorMessage || 'Invalid value';
-    }
-
-    return null;
+  const validateField = (name: string, value: any, formValues: T = values): ValidationError => {
+    return validateFieldValue(name, value, getRules(formValues));
   };
 
-  // Validate all fields
-  const validateForm = (): boolean => {
+  const validateForm = (formValues: T = values): boolean => {
+    const rules = getRules(formValues);
     const newErrors: ValidationErrors = {};
     let formIsValid = true;
 
-    // Validate each field
-    Object.keys(validationRules).forEach((fieldName) => {
-      const error = validateField(fieldName, values[fieldName as keyof T]);
+    Object.keys(rules).forEach((fieldName) => {
+      const error = validateFieldValue(fieldName, formValues[fieldName as keyof T], rules);
       if (error) {
         newErrors[fieldName] = error;
         formIsValid = false;
@@ -83,16 +91,12 @@ export function useFormValidation<T extends Record<string, any>>(
     return formIsValid;
   };
 
-  // Handle field change
   const handleChange = (name: keyof T, value: any) => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    const nextValues = { ...values, [name]: value };
+    setValues(nextValues);
 
-    // If field has been touched, validate it on change
     if (touched[name as string]) {
-      const error = validateField(name as string, value);
+      const error = validateField(name as string, value, nextValues);
       setErrors((prevErrors) => ({
         ...prevErrors,
         [name]: error,
@@ -100,7 +104,6 @@ export function useFormValidation<T extends Record<string, any>>(
     }
   };
 
-  // Handle field blur
   const handleBlur = (name: keyof T) => {
     setTouched((prevTouched) => ({
       ...prevTouched,
@@ -114,7 +117,6 @@ export function useFormValidation<T extends Record<string, any>>(
     }));
   };
 
-  // Reset form to initial values
   const resetForm = () => {
     setValues(initialValues);
     setErrors({});
@@ -122,39 +124,43 @@ export function useFormValidation<T extends Record<string, any>>(
     setIsSubmitting(false);
   };
 
-  // Handle form submission
   const handleSubmit = async (
     onSubmit: (values: T) => Promise<void> | void,
     onError?: (errors: ValidationErrors) => void
   ) => {
-    setIsSubmitting(true);
-    
-    // Validate all fields and mark them as touched
+    const rules = getRules(values);
     const touchedFields: TouchedFields = {};
-    Object.keys(validationRules).forEach((field) => {
+    Object.keys(rules).forEach((field) => {
       touchedFields[field] = true;
     });
     setTouched(touchedFields);
 
-    const formIsValid = validateForm();
+    const newErrors: ValidationErrors = {};
+    let formIsValid = true;
+    Object.keys(rules).forEach((fieldName) => {
+      const error = validateFieldValue(fieldName, values[fieldName as keyof T], rules);
+      if (error) {
+        newErrors[fieldName] = error;
+        formIsValid = false;
+      }
+    });
+    setErrors(newErrors);
 
-    if (formIsValid) {
-      try {
-        await onSubmit(values);
-      } catch (error) {
-        // Optionally handle error in production
-      } finally {
-        setIsSubmitting(false);
-      }
-    } else {
+    if (!formIsValid) {
+      onError?.(newErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit(values);
+    } catch (error) {
+      // Optionally handle error in production
+    } finally {
       setIsSubmitting(false);
-      if (onError) {
-        onError(errors);
-      }
     }
   };
 
-  // Check form validity whenever values or errors change
   useEffect(() => {
     const formHasErrors = Object.values(errors).some((error) => error !== null);
     setIsValid(!formHasErrors);
